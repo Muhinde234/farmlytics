@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getMe, verifyEmail } = require('../controllers/authController'); // Import verifyEmail
+const { register, login, getMe, verifyEmail } = require('../controllers/authController'); 
 const { protect } = require('../middlewares/auth');
 
 const router = express.Router();
@@ -30,11 +30,11 @@ const router = express.Router();
  *             properties:
  *               name:
  *                 type: string
- *                 example: John Doe
+ *                 example: Aline KIM
  *               email:
  *                 type: string
  *                 format: email
- *                 example: new.user@example.com
+ *                 example: newfarmer@gmail.com
  *               password:
  *                 type: string
  *                 format: password
@@ -63,8 +63,8 @@ const router = express.Router();
  *                   type: object
  *                   properties:
  *                     id: { type: string, example: "60c72b2f9c1e4b001c8e4d3a" }
- *                     name: { type: string, example: "John Doe" }
- *                     email: { type: string, example: "new.user@example.com" }
+ *                     name: { type: string, example: "KIM Aline" }
+ *                     email: { type: string, example: "newfarmerlytics@gmail.com" }
  *                     role: { type: string, example: "farmer" }
  *                     isVerified: { type: boolean, example: false }
  *       400:
@@ -93,7 +93,7 @@ router.post('/register', register);
  *               email:
  *                 type: string
  *                 format: email
- *                 example: john.doe@example.com
+ *                 example: newfarmer@gmail.com
  *               password:
  *                 type: string
  *                 format: password
@@ -116,8 +116,8 @@ router.post('/register', register);
  *                   type: object
  *                   properties:
  *                     id: { type: string, example: "60c72b2f9c1e4b001c8e4d3a" }
- *                     name: { type: string, example: "John Doe" }
- *                     email: { type: string, example: "john.doe@example.com" }
+ *                     name: { type: string, example: "Aline KIM" }
+ *                     email: { type: string, example: "newfarmer@gmail.com" }
  *                     role: { type: string, example: "farmer" }
  *                     isVerified: { type: boolean, example: true }
  *       400:
@@ -150,8 +150,8 @@ router.post('/login', login);
  *                   type: object
  *                   properties:
  *                     _id: { type: string, example: "60c72b2f9c1e4b001c8e4d3a" }
- *                     name: { type: string, example: "John Doe" }
- *                     email: { type: string, example: "john.doe@example.com" }
+ *                     name: { type: string, example: "Aline KIM" }
+ *                     email: { type: string, example: "newfarmer@gmail.com" }
  *                     role: { type: string, example: "farmer" }
  *                     isVerified: { type: boolean, example: true }
  *                     createdAt: { type: string, format: date-time }

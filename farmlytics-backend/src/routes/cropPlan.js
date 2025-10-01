@@ -5,7 +5,7 @@ const {
     createCropPlan,
     updateCropPlan,
     deleteCropPlan
-} = require('../controllers/cropPlanController'); // Correct import for this specific controller
+} = require('../controllers/cropPlanController'); 
 const { protect, authorize } = require('../middlewares/auth');
 
 const router = express.Router();
@@ -17,9 +17,7 @@ const router = express.Router();
  *   description: Manage farmer's crop planting plans and estimates
  */
 
-// All crop plan routes require authentication
-router.use(protect); // This applies protect middleware to all routes below in this file
-
+router.use(protect); 
 /**
  * @swagger
  * /crop-plans:

@@ -15,7 +15,7 @@ exports.getHarvestAndRevenueEstimates = asyncHandler(async (req, res, next) => {
         res.status(400);
         throw new Error('actual_area_planted_ha must be a positive number.');
     }
-    // Basic date validation (more robust parsing is in the service)
+    
     if (!/^\d{4}-\d{2}-\d{2}$/.test(planting_date)) {
         res.status(400);
         throw new Error('planting_date must be in YYYY-MM-DD format.');

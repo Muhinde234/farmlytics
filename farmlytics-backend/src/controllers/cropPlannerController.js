@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const analyticsService = require('../utils/analyticsService'); // Import our analytics service
+const analyticsService = require('../utils/analyticsService'); 
 
 // @desc      Get crop recommendations
 // @route     GET /api/v1/crops/recommendations
@@ -11,7 +11,7 @@ exports.getCropRecommendations = asyncHandler(async (req, res, next) => {
         res.status(400);
         throw new Error('Please provide district_name and farm_size_ha as query parameters.');
     }
-    // Validate farm_size_ha as a positive number
+    
     const parsedFarmSizeHa = parseFloat(farm_size_ha);
     if (isNaN(parsedFarmSizeHa) || parsedFarmSizeHa <= 0) {
         res.status(400);
@@ -19,7 +19,7 @@ exports.getCropRecommendations = asyncHandler(async (req, res, next) => {
     }
 
     const cropPlannerService = analyticsService.getCropPlannerService();
-    // Ensure the service is initialized before use
+    
     if (!cropPlannerService) {
         res.status(500);
         throw new Error('Analytics services not initialized. Server error during crop recommendations.');
@@ -27,8 +27,8 @@ exports.getCropRecommendations = asyncHandler(async (req, res, next) => {
 
     const recommendations = cropPlannerService.get_crop_recommendations(
         district_name,
-        parsedFarmSizeHa, // Use the parsed float
-        top_n ? parseInt(top_n) : undefined, // Pass undefined if not provided to use default in service
+        parsedFarmSizeHa, 
+        top_n ? parseInt(top_n) : undefined, 
         season
     );
 
