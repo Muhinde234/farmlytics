@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getMe } = require('../controllers/authController');
+const { register, login, getMe, verifyEmail } = require('../controllers/authController'); // Import verifyEmail
 const { protect } = require('../middlewares/auth');
 
 const router = express.Router();
@@ -15,7 +15,7 @@ const router = express.Router();
  * @swagger
  * /auth/register:
  *   post:
- *     summary: Register a new user
+ *     summary: Register a new user and send verification email
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -34,7 +34,7 @@ const router = express.Router();
  *               email:
  *                 type: string
  *                 format: email
- *                 example: john.doe@example.com
+ *                 example: new.user@example.com
  *               password:
  *                 type: string
  *                 format: password
@@ -47,7 +47,7 @@ const router = express.Router();
  *                 example: farmer
  *     responses:
  *       201:
- *         description: User registered successfully
+ *         description: User registered successfully. Email verification link sent.
  *         content:
  *           application/json:
  *             schema:
@@ -56,25 +56,21 @@ const router = express.Router();
  *                 success:
  *                   type: boolean
  *                   example: true
- *                 token:
+ *                 message:
  *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                   example: User registered. Please check your email for verification link.
  *                 user:
  *                   type: object
  *                   properties:
  *                     id: { type: string, example: "60c72b2f9c1e4b001c8e4d3a" }
  *                     name: { type: string, example: "John Doe" }
- *                     email: { type: string, example: "john.doe@example.com" }
+ *                     email: { type: string, example: "new.user@example.com" }
  *                     role: { type: string, example: "farmer" }
+ *                     isVerified: { type: boolean, example: false }
  *       400:
  *         description: Bad request (e.g., missing fields, invalid email, duplicate email)
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success: { type: boolean, example: false }
- *                 error: { type: string, example: "Please add a name" }
+ *       500:
+ *         description: Email could not be sent (server issue)
  */
 router.post('/register', register);
 
@@ -123,10 +119,11 @@ router.post('/register', register);
  *                     name: { type: string, example: "John Doe" }
  *                     email: { type: string, example: "john.doe@example.com" }
  *                     role: { type: string, example: "farmer" }
+ *                     isVerified: { type: boolean, example: true }
  *       400:
  *         description: Bad request (e.g., missing fields)
  *       401:
- *         description: Unauthorized (e.g., invalid credentials)
+ *         description: Unauthorized (e.g., invalid credentials, email not verified)
  */
 router.post('/login', login);
 
@@ -156,10 +153,34 @@ router.post('/login', login);
  *                     name: { type: string, example: "John Doe" }
  *                     email: { type: string, example: "john.doe@example.com" }
  *                     role: { type: string, example: "farmer" }
+ *                     isVerified: { type: boolean, example: true }
  *                     createdAt: { type: string, format: date-time }
  *       401:
  *         description: Unauthorized (e.g., no token, invalid token)
  */
 router.get('/me', protect, getMe);
+
+/**
+ * @swagger
+ * /auth/verifyemail/{token}:
+ *   get:
+ *     summary: Verify user email using token
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The email verification token received in the user's email.
+ *     responses:
+ *       302:
+ *         description: Redirects to frontend login page on successful verification.
+ *       400:
+ *         description: Invalid or expired verification token.
+ *       500:
+ *         description: Server error during verification.
+ */
+router.get('/verifyemail/:token', verifyEmail);
 
 module.exports = router;
