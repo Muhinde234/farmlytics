@@ -8,9 +8,7 @@ This repository contains the backend API for **Farmlytics**, a comprehensive agr
 
 ## Deployed API Link
 
-**(Note: Once your backend is deployed, replace this placeholder with the actual URL.)**
-
-`https://your-deployed-farmlytics-backend.com/api/v1`
+`https://farmlytics1.onrender.com/api-docs/`
 
 ---
 
@@ -88,7 +86,7 @@ farmlytics-backend/
 
 ---
 
-## ⚙️ Setup & Installation
+## Setup & Installation
 
 Follow these steps to get the Farmlytics backend running locally:
 
@@ -180,7 +178,7 @@ Admin user seeded successfully. (or Admin user already exists. on subsequent run
 
 ---
 
-## 📚 API Documentation (Swagger/OpenAPI)
+## API Documentation (Swagger/OpenAPI)
 
 Once the server is running, you can access the interactive API documentation:
 
