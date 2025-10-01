@@ -1,7 +1,8 @@
 const app = require('./app');
 const connectDB = require('./config/db');
 const config = require('./config');
-const User = require('./models/User'); // Import User model to seed admin
+const User = require('./models/User');
+const analyticsService = require('./utils/analyticsService'); 
 
 // Connect to database
 connectDB();
@@ -26,15 +27,21 @@ const seedAdmin = async () => {
     }
 };
 
-const PORT = config.port;
+// Start the server and initialize analytics services
+const startServer = async () => {
+    await analyticsService.init();
+    const PORT = config.port;
 
-app.listen(PORT, () => {
-    console.log(`Server running in ${config.nodeEnv} mode on port ${PORT}`);
-    seedAdmin(); // Seed admin after server starts
-});
+    app.listen(PORT, () => {
+        console.log(`Server running in ${config.nodeEnv} mode on port ${PORT}`);
+        seedAdmin(); 
+    });
+};
+
+startServer(); 
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
     console.error(`Error: ${err.message}`);
- 
+   
 });
