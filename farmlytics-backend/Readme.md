@@ -1,6 +1,3 @@
-Sure! Here’s the markdown code for the Farmlytics Backend API documentation. You can copy this code directly into your markdown file.
-
-````markdown
 # Farmlytics Backend API
 
 ## 🌾 Empowering Rwandan Farmers with Data-Driven Decisions
@@ -324,6 +321,3 @@ Contributions are welcome! Please feel free to open issues, submit pull requests
 ## 📄 License
 
 This project is licensed under the MIT License.
-````
-
-You can paste this code into a `.md` file to create your markdown documentation.
