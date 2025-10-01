@@ -1,5 +1,5 @@
 const express = require('express');
-const { getCropRecommendations } = require('../controllers/cropPlannerController');
+const { getCropRecommendations } = require('../controllers/cropPlannerController'); // Correct import and destructuring
 const { protect, authorize } = require('../middlewares/auth');
 
 const router = express.Router();

@@ -2,10 +2,11 @@ const express = require('express');
 const app = express();
 const config = require('./config');
 const errorHandler = require('./middlewares/error');
-const cors = require('cors'); 
- require('colors'); 
+const cors = require('cors');
+// Optional: For colored console logs
+// require('colors'); 
 
-
+// Swagger setup
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -24,7 +25,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: `http://localhost:${config.port}/api/v1`, // Ensure this is http, not https for local dev
+                url: `http://localhost:${config.port}/api/v1`,
                 description: 'Development server'
             }
         ],
@@ -34,6 +35,38 @@ const swaggerOptions = {
                     type: 'http',
                     scheme: 'bearer',
                     bearerFormat: 'JWT'
+                }
+            },
+            // Add Mongoose schemas here for Swagger to recognize them
+            schemas: {
+                User: {
+                    type: 'object',
+                    properties: {
+                        _id: { type: 'string', example: '60c72b2f9c1e4b001c8e4d3a' },
+                        name: { type: 'string', example: 'John Doe' },
+                        email: { type: 'string', example: 'john.doe@example.com' },
+                        role: { type: 'string', enum: ['admin', 'farmer', 'buyer'], example: 'farmer' },
+                        isVerified: { type: 'boolean', example: true },
+                        createdAt: { type: 'string', format: 'date-time' }
+                    }
+                },
+                CropPlan: { // Define the CropPlan schema for Swagger
+                    type: 'object',
+                    properties: {
+                        _id: { type: 'string', example: '60c72b2f9c1e4b001c8e4d3b' },
+                        user: { type: 'string', example: '60c72b2f9c1e4b001c8e4d3a', description: 'ID of the farmer who owns this plan' },
+                        cropName: { type: 'string', enum: ['Maize', 'Beans', 'Irish potatoes', 'Cassava', 'Tomatoes'], example: 'Maize' },
+                        districtName: { type: 'string', example: 'Gasabo' },
+                        actualAreaPlantedHa: { type: 'number', format: 'float', example: 2.5 },
+                        plantingDate: { type: 'string', format: 'date', example: '2025-05-01' },
+                        estimatedHarvestDate: { type: 'string', format: 'date', example: '2025-09-01' },
+                        estimatedYieldKgPerHa: { type: 'number', format: 'float', example: 600.0 },
+                        estimatedTotalProductionKg: { type: 'number', format: 'float', example: 1500.0 }, 
+                        estimatedPricePerKgRwf: { type: 'number', format: 'float', example: 350.0 },
+                        estimatedRevenueRwf: { type: 'number', format: 'float', example: 525000.0 },
+                        status: { type: 'string', enum: ['Planned', 'Planted', 'Harvested', 'Completed', 'Cancelled'], example: 'Planted' },
+                        createdAt: { type: 'string', format: 'date-time' }
+                    }
                 }
             }
         },
@@ -50,8 +83,7 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Enable CORS for all routes
-// For development, allow all origins. In production, restrict this.
-app.use(cors()); 
+app.use(cors());
 
 
 // Body parser for JSON
@@ -59,21 +91,23 @@ app.use(express.json());
 
 // Mount routers
 const authRoutes = require('./routes/auth');
-const cropPlannerRoutes = require('./routes/cropPlanner');
+const cropPlannerRoutes = require('./routes/cropPlanner'); 
 const marketRoutes = require('./routes/market');
 const trackerRoutes = require('./routes/tracker');
+const cropPlanRoutes = require('./routes/cropPlan'); // Import cropPlan routes
 
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/crops', cropPlannerRoutes);
+app.use('/api/v1/crops', cropPlannerRoutes); // Mount cropPlanner routes
 app.use('/api/v1/market', marketRoutes);
 app.use('/api/v1/tracker', trackerRoutes);
+app.use('/api/v1/crop-plans', cropPlanRoutes); // Mount cropPlan routes
 
 
 app.get('/', (req, res) => {
     res.send('Farmlytics API is running...');
 });
 
-
+// Error handling middleware MUST be after all routes
 app.use(errorHandler);
 
 module.exports = app;
