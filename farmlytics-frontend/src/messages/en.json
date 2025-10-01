@@ -1,0 +1,34 @@
+{
+  "login": {
+    "title": "Login",
+    "email": { "label": "Email", "placeholder": "Enter your email", "invalid": "Invalid email" },
+    "password": { "label": "Password", "placeholder": "Enter your password", "invalid": "Invalid password" },
+    "submit": "Sign In",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register"
+  },
+  "register": {
+    "title": "Register",
+    "firstName": { "label": "First Name", "placeholder": "Enter your first name", "invalid": "Invalid first name" },
+    "lastName": { "label": "Last Name", "placeholder": "Enter your last name", "invalid": "Invalid last name" },
+    "district": {
+      "label": "District",
+      "placeholder": "Select your district",
+      "invalid": "Invalid district",
+      "select": "Select",
+      "options": { "gasabo": "Gasabo", "kicukiro": "Kicukiro", "nyarugenge": "Nyarugenge" }
+    },
+    "email": { "label": "Email", "placeholder": "Enter your email", "invalid": "Invalid email" },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your password",
+      "invalid": "Invalid password",
+      "min": "Password must be at least 6 characters"
+    },
+    "confirmPassword": { "label": "Confirm Password", "placeholder": "Confirm your password", "invalid": "Passwords do not match", "match": "Passwords must match" },
+    "submit": "Sign Up",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Login"
+  }
+}
+

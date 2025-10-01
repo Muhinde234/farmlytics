@@ -1,0 +1,33 @@
+{
+  "login": {
+    "title": "Connexion",
+    "email": { "label": "Email", "placeholder": "Entrez votre email", "invalid": "Email invalide" },
+    "password": { "label": "Mot de passe", "placeholder": "Entrez votre mot de passe", "invalid": "Mot de passe invalide" },
+    "submit": "Se connecter",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "registerLink": "S'inscrire"
+  },
+  "register": {
+    "title": "Inscription",
+    "firstName": { "label": "Prénom", "placeholder": "Entrez votre prénom", "invalid": "Prénom invalide" },
+    "lastName": { "label": "Nom", "placeholder": "Entrez votre nom", "invalid": "Nom invalide" },
+    "district": {
+      "label": "District",
+      "placeholder": "Sélectionnez votre district",
+      "invalid": "District invalide",
+      "select": "Sélectionner",
+      "options": { "gasabo": "Gasabo", "kicukiro": "Kicukiro", "nyarugenge": "Nyarugenge" }
+    },
+    "email": { "label": "Email", "placeholder": "Entrez votre email", "invalid": "Email invalide" },
+    "password": {
+      "label": "Mot de passe",
+      "placeholder": "Entrez votre mot de passe",
+      "invalid": "Mot de passe invalide",
+      "min": "Le mot de passe doit comporter au moins 6 caractères"
+    },
+    "confirmPassword": { "label": "Confirmez le mot de passe", "placeholder": "Confirmez votre mot de passe", "invalid": "Les mots de passe ne correspondent pas", "match": "Les mots de passe doivent correspondre" },
+    "submit": "S'inscrire",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "loginLink": "Connexion"
+  }
+}

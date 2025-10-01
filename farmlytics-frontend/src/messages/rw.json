@@ -1,0 +1,33 @@
+{
+  "login": {
+    "title": "Injira",
+    "email": { "label": "Imeyili", "placeholder": "Andika imeyili yawe", "invalid": "Imeyili siyo" },
+    "password": { "label": "Ijambo ry'ibanga", "placeholder": "Andika ijambo ry'ibanga", "invalid": "Ijambo ry'ibanga si ryo" },
+    "submit": "Injira",
+    "noAccount": "Nta konti ufite?",
+    "registerLink": "Iyandikishe"
+  },
+  "register": {
+    "title": "Iyandikishe",
+    "firstName": { "label": "Izina rya mbere", "placeholder": "Andika izina rya mbere", "invalid": "Izina rya mbere si ryo" },
+    "lastName": { "label": "Izina rya nyuma", "placeholder": "Andika izina rya nyuma", "invalid": "Izina rya nyuma si ryo" },
+    "district": {
+      "label": "Akarere",
+      "placeholder": "Hitamo akarere kawe",
+      "invalid": "Akarere si ko",
+      "select": "Hitamo",
+      "options": { "gasabo": "Gasabo", "kicukiro": "Kicukiro", "nyarugenge": "Nyarugenge" }
+    },
+    "email": { "label": "Imeyili", "placeholder": "Andika imeyili yawe", "invalid": "Imeyili siyo" },
+    "password": {
+      "label": "Ijambo ry'ibanga",
+      "placeholder": "Andika ijambo ry'ibanga",
+      "invalid": "Ijambo ry'ibanga si ryo",
+      "min": "Ijambo ry'ibanga rigomba kuba nibura inyuguti 6"
+    },
+    "confirmPassword": { "label": "Emeza ijambo ry'ibanga", "placeholder": "Andika ijambo ry'ibanga bwa kabiri", "invalid": "Amagambo y'ibanga ntahura", "match": "Amagambo y'ibanga agomba guhura" },
+    "submit": "Iyandikishe",
+    "haveAccount": "Ufite konti?",
+    "loginLink": "Injira"
+  }
+}
