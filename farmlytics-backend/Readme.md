@@ -1,12 +1,12 @@
 # Farmlytics Backend API
 
-## 🌾 Empowering Rwandan Farmers with Data-Driven Decisions
+## Empowering Rwandan Farmers with Data-Driven Decisions
 
 This repository contains the backend API for **Farmlytics**, a comprehensive agricultural intelligence platform designed to empower Rwandan farmers. By leveraging national agricultural and socio-economic datasets (SAS, EICV7, Establishment Census, Population Census), Farmlytics provides personalized crop planning, market connection insights, and harvest tracking to optimize agricultural productivity and market access.
 
 ---
 
-## 🔗 Deployed API Link
+## Deployed API Link
 
 **(Note: Once your backend is deployed, replace this placeholder with the actual URL.)**
 
@@ -14,7 +14,7 @@ This repository contains the backend API for **Farmlytics**, a comprehensive agr
 
 ---
 
-## 🚀 Key Features
+##  Key Features
 
 The Farmlytics backend provides a robust set of API endpoints to power the web and mobile applications:
 
@@ -28,7 +28,7 @@ The Farmlytics backend provides a robust set of API endpoints to power the web a
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Runtime:** Node.js
 - **Web Framework:** Express.js
@@ -44,7 +44,7 @@ The Farmlytics backend provides a robust set of API endpoints to power the web a
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 The backend follows a modular and organized structure:
 
@@ -95,7 +95,7 @@ Follow these steps to get the Farmlytics backend running locally:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url> # Replace with your actual repository URL
+git clone https://github.com/Muhinde234/farmlytics.git
 cd farmlytics-backend
 ```
 
@@ -188,7 +188,7 @@ Once the server is running, you can access the interactive API documentation:
 
 ---
 
-## 🔐 Authentication & Authorization
+##  Authentication & Authorization
 
 Farmlytics employs JWT-based authentication and role-based authorization to secure its API.
 
@@ -208,7 +208,7 @@ Most API routes are protected (using `protect` middleware), requiring a valid JW
 
 ---
 
-## 📍 Core API Modules & Endpoints
+## Core API Modules & Endpoints
 
 This section details the purpose and functionality of each API endpoint.
 
@@ -290,17 +290,7 @@ Helps farmers track their actual plantings and provides dynamic revenue estimati
 
 ---
 
-## 🎨 Color Palette (Rwandan Flag Inspiration)
-
-The email verification template and other potential frontend elements are inspired by the vibrant colors of the Rwandan flag, reflecting a commitment to the local context and national identity:
-
-- **Green:** #007A3D (Represents prosperity and hope)
-- **Yellow:** #FFD200 (Symbolizes economic development)
-- **Blue:** #00A3DD (Represents peace and tranquility)
-
----
-
-## 🚧 Future Enhancements (Roadmap)
+##  Future Enhancements (Roadmap)
 
 - **Real-time Market Prices:** Integration with live market price APIs for more accurate revenue forecasting.
 - **Weather Data Integration:** Incorporate weather forecasts into crop planning and yield estimation.
@@ -312,12 +302,12 @@ The email verification template and other potential frontend elements are inspir
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please feel free to open issues, submit pull requests, or suggest improvements.
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License.
