@@ -4,10 +4,9 @@ const config = require('./config');
 const User = require('./models/User');
 const analyticsService = require('./utils/analyticsService'); 
 
-// Connect to database
+
 connectDB();
 
-// Function to seed admin user
 const seedAdmin = async () => {
     try {
         const adminExists = await User.findOne({ email: config.adminEmail });
@@ -27,7 +26,7 @@ const seedAdmin = async () => {
     }
 };
 
-// Start the server and initialize analytics services
+
 const startServer = async () => {
     await analyticsService.init();
     const PORT = config.port;
@@ -40,7 +39,6 @@ const startServer = async () => {
 
 startServer(); 
 
-// Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
     console.error(`Error: ${err.message}`);
    

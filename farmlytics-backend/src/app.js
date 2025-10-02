@@ -3,8 +3,8 @@ const app = express();
 const config = require('./config');
 const errorHandler = require('./middlewares/error');
 const cors = require('cors');
-// Optional: For colored console logs
-// require('colors'); 
+
+ require('colors'); 
 
 // Swagger setup
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -37,7 +37,7 @@ const swaggerOptions = {
                     bearerFormat: 'JWT'
                 }
             },
-            // Add Mongoose schemas here for Swagger to recognize them
+            
             schemas: {
                 User: {
                     type: 'object',
@@ -79,14 +79,14 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 
-// Serve Swagger UI
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// Enable CORS for all routes
+
 app.use(cors());
 
 
-// Body parser for JSON
+
 app.use(express.json());
 
 // Mount routers
@@ -94,20 +94,20 @@ const authRoutes = require('./routes/auth');
 const cropPlannerRoutes = require('./routes/cropPlanner'); 
 const marketRoutes = require('./routes/market');
 const trackerRoutes = require('./routes/tracker');
-const cropPlanRoutes = require('./routes/cropPlan'); // Import cropPlan routes
+const cropPlanRoutes = require('./routes/cropPlan'); 
 
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/crops', cropPlannerRoutes); // Mount cropPlanner routes
+app.use('/api/v1/crops', cropPlannerRoutes); 
 app.use('/api/v1/market', marketRoutes);
 app.use('/api/v1/tracker', trackerRoutes);
-app.use('/api/v1/crop-plans', cropPlanRoutes); // Mount cropPlan routes
+app.use('/api/v1/crop-plans', cropPlanRoutes); 
 
 
 app.get('/', (req, res) => {
     res.send('Farmlytics API is running...');
 });
 
-// Error handling middleware MUST be after all routes
+
 app.use(errorHandler);
 
 module.exports = app;

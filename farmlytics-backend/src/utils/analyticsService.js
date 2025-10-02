@@ -1,21 +1,20 @@
 const fs = require('fs');
 const path = require('path');
-const { parse } = require('csv-parse'); // For parsing CSV data
+const { parse } = require('csv-parse'); 
 
-const baseDataFolder = path.join(__dirname, '../../data'); // Path to your 'data' folder
+const baseDataFolder = path.join(__dirname, '../../data'); 
 
-// --- CropPlannerService (JavaScript adaptation of CropPlannerModel) ---
 class CropPlannerService {
     constructor(data) {
         this.data = data;
-        // Ensure data types are correct for calculations
+       
         this.data.forEach(row => {
             row.Avg_Area_ha = parseFloat(row.Avg_Area_ha) || 0;
             row.Avg_Yield_Kg_per_Ha = parseFloat(row.Avg_Yield_Kg_per_Ha) || 0;
             row.Total_Production_Kg = parseFloat(row.Total_Production_Kg) || 0;
             row.Num_Observations = parseInt(row.Num_Observations) || 0;
         });
-        // Filter out records with no meaningful area
+        
         this.data = this.data.filter(row => row.Avg_Area_ha > 0);
         console.log(`CropPlannerService initialized with ${this.data.length} records.`);
     }
@@ -24,22 +23,20 @@ class CropPlannerService {
         let districtData = this.data.filter(row => row.DistrictName === district_name);
 
         if (districtData.length === 0) {
-            return []; // No data for this district
+            return []; 
         }
 
-        // Filter by specific season if provided
         if (season) {
             const seasonSpecificData = districtData.filter(row => row.Season === season);
             if (seasonSpecificData.length > 0) {
                 districtData = seasonSpecificData;
             } else {
-                // Fallback: if specific season has no data for the district, use overall district data
+                
                 console.warn(`Falling back to overall seasonal averages for ${district_name} as no data for ${season}.`);
             }
         }
 
-        // Aggregate data (if season not specified or fallback occurred)
-        // Group by CropName and calculate mean for averages, sum for totals
+      
         const aggregatedMap = new Map();
         districtData.forEach(row => {
             if (!aggregatedMap.has(row.CropName)) {
@@ -47,9 +44,9 @@ class CropPlannerService {
                     CropName: row.CropName,
                     Avg_Area_ha_Sum: 0,
                     Avg_Yield_Kg_per_Ha_Sum: 0,
-                    Total_Production_Kg_Sum: 0, // This is already summed in aggregated CSV, so sum again to get overall sum
-                    Observation_Count: 0, // To count how many entries contributed to the average
-                    Overall_Num_Observations_Accumulated: 0 // Sum of original Num_Observations
+                    Total_Production_Kg_Sum: 0, 
+                    Observation_Count: 0, 
+                    Overall_Num_Observations_Accumulated: 0 
                 });
             }
             const agg = aggregatedMap.get(row.CropName);
@@ -68,25 +65,25 @@ class CropPlannerService {
             Overall_Num_Observations: agg.Overall_Num_Observations_Accumulated
         }));
 
-        // Filter out crops with very low average area or yield (noise)
+        
         districtDataAgg = districtDataAgg.filter(row => row.Avg_Area_ha > 0.01 && row.Avg_Yield_Kg_per_Ha > 0);
         
-        // Sort by average yield for recommendation
+        
         districtDataAgg.sort((a, b) => b.Avg_Yield_Kg_per_Ha - a.Avg_Yield_Kg_per_Ha);
 
         const recommendedCrops = districtDataAgg.slice(0, top_n);
 
         if (recommendedCrops.length === 0) {
-            return []; // No suitable crops found
+            return []; 
         }
 
-        // Calculate proportional area allocation
+       
         const totalHistoricalAreaForTopCrops = recommendedCrops.reduce((sum, crop) => sum + crop.Avg_Area_ha, 0);
 
         return recommendedCrops.map(crop => {
             let allocatedArea;
             if (totalHistoricalAreaForTopCrops === 0) {
-                // If no historical area, distribute evenly
+                
                 allocatedArea = farm_size_ha / recommendedCrops.length;
             } else {
                 allocatedArea = (crop.Avg_Area_ha / totalHistoricalAreaForTopCrops) * farm_size_ha;
@@ -103,7 +100,7 @@ class CropPlannerService {
     }
 }
 
-// --- MarketDemandService (JavaScript adaptation of MarketDemandModel) ---
+
 class MarketDemandService {
     constructor(data) {
         this.data = data;
@@ -122,7 +119,7 @@ class MarketDemandService {
             demandData = this.data.filter(row => row.DistrictName === location_name);
         } else if (location_type === 'Province') {
             let provincialData = this.data.filter(row => row.ProvinceName === location_name);
-            // Aggregate provincial data by summing across districts
+            
             const aggregatedMap = new Map();
             provincialData.forEach(row => {
                 if (!aggregatedMap.has(row.CropName)) {
@@ -147,7 +144,7 @@ class MarketDemandService {
             return [];
         }
 
-        let sortedDemand = [...demandData]; // Create a copy for sorting
+        let sortedDemand = [...demandData]; 
         if (sort_by === 'quantity') {
             sortedDemand.sort((a, b) => b.Total_Weighted_Consumption_Qty_Kg - a.Total_Weighted_Consumption_Qty_Kg);
         } else if (sort_by === 'value') {
@@ -164,13 +161,12 @@ class MarketDemandService {
     }
 }
 
-// --- MarketConnectionService (JavaScript adaptation of MarketConnectionModel) ---
 class MarketConnectionService {
     constructor(data) {
         this.data = data;
         this.data.forEach(row => {
             row.Total_workers = parseInt(row.Total_workers) || 0;
-            // q20: Annual_Turnover_2022, q21: Employed_Capital from cleaned CSV
+            
             row.Annual_Turnover_2022 = parseFloat(row.Annual_Turnover_2022) || 0;
             row.Employed_Capital = parseFloat(row.Employed_Capital) || 0;
             row.Is_Agriculture_Related = parseInt(row.Is_Agriculture_Related) || 0;
@@ -236,12 +232,12 @@ class MarketConnectionService {
     }
 }
 
-// --- HarvestTrackerService (JavaScript adaptation of Harvest & Revenue Tracker Logic) ---
+
 class HarvestTrackerService {
     constructor(cropPlannerService, marketDemandService) {
         this.cropPlannerService = cropPlannerService;
         this.marketDemandService = marketDemandService;
-        // Default values for crops not directly found in analytics data
+        
         this.defaultYields = {
             "Maize": 700.0, "Beans": 1500.0, "Irish potatoes": 10000.0,
             "Cassava": 15000.0, "Tomatoes": 20000.0
@@ -251,11 +247,11 @@ class HarvestTrackerService {
             "Cassava": 100.0, "Tomatoes": 400.0
         };
         this.daysToMaturity = {
-            "Maize": 120, // ~4 months
-            "Beans": 90,  // ~3 months
-            "Irish potatoes": 100, // ~3.5 months
-            "Cassava": 365, // ~12 months (long cycle)
-            "Tomatoes": 75  // ~2.5 months
+            "Maize": 120, 
+            "Beans": 90,  
+            "Irish potatoes": 100, 
+            "Cassava": 365, 
+            "Tomatoes": 75  
         };
     }
 
@@ -271,13 +267,12 @@ class HarvestTrackerService {
         }
         
 
-        // 1. Get Estimated Yield (from CropPlannerService or default)
         let estimatedYieldKgPerHa = 0.0;
         const cropRecommendations = this.cropPlannerService.get_crop_recommendations(
             district_name,
-            actual_area_planted_ha, // Pass farmer's area for a dummy query, though logic focuses on crop yield
-            1, // Only need data for the specific crop
-            null // Consider all seasons for yield estimation if not specified by caller
+            actual_area_planted_ha, 
+            1, 
+            null 
         );
 
         const foundRecommendation = cropRecommendations.find(rec => rec.CropName === crop_name);
@@ -292,16 +287,16 @@ class HarvestTrackerService {
             throw new Error(`Unable to estimate yield for '${crop_name}' in '${district_name}'. Estimated yield is 0.`);
         }
 
-        // 2. Estimated Total Production
+        
         const estimatedTotalProductionKg = actual_area_planted_ha * estimatedYieldKgPerHa;
 
-        // 3. Estimated Market Price per Kg (from MarketDemandService or default)
+        
         let estimatedPricePerKgRwf = 0.0;
         const marketDemandInsights = this.marketDemandService.get_market_demand_insights(
             district_name,
             'District',
             1,
-            'value' // Prioritize value to get a price
+            'value' 
         );
 
         const foundDemand = marketDemandInsights.find(demand => demand.CropName === crop_name);
@@ -316,10 +311,9 @@ class HarvestTrackerService {
             throw new Error(`Unable to estimate market price for '${crop_name}' in '${district_name}'. Estimated price is 0.`);
         }
 
-        // 4. Estimated Revenue
         const estimatedRevenueRwf = estimatedTotalProductionKg * estimatedPricePerKgRwf;
 
-        // 5. Estimated Harvest Date (simplified based on fixed days to maturity)
+        
         const maturityDays = this.daysToMaturity[crop_name] || 90;
         const estimatedHarvestDate = new Date(plantingDate);
         estimatedHarvestDate.setDate(plantingDate.getDate() + maturityDays);
@@ -338,7 +332,7 @@ class HarvestTrackerService {
 }
 
 
-// --- Data Loading Utility ---
+
 function loadCsv(filePath) {
     return new Promise((resolve, reject) => {
         const records = [];
@@ -356,7 +350,7 @@ function loadCsv(filePath) {
     });
 }
 
-// --- Service Instances (Singleton) ---
+
 let cropPlannerServiceInstance;
 let marketDemandServiceInstance;
 let marketConnectionServiceInstance;
@@ -379,7 +373,7 @@ const initAnalyticsServices = async () => {
         console.log('All analytics services initialized successfully.');
     } catch (error) {
         console.error('CRITICAL ERROR: Failed to load analytics data or initialize services:', error.message);
-        process.exit(1); // Exit if critical data cannot be loaded
+        process.exit(1); 
     }
 };
 
