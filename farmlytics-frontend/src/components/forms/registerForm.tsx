@@ -149,7 +149,7 @@ export function RegisterForm({ dict, lang }: RegisterFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{dict.password.label}</FormLabel>
-                  <FormControl>
+                  <FormControl> 
                     <Input
                       type="password"
                       placeholder={dict.password.placeholder}

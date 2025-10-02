@@ -30,8 +30,8 @@ export default function RootLayout({
   return (
     <html lang={locale}>
       <body className="">
-        <div className="">
-          <LoginPage params={{ locale }} /> {/* Pass 'locale', not 'lang' */}
+        <div className="flex flex-col md:flex-row items-center justify-center min-h-screen gap-8">
+          <LoginPage params={{ lang: locale }} />
         </div>
         {children}
       </body>
