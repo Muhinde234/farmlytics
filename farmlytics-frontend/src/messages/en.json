@@ -1,34 +1,47 @@
 {
   "login": {
     "title": "Login",
-    "email": { "label": "Email", "placeholder": "Enter your email", "invalid": "Invalid email" },
-    "password": { "label": "Password", "placeholder": "Enter your password", "invalid": "Invalid password" },
-    "submit": "Sign In",
-    "noAccount": "Don't have an account?",
-    "registerLink": "Register"
-  },
-  "register": {
-    "title": "Register",
-    "firstName": { "label": "First Name", "placeholder": "Enter your first name", "invalid": "Invalid first name" },
-    "lastName": { "label": "Last Name", "placeholder": "Enter your last name", "invalid": "Invalid last name" },
-    "district": {
-      "label": "District",
-      "placeholder": "Select your district",
-      "invalid": "Invalid district",
-      "select": "Select",
-      "options": { "gasabo": "Gasabo", "kicukiro": "Kicukiro", "nyarugenge": "Nyarugenge" }
+    "subtitle": "Welcome Back",
+    "email": {
+      "label": "Email Address",
+      "placeholder": "Enter your email",
+      "invalid": "Invalid email address",
+      "required": "Email is required"
     },
-    "email": { "label": "Email", "placeholder": "Enter your email", "invalid": "Invalid email" },
     "password": {
       "label": "Password",
       "placeholder": "Enter your password",
       "invalid": "Invalid password",
-      "min": "Password must be at least 6 characters"
+      "min": "Password must be at least 8 characters",
+      "required": "Password is required"
     },
-    "confirmPassword": { "label": "Confirm Password", "placeholder": "Confirm your password", "invalid": "Passwords do not match", "match": "Passwords must match" },
-    "submit": "Sign Up",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Sign In",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register"
+  },
+  
+  "register": {
+    "title": "Create Your Account",
+    "subtitle": "Join us today and start exploring",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Enter your first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Enter your last name",
+    "district": "District",
+    "districtPlaceholder": "Enter your district",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email address",
+    "password": "Password",
+    "passwordPlaceholder": "Enter a password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "registerButton": "Register",
+    "registering": "Registering...",
+    "success": "Registration successful!",
+    "error": "Something went wrong, please try again.",
     "haveAccount": "Already have an account?",
-    "loginLink": "Login"
+    "loginLink": "Login here"
   }
 }
-

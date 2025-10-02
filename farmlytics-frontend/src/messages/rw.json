@@ -1,33 +1,48 @@
 {
   "login": {
     "title": "Injira",
-    "email": { "label": "Imeyili", "placeholder": "Andika imeyili yawe", "invalid": "Imeyili siyo" },
-    "password": { "label": "Ijambo ry'ibanga", "placeholder": "Andika ijambo ry'ibanga", "invalid": "Ijambo ry'ibanga si ryo" },
-    "submit": "Injira",
-    "noAccount": "Nta konti ufite?",
-    "registerLink": "Iyandikishe"
-  },
-  "register": {
-    "title": "Iyandikishe",
-    "firstName": { "label": "Izina rya mbere", "placeholder": "Andika izina rya mbere", "invalid": "Izina rya mbere si ryo" },
-    "lastName": { "label": "Izina rya nyuma", "placeholder": "Andika izina rya nyuma", "invalid": "Izina rya nyuma si ryo" },
-    "district": {
-      "label": "Akarere",
-      "placeholder": "Hitamo akarere kawe",
-      "invalid": "Akarere si ko",
-      "select": "Hitamo",
-      "options": { "gasabo": "Gasabo", "kicukiro": "Kicukiro", "nyarugenge": "Nyarugenge" }
+    "subtitle": "Urakaza neza",
+    "email": {
+      "label": "Imeyili",
+      "placeholder": "Andika imeyili yawe",
+      "invalid": "Imeyili si yo",
+      "required": "Imeyili irasabwa"
     },
-    "email": { "label": "Imeyili", "placeholder": "Andika imeyili yawe", "invalid": "Imeyili siyo" },
     "password": {
       "label": "Ijambo ry'ibanga",
       "placeholder": "Andika ijambo ry'ibanga",
       "invalid": "Ijambo ry'ibanga si ryo",
-      "min": "Ijambo ry'ibanga rigomba kuba nibura inyuguti 6"
+      "min": "Ijambo ry'ibanga rigomba kuba nibura inyuguti 8",
+      "required": "Ijambo ry'ibanga rirasabwa"
     },
-    "confirmPassword": { "label": "Emeza ijambo ry'ibanga", "placeholder": "Andika ijambo ry'ibanga bwa kabiri", "invalid": "Amagambo y'ibanga ntahura", "match": "Amagambo y'ibanga agomba guhura" },
-    "submit": "Iyandikishe",
-    "haveAccount": "Ufite konti?",
-    "loginLink": "Injira"
+    "rememberMe": "Unyibuke",
+    "forgotPassword": "Wibagiwe ijambo ry'ibanga?",
+    "loginButton": "Injira",
+    "noAccount": "Nta konti ufite?",
+    "registerLink": "Iyandikishe"
+  },
+  
+  
+  "register": {
+    "title": "Iyandikishe",
+    "subtitle": "Tangira kugendana natwe uyu munsi",
+    "firstName": "Izina rya mbere",
+    "firstNamePlaceholder": "Andika izina rya mbere",
+    "lastName": "Izina ry’umuryango",
+    "lastNamePlaceholder": "Andika izina ry’umuryango",
+    "district": "Akarere",
+    "districtPlaceholder": "Andika akarere kawe",
+    "email": "Imeyili",
+    "emailPlaceholder": "Andika aderesi yawe ya imeyili",
+    "password": "Ijambo ry’ibanga",
+    "passwordPlaceholder": "Andika ijambo ry’ibanga",
+    "confirmPassword": "Emeza ijambo ry’ibanga",
+    "confirmPasswordPlaceholder": "Andika ijambo ry’ibanga ukundi",
+    "registerButton": "Iyandikishe",
+    "registering": "Birimo kwiyandikisha...",
+    "success": "Kwiyandikisha byagenze neza!",
+    "error": "Habaye ikibazo, ongera ugerageze.",
+    "haveAccount": "Usanzwe ufite konti?",
+    "loginLink": "Injira hano"
   }
 }

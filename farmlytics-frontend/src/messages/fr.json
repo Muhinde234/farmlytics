@@ -1,33 +1,68 @@
 {
   "login": {
     "title": "Connexion",
-    "email": { "label": "Email", "placeholder": "Entrez votre email", "invalid": "Email invalide" },
-    "password": { "label": "Mot de passe", "placeholder": "Entrez votre mot de passe", "invalid": "Mot de passe invalide" },
-    "submit": "Se connecter",
+    "subtitle": "Content de vous revoir",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "Entrez votre e-mail",
+    "emailInvalid": "E-mail invalide",
+    "emailRequired": "L'e-mail est requis",
+
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "passwordInvalid": "Mot de passe invalide",
+    "passwordMin": "Le mot de passe doit comporter au moins 8 caractères",
+    "passwordRequired": "Le mot de passe est requis",
+
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "loginButton": "Se connecter",
     "noAccount": "Vous n'avez pas de compte ?",
     "registerLink": "S'inscrire"
   },
   "register": {
     "title": "Inscription",
-    "firstName": { "label": "Prénom", "placeholder": "Entrez votre prénom", "invalid": "Prénom invalide" },
-    "lastName": { "label": "Nom", "placeholder": "Entrez votre nom", "invalid": "Nom invalide" },
-    "district": {
-      "label": "District",
-      "placeholder": "Sélectionnez votre district",
-      "invalid": "District invalide",
-      "select": "Sélectionner",
-      "options": { "gasabo": "Gasabo", "kicukiro": "Kicukiro", "nyarugenge": "Nyarugenge" }
+    "subtitle": "Rejoignez-nous pour accéder à toutes les fonctionnalités !",
+
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Entrez votre prénom",
+    "firstNameInvalid": "Le prénom est requis",
+
+    "lastName": "Nom",
+    "lastNamePlaceholder": "Entrez votre nom",
+    "lastNameInvalid": "Le nom est requis",
+
+    "district": "District",
+    "districtPlaceholder": "Sélectionnez votre district",
+    "districtInvalid": "Le district est requis",
+    "districtSelect": "Sélectionner un district",
+    "districtOptions": {
+      "gasabo": "Gasabo",
+      "kicukiro": "Kicukiro",
+      "nyarugenge": "Nyarugenge"
     },
-    "email": { "label": "Email", "placeholder": "Entrez votre email", "invalid": "Email invalide" },
-    "password": {
-      "label": "Mot de passe",
-      "placeholder": "Entrez votre mot de passe",
-      "invalid": "Mot de passe invalide",
-      "min": "Le mot de passe doit comporter au moins 6 caractères"
-    },
-    "confirmPassword": { "label": "Confirmez le mot de passe", "placeholder": "Confirmez votre mot de passe", "invalid": "Les mots de passe ne correspondent pas", "match": "Les mots de passe doivent correspondre" },
-    "submit": "S'inscrire",
+
+    "email": "E-mail",
+    "emailPlaceholder": "Entrez votre e-mail",
+    "emailInvalid": "E-mail invalide",
+    "emailRequired": "L'e-mail est requis",
+
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "passwordInvalid": "Mot de passe invalide",
+    "passwordMin": "Le mot de passe doit comporter au moins 8 caractères",
+    "passwordRequired": "Le mot de passe est requis",
+
+    "confirmPassword": "Confirmez le mot de passe",
+    "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+    "confirmPasswordInvalid": "Les mots de passe ne correspondent pas",
+    "confirmPasswordMatch": "Les mots de passe ne correspondent pas",
+
+    "registerButton": "S'inscrire",
     "haveAccount": "Vous avez déjà un compte ?",
-    "loginLink": "Connexion"
+    "loginLink": "Connexion",
+
+    "success": "Inscription réussie !",
+    "error": "Échec de l'inscription. Veuillez réessayer.",
+    "registering": "Inscription en cours..."
   }
 }
