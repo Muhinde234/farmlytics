@@ -10,6 +10,7 @@ import Image from "next/image";
 import Logo from "@/components/common/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { z } from "zod";
 import {
   Form,
@@ -20,19 +21,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
-// Validation schema
+// Fix: Define schema outside component to avoid translation dependency in schema
 const loginSchema = z.object({
   email: z
     .string()
-    .min(1, { message: "Email is required" })
-    .email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(1, { message: "Password is required" })
-    .min(8, { message: "Password must be at least 8 characters" }),
-  rememberMe: z.boolean().optional(),
+    .min(1, { message: "email.required" })
+    .email({ message: "email.invalid" }),
+  password: z.string().min(8, { message: "password.min" }),
+  rememberMe: z.boolean().default(false),
 });
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
@@ -43,9 +41,14 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
+  // Fix: Properly typed form with explicit generic
   const form = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", rememberMe: false },
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
@@ -54,13 +57,19 @@ export default function LoginPage() {
       console.log("Login data:", data);
       // Replace with your login API call
       // await loginUser(data);
-      // if (data.rememberMe) { saveTokenToLocalStorage() }
-      // router.push("/dashboard");
+      toast.success(t("success"));
+      router.push("/dashboard");
     } catch (error: any) {
-      console.error("Login error:", error);
+      toast.error(error.message || t("error"));
     } finally {
       setIsPending(false);
     }
+  };
+
+  // Helper function to get translated error messages
+  const getTranslatedError = (error: { message?: string }) => {
+    if (!error?.message) return "";
+    return t(error.message as any);
   };
 
   return (
@@ -105,9 +114,11 @@ export default function LoginPage() {
             </div>
 
             {/* Welcome text */}
-            <h1 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 text-white">Welcome Back to Our Farming Community</h1>
+            <h1 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 text-white">
+              {t("title")}
+            </h1>
             <p className="text-green-100 text-sm md:text-lg leading-relaxed">
-              Sign in to continue your journey with fellow farmers and growers.
+              {t("subtitle")}
             </p>
           </div>
         </div>
@@ -116,8 +127,12 @@ export default function LoginPage() {
         <div className="lg:w-3/5 p-6 md:p-8 lg:p-12 flex flex-col justify-center overflow-y-auto">
           {/* Form header */}
           <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 md:mb-3">Sign In to Your Account</h2>
-            <p className="text-gray-600 text-sm md:text-base">Welcome back! Please enter your details</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 md:mb-3">
+              {t("title")}
+            </h2>
+            <p className="text-gray-600 text-sm md:text-base">
+              {t("subtitle")}
+            </p>
           </div>
 
           <Form {...form}>
@@ -128,12 +143,14 @@ export default function LoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">Email Address</FormLabel>
+                    <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">
+                      {t("email.label")}
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base pl-9 md:pl-11"
-                          placeholder="Enter your email address"
+                          placeholder={t("email.placeholder")}
                           type="email"
                           {...field}
                         />
@@ -142,7 +159,9 @@ export default function LoginPage() {
                         </svg>
                       </div>
                     </FormControl>
-                    <FormMessage className="text-xs text-red-500" />
+                    <FormMessage className="text-xs text-red-500">
+                      {getTranslatedError(form.formState.errors.email)}
+                    </FormMessage>
                   </FormItem>
                 )}
               />
@@ -153,12 +172,14 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">Password</FormLabel>
+                    <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">
+                      {t("password.label")}
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base pr-9 md:pr-11"
-                          placeholder="Enter your password"
+                          placeholder={t("password.placeholder")}
                           type={showPassword ? "text" : "password"}
                           {...field}
                         />
@@ -176,7 +197,9 @@ export default function LoginPage() {
                         </Button>
                       </div>
                     </FormControl>
-                    <FormMessage className="text-xs text-red-500" />
+                    <FormMessage className="text-xs text-red-500">
+                      {getTranslatedError(form.formState.errors.password)}
+                    </FormMessage>
                   </FormItem>
                 )}
               />
@@ -196,7 +219,7 @@ export default function LoginPage() {
                         />
                       </FormControl>
                       <FormLabel className="text-xs md:text-sm font-normal text-gray-700 cursor-pointer">
-                        Remember me for 30 days
+                        {t("rememberMe")}
                       </FormLabel>
                     </FormItem>
                   )}
@@ -206,7 +229,7 @@ export default function LoginPage() {
                   href="/forgot-password"
                   className="text-xs md:text-sm text-[#4CAF50] hover:text-[#2E7D32] font-medium underline-offset-2 md:underline-offset-4 hover:underline transition-colors duration-200"
                 >
-                  Forgot password?
+                  {t("forgotPassword")}
                 </Link>
               </div>
 
@@ -228,10 +251,15 @@ export default function LoginPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <span className="text-xs md:text-sm">Signing in...</span>
+                    <span className="text-xs md:text-sm">{t("loginButton")}...</span>
                   </div>
                 ) : (
-                  <span className="text-xs md:text-sm">Sign In</span>
+                  <div className="flex items-center justify-center">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                    <span className="text-xs md:text-sm">{t("loginButton")}</span>
+                  </div>
                 )}
               </Button>
             </form>
@@ -240,9 +268,9 @@ export default function LoginPage() {
           {/* Sign up link */}
           <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-200">
             <p className="text-center text-xs md:text-sm text-gray-600">
-              Don't have an account?{" "}
+              {t("noAccount")}{" "}
               <Link href="/register" className="text-[#4CAF50] hover:text-[#2E7D32] font-semibold underline-offset-2 md:underline-offset-4 hover:underline transition-colors duration-200">
-                Create account
+                {t("registerLink")}
               </Link>
             </p>
           </div>
