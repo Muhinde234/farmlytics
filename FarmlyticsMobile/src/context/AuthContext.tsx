@@ -1,127 +1,149 @@
 // src/context/AuthContext.tsx
-import React, { createContext, useState, useEffect, useContext } from 'react';
+
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  ReactNode,
+} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from '../services/api';
-import * as SplashScreen from 'expo-splash-screen'; // For managing splash screen during initial load
+import { Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 interface User {
   id: string;
   name: string;
   email: string;
-  role: string;
+  role: 'admin' | 'farmer' | 'buyer';
   isVerified: boolean;
-}
-
-// Define the return type for the register function
-interface RegisterResponse {
-  success: boolean;
-  message: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  jwtToken: string | null;
+  token: string | null;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string, role?: string) => Promise<RegisterResponse | undefined>;
-  logout: () => Promise<void>;
-  error: string | null;
-  clearError: () => void;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string, role: 'farmer' | 'buyer') => Promise<boolean>; // Role added
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [jwtToken, setJwtToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const API_BASE_URL = 'https://farmlytics1.onrender.com/api/v1';
 
-  const clearError = () => setError(null);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
-    const loadUser = async () => {
+    const loadUserFromStorage = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('jwtToken');
+        const storedToken = await AsyncStorage.getItem('userToken');
         if (storedToken) {
-          setJwtToken(storedToken);
-          api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-          const response = await api.get('/auth/me'); // Use your backend's /auth/me endpoint
-          if (response.data.success) {
-            setUser(response.data.data);
+          setToken(storedToken);
+          const response = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setUser(data.data);
           } else {
-            await AsyncStorage.removeItem('jwtToken');
-            setJwtToken(null);
-            setUser(null); // Ensure user is null if token is invalid
+            await AsyncStorage.removeItem('userToken');
+            setToken(null);
+            setUser(null);
           }
         }
-      } catch (err: any) {
-        console.error('Failed to load user from AsyncStorage or API:', err.message || err); // FIXED: Explicitly log err.message
-        await AsyncStorage.removeItem('jwtToken');
-        setJwtToken(null);
-        setUser(null); // Ensure user is null on error
+      } catch (error) {
+        console.error('Failed to load user from storage:', error);
       } finally {
         setIsLoading(false);
-        // Only hide splash screen if it's still visible and loading is complete
-        SplashScreen.hideAsync(); 
       }
     };
-
-    loadUser();
+    loadUserFromStorage();
   }, []);
 
-  const login = async (email: string, password: string): Promise<void> => { // Explicit return type
-    setError(null);
+  const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await api.post('/auth/login', { email, password });
-      if (response.data.success) {
-        const { token, user: userData } = response.data;
-        await AsyncStorage.setItem('jwtToken', token);
-        setJwtToken(token);
-        setUser(userData);
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`; // Update Axios default
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        if (!data.user.isVerified) {
+          Alert.alert(t('auth.verificationNeededTitle'), t('auth.verificationNeededMessage'));
+          setIsLoading(false);
+          return false;
+        }
+        await AsyncStorage.setItem('userToken', data.token);
+        setToken(data.token);
+        setUser(data.user);
+        setIsLoading(false);
+        return true;
       } else {
-        setError(response.data.error || 'Login failed.');
+        const errorMessage = data.message || t('auth.loginFailed');
+        Alert.alert(t('common.error'), errorMessage);
+        setIsLoading(false);
+        return false;
       }
-    } catch (err: any) {
-      setError(err.response?.data?.error || err.message || 'An unexpected error occurred during login.');
-    } finally {
+    } catch (error) {
+      console.error('Login error:', error);
+      Alert.alert(t('common.error'), t('common.networkError'));
       setIsLoading(false);
+      return false;
     }
   };
 
-  const register = async (name: string, email: string, password: string, role: string = 'farmer'): Promise<RegisterResponse | undefined> => {
-    setError(null);
+  // Updated register function to include role
+  const register = async (name: string, email: string, password: string, role: 'farmer' | 'buyer'): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const response = await api.post('/auth/register', { name, email, password, role });
-      if (response.data.success) {
-        return { success: true, message: response.data.message || 'Registration successful, please verify your email.' };
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, role }), // Role included in body
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        Alert.alert(t('common.success'), t('auth.registrationSuccess'));
+        setIsLoading(false);
+        return true;
       } else {
-        setError(response.data.error || 'Registration failed.');
-        return { success: false, message: response.data.error || 'Registration failed.' };
+        const errorMessage = data.message || t('auth.registrationFailed');
+        Alert.alert(t('common.error'), errorMessage);
+        setIsLoading(false);
+        return false;
       }
-    } catch (err: any) {
-      setError(err.response?.data?.error || err.message || 'An unexpected error occurred during registration.');
-      return { success: false, message: err.response?.data?.error || err.message || 'An unexpected error occurred during registration.' };
-    } finally {
+    } catch (error) {
+      console.error('Register error:', error);
+      Alert.alert(t('common.error'), t('common.networkError'));
       setIsLoading(false);
+      return false;
     }
   };
 
-  const logout = async (): Promise<void> => { // Explicit return type
-    await AsyncStorage.removeItem('jwtToken');
-    setJwtToken(null);
+  const logout = async () => {
+    await AsyncStorage.removeItem('userToken');
+    setToken(null);
     setUser(null);
-    api.defaults.headers.common['Authorization'] = ''; // Clear Authorization header
   };
 
-  return (
-    <AuthContext.Provider value={{ user, jwtToken, isLoading, login, register, logout, error, clearError }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = { user, token, isLoading, login, register, logout };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

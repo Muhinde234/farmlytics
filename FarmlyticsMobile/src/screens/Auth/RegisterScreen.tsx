@@ -1,210 +1,238 @@
 // src/screens/Auth/RegisterScreen.tsx
+
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import styled from 'styled-components/native';
+import { Image, ActivityIndicator, Alert, Platform, ScrollView, Text, View, KeyboardAvoidingView } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import { Picker } from '@react-native-picker/picker';
+import { useCallback } from 'react';
+
+import { defaultTheme } from '../../config/theme';
+import { RootStackNavigationProp } from '../../navigation/types';
 import { useAuth } from '../../context/AuthContext';
-import { Colors } from '../../styles/colors';
-import { useNavigation, NavigationProp } from '@react-navigation/native'; // Import NavigationProp
-import { RootStackParamList } from '../../navigation/AppNavigator'; // Import RootStackParamList
+import CustomHeader from '../../components/CustomHeader';
+
+const Container = styled(KeyboardAvoidingView).attrs({
+  behavior: Platform.OS === 'ios' ? 'padding' : 'height',
+})`
+  flex: 1;
+  background-color: ${props => props.theme.colors.background};
+`;
+
+const ScrollContent = styled(ScrollView).attrs({
+  contentContainerStyle: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: defaultTheme.spacing.large,
+  },
+})`
+  width: 100%;
+`;
+
+const LogoContainer = styled(View)`
+  margin-bottom: ${props => props.theme.spacing.xl}px; /* Explicitly 'px' string */
+  align-items: center;
+`;
+
+const AppLogo = styled(Image)`
+  width: 180px; /* Explicitly 'px' string */
+  height: 180px; /* Explicitly 'px' string */
+  resize-mode: contain;
+  margin-bottom: ${props => props.theme.spacing.medium}px; /* Explicitly 'px' string */
+`;
+
+const Title = styled(Text)`
+  font-size: ${props => props.theme.fontSizes.xxl}px; /* Explicitly 'px' string */
+  font-weight: bold;
+  color: ${props => props.theme.colors.primary};
+  margin-bottom: ${props => props.theme.spacing.xxl}px; /* Explicitly 'px' string */
+  text-align: center;
+`;
+
+const Input = styled.TextInput`
+  width: 100%;
+  padding: ${props => props.theme.spacing.medium + 4}px; /* Explicitly 'px' string */
+  margin-bottom: ${props => props.theme.spacing.medium}px; /* Explicitly 'px' string */
+  border-width: 1px; /* Explicitly 'px' string */
+  border-color: ${props => props.theme.colors.border};
+  border-radius: ${props => props.theme.borderRadius.medium}px; /* Explicitly 'px' string */
+  background-color: ${props => props.theme.colors.cardBackground};
+  color: ${props => props.theme.colors.text};
+  font-size: ${props => props.theme.fontSizes.medium}px; /* Explicitly 'px' string */
+  elevation: 1;
+  shadow-color: #000;
+  shadow-offset: 0px 1px;
+  shadow-opacity: 0.08;
+  shadow-radius: 1.84px; /* Explicitly 'px' string */
+`;
+
+const PickerContainer = styled(View)`
+  width: 100%;
+  border-width: 1px; /* Explicitly 'px' string */
+  border-color: ${props => props.theme.colors.border};
+  border-radius: ${props => props.theme.borderRadius.medium}px; /* Explicitly 'px' string */
+  background-color: ${props => props.theme.colors.cardBackground};
+  margin-bottom: ${props => props.theme.spacing.large}px; /* Explicitly 'px' string */
+  overflow: hidden;
+  elevation: 1;
+  shadow-color: #000;
+  shadow-offset: 0px 1px;
+  shadow-opacity: 0.08;
+  shadow-radius: 1.84px; /* Explicitly 'px' string */
+`;
+
+const StyledPicker = styled(Picker)`
+  width: 100%;
+  color: ${props => props.theme.colors.text};
+`;
+
+const Button = styled.TouchableOpacity`
+  width: 100%;
+  padding: ${props => props.theme.spacing.medium + 6}px; /* Explicitly 'px' string */
+  background-color: ${props => props.theme.colors.tertiary};
+  border-radius: ${props => props.theme.borderRadius.pill}px; /* Explicitly 'px' string */
+  align-items: center;
+  margin-top: ${props => props.theme.spacing.large}px; /* Explicitly 'px' string */
+  elevation: 5;
+  shadow-color: #000;
+  shadow-offset: 0px 4px;
+  shadow-opacity: 0.3;
+  shadow-radius: 4.65px; /* Explicitly 'px' string */
+`;
+
+const ButtonText = styled(Text)`
+  color: ${props => props.theme.colors.lightText};
+  font-size: ${props => props.theme.fontSizes.large}px; /* Explicitly 'px' string */
+  font-weight: bold;
+`;
+
+const LinkText = styled(Text)`
+  color: ${props => props.theme.colors.primary};
+  font-size: ${props => props.theme.fontSizes.medium}px; /* Explicitly 'px' string */
+  margin-top: ${props => props.theme.spacing.xl}px; /* Explicitly 'px' string */
+  font-weight: 600;
+  text-decoration-line: underline;
+`;
+
+const LoadingMessage = styled(Text)`
+  color: ${props => props.theme.colors.text};
+  font-size: ${props => props.theme.fontSizes.medium}px;
+  margin-top: ${props => props.theme.spacing.medium}px;
+  text-align: center;
+`;
 
 const RegisterScreen: React.FC = () => {
-  const { t } = useTranslation();
-  const { register, isLoading, error, clearError } = useAuth();
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>(); // Explicitly type useNavigation
-
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('farmer'); // Default role
+  const [role, setRole] = useState<'farmer' | 'buyer'>('farmer');
+  const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
+  const navigation = useNavigation<RootStackNavigationProp<'Register'>>();
+  const { register } = useAuth();
+
+  useFocusEffect(
+    useCallback(() => {
+      setName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setRole('farmer');
+      setLoading(false);
+    }, [])
+  );
 
   const handleRegister = async () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert(t('error'), t('Please fill in all fields.'));
-      return;
-    }
+    setLoading(true);
     if (password !== confirmPassword) {
-      Alert.alert(t('error'), t('Passwords do not match.'));
+      Alert.alert(t('common.error'), t('auth.passwordsMismatch'));
+      setLoading(false);
       return;
     }
-    clearError();
-    const result = await register(name, email, password, role); // Now `result` has a proper type
-
-    if (result && result.success) { // Truthiness check is now valid
-        Alert.alert(t('success'), result.message || t('Registration successful! Please check your email for verification.'));
-        navigation.navigate('Login');
+    const success = await register(name, email, password, role);
+    if (success) {
+      navigation.replace('Login');
     }
-    // Error handling is still done via the useEffect for 'error'
+    setLoading(false);
   };
 
-  React.useEffect(() => {
-    if (error) {
-      Alert.alert(t('error'), error);
-      clearError();
-    }
-  }, [error, t, clearError]);
-
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <Text style={styles.title}>{t('register')}</Text>
-        
-        <TextInput
-          style={styles.input}
-          placeholder={t('full_name')}
-          placeholderTextColor={Colors.gray}
+    <Container>
+      <CustomHeader title={t('auth.registerTitle')} showBack={true} />
+      <ScrollContent>
+        <LogoContainer>
+          <AppLogo source={require('../../../assets/logo.png')} />
+          <Title>Farmlytics</Title>
+        </LogoContainer>
+
+        <Input
+          placeholder={t('auth.name')}
           autoCapitalize="words"
           value={name}
           onChangeText={setName}
+          placeholderTextColor={defaultTheme.colors.placeholder}
+          editable={!loading}
         />
-        <TextInput
-          style={styles.input}
-          placeholder={t('email')}
-          placeholderTextColor={Colors.gray}
+        <Input
+          placeholder={t('common.email')}
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
+          placeholderTextColor={defaultTheme.colors.placeholder}
+          editable={!loading}
         />
-        <TextInput
-          style={styles.input}
-          placeholder={t('password')}
-          placeholderTextColor={Colors.gray}
+        <Input
+          placeholder={t('common.password')}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+          placeholderTextColor={defaultTheme.colors.placeholder}
+          editable={!loading}
         />
-        <TextInput
-          style={styles.input}
-          placeholder={t('confirm_password')}
-          placeholderTextColor={Colors.gray}
+        <Input
+          placeholder={t('auth.confirmPassword')}
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
+          placeholderTextColor={defaultTheme.colors.placeholder}
+          editable={!loading}
         />
 
-        <View style={styles.roleContainer}>
-          <Text style={styles.roleLabel}>{t('Select Role')}:</Text>
-          <TouchableOpacity
-            style={[styles.roleButton, role === 'farmer' && styles.selectedRoleButton]}
-            onPress={() => setRole('farmer')}
+        <PickerContainer>
+          <StyledPicker
+            selectedValue={role}
+            onValueChange={(itemValue: unknown, itemIndex: number) => setRole(itemValue as 'farmer' | 'buyer')}
+            enabled={!loading}
           >
-            <Text style={[styles.roleButtonText, role === 'farmer' && styles.selectedRoleButtonText]}>{t('Farmer')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.roleButton, role === 'buyer' && styles.selectedRoleButton]}
-            onPress={() => setRole('buyer')}
-          >
-            <Text style={[styles.roleButtonText, role === 'buyer' && styles.selectedRoleButtonText]}>{t('Buyer')}</Text>
-          </TouchableOpacity>
-        </View>
+            <Picker.Item label={t('auth.roleFarmer')} value="farmer" />
+            <Picker.Item label={t('auth.roleBuyer')} value="buyer" />
+          </StyledPicker>
+        </PickerContainer>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleRegister}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color={Colors.white} />
+        <Button onPress={handleRegister} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color={defaultTheme.colors.lightText} />
           ) : (
-            <Text style={styles.buttonText}>{t('register')}</Text>
+            <ButtonText>{t('common.register')}</ButtonText>
           )}
-        </TouchableOpacity>
+        </Button>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Login')}
-          style={styles.linkButton}
-        >
-          <Text style={styles.linkText}>
-            {t('Already have an account?')} <Text style={{ color: Colors.primaryBlue }}>{t('Login here')}</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        {loading && (
+          <LoadingMessage>
+            <Text>{t('auth.sendingVerificationEmail')}</Text>
+          </LoadingMessage>
+        )}
+
+        <LinkText onPress={() => navigation.replace('Login')}>
+          {t('auth.alreadyHaveAccount')}
+        </LinkText>
+      </ScrollContent>
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    color: Colors.darkGray,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    borderColor: Colors.gray,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    color: Colors.black,
-    backgroundColor: Colors.lightGray,
-  },
-  roleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    width: '100%',
-    justifyContent: 'center',
-  },
-  roleLabel: {
-    fontSize: 16,
-    color: Colors.darkGray,
-    marginRight: 10,
-  },
-  roleButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: Colors.primaryGreen,
-    marginHorizontal: 5,
-    backgroundColor: Colors.white,
-  },
-  selectedRoleButton: {
-    backgroundColor: Colors.primaryGreen,
-  },
-  roleButtonText: {
-    color: Colors.primaryGreen,
-    fontWeight: 'bold',
-  },
-  selectedRoleButtonText: {
-    color: Colors.white,
-  },
-  button: {
-    width: '100%',
-    height: 50,
-    backgroundColor: Colors.primaryGreen,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: Colors.white,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  linkButton: {
-    padding: 10,
-  },
-  linkText: {
-    fontSize: 16,
-    color: Colors.darkGray,
-  },
-});
 
 export default RegisterScreen;
