@@ -1,47 +1,34 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Eye, EyeOff } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import Logo from "@/components/common/logo";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { useTranslations } from "next-intl"
+import { Eye, EyeOff } from "lucide-react"
+import { Link } from "@/i18n/routing"
+import Logo from "@/components/common/logo"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { z } from "zod"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "sonner"
 
-// Fix: Define schema outside component to avoid translation dependency in schema
+// --------------------------
+// Define schema
 const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: "email.required" })
-    .email({ message: "email.invalid" }),
+  email: z.string().min(1, { message: "email.required" }).email({ message: "email.invalid" }),
   password: z.string().min(8, { message: "password.min" }),
-  rememberMe: z.boolean().default(false),
-});
+  rememberMe: z.boolean(),
+})
 
-type LoginFormInputs = z.infer<typeof loginSchema>;
+type LoginFormInputs = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
-  const t = useTranslations("login");
-  const router = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
-  const [isPending, setIsPending] = useState(false);
+  const t = useTranslations("login")
+  const [showPassword, setShowPassword] = useState(false)
+  const [isPending, setIsPending] = useState(false)
 
-  // Fix: Properly typed form with explicit generic
   const form = useForm<LoginFormInputs>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -49,117 +36,85 @@ export default function LoginPage() {
       password: "",
       rememberMe: false,
     },
-  });
+  })
 
   const onSubmit = async (data: LoginFormInputs) => {
-    setIsPending(true);
+    setIsPending(true)
     try {
-      console.log("Login data:", data);
-      // Replace with your login API call
-      // await loginUser(data);
-      toast.success(t("success"));
-      router.push("/dashboard");
+      console.log("Login data:", data)
+      toast.success(t("success"))
     } catch (error: any) {
-      toast.error(error.message || t("error"));
+      toast.error(error.message || t("error"))
     } finally {
-      setIsPending(false);
+      setIsPending(false)
     }
-  };
+  }
 
-  // Helper function to get translated error messages
-  const getTranslatedError = (error: { message?: string }) => {
-    if (!error?.message) return "";
-    return t(error.message as any);
-  };
+  const getTranslatedError = (error?: { message?: string }) => {
+    if (!error?.message) return ""
+    return t(error.message as any)
+  }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-amber-50 via-green-50 to-amber-100 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen w-full bg-[#EBF0E6] flex items-center justify-center p-4 md:p-8 font-sans antialiased">
       {/* Main container */}
-      <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col lg:flex-row min-h-[600px] max-h-[90vh] border border-green-100">
-        
-        {/* Left side - Branding and image */}
-        <div className="lg:w-2/5 bg-gradient-to-br from-[#2E7D32] to-[#4CAF50] relative overflow-hidden flex items-center justify-center p-6 md:p-8">
-          {/* Subtle agricultural pattern overlay */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-4 left-4 md:top-10 md:left-10 w-20 h-20 md:w-32 md:h-32 bg-leaf-pattern bg-contain"></div>
-            <div className="absolute bottom-4 right-4 md:bottom-20 md:right-16 w-16 h-16 md:w-24 md:h-24 bg-leaf-pattern bg-contain rotate-45"></div>
-            <div className="absolute top-1/3 right-4 md:right-20 w-12 h-12 md:w-20 md:h-20 bg-leaf-pattern bg-contain rotate-12"></div>
-          </div>
-          
-          {/* Content container */}
-          <div className="relative z-10 text-center text-white w-full max-w-xs md:max-w-none">
-            {/* Logo */}
-            <div className="flex justify-center mb-6 md:mb-8">
-              <Link href="/" className="group">
-                <div className="relative">
-                  <div className="absolute -inset-2 md:-inset-4 bg-white/10 rounded-2xl blur-md group-hover:bg-white/20 transition-all duration-300"></div>
-                  <Logo />
-                </div>
+      <div className="w-full max-w-[900px] mx-auto bg-white rounded-[20px] shadow-xl overflow-hidden flex flex-col lg:flex-row min-h-[550px] border border-[#DCE4D6]">
+        {/* Left side - Branding with professional abstract background */}
+        <div className="lg:w-2/5 bg-[#4F8B52] relative overflow-hidden flex flex-col items-center justify-center p-6 md:p-8 rounded-b-[20px] lg:rounded-bl-[20px] lg:rounded-tr-none text-white">
+          <div className="absolute inset-0 bg-gradient-to-tr from-[#4F8B52] to-[#76B77D] opacity-90"></div>
+          <div className="relative z-10 ">
+            <div className="flex items-center justify-center">
+              <Link href="/" className=" ">
+                <Logo />
+               
               </Link>
             </div>
 
-            {/* Agricultural image */}
-            <div className="relative w-32 h-32 md:w-48 md:h-48 mx-auto mb-6 md:mb-8">
-              <div className="absolute inset-0 bg-white/20 rounded-2xl transform rotate-3 md:rotate-6 scale-105"></div>
-              <div className="relative w-full h-full bg-white rounded-2xl shadow-2xl flex items-center justify-center p-3 md:p-4">
-                <Image
-                  src="/image/crop.png"
-                  alt="Agriculture"
-                  width={120}
-                  height={120}
-                  className="object-contain w-20 h-20 md:w-32 md:h-32"
-                  priority
-                />
-              </div>
+            {/* Abstract shapes instead of image */}
+            <div className="my-12 flex justify-center space-x-4">
+              <div className="w-14 h-14 bg-white/20 rounded-full animate-pulse"></div>
+              <div className="w-20 h-20 bg-white/30 rounded-2xl animate-pulse delay-150"></div>
+              <div className="w-12 h-12 bg-white/10 rounded-full animate-pulse delay-300"></div>
             </div>
 
-            {/* Welcome text */}
-            <h1 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 text-white">
-              {t("title")}
+            <h1 className="text-2xl font-bold mb-2 text-white drop-shadow-sm">
+              Welcome to Farmlytics
             </h1>
-            <p className="text-green-100 text-sm md:text-lg leading-relaxed">
-              {t("subtitle")}
+            <p className="text-[#DCE4D6] text-sm leading-relaxed opacity-90 font-light">
+              Connecting Farmers, Growing Futures
             </p>
           </div>
         </div>
 
         {/* Right side - Login form */}
-        <div className="lg:w-3/5 p-6 md:p-8 lg:p-12 flex flex-col justify-center overflow-y-auto">
-          {/* Form header */}
+        <div className="lg:w-3/5 p-6 md:p-8 lg:p-10 flex flex-col justify-center bg-white rounded-t-[20px] lg:rounded-tr-[20px] lg:rounded-bl-none">
           <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 md:mb-3">
-              {t("title")}
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Welcome to Farmlytics
             </h2>
-            <p className="text-gray-600 text-sm md:text-base">
-              {t("subtitle")}
+            <p className="text-gray-600 text-sm">
+              Connect to your account
             </p>
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-5">
               {/* Email field */}
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">
-                      {t("email.label")}
-                    </FormLabel>
+                    <FormLabel className="sr-only">Email</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Input
-                          className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base pl-9 md:pl-11"
-                          placeholder={t("email.placeholder")}
-                          type="email"
-                          {...field}
-                        />
-                        <svg className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
+                      <Input
+                        placeholder="Email"
+                        type="email"
+                        {...field}
+                        className="h-10 rounded-lg border-gray-300 bg-white focus-visible:ring-1 focus-visible:ring-[#4F8B52] focus-visible:border-[#4F8B52] transition-all duration-200 shadow-sm text-sm pl-3 pr-8"
+                      />
                     </FormControl>
-                    <FormMessage className="text-xs text-red-500">
+                    <FormMessage className="text-xs text-red-500 mt-1">
                       {getTranslatedError(form.formState.errors.email)}
                     </FormMessage>
                   </FormItem>
@@ -172,40 +127,35 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">
-                      {t("password.label")}
-                    </FormLabel>
+                    <FormLabel className="sr-only">Password</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
-                          className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base pr-9 md:pr-11"
-                          placeholder={t("password.placeholder")}
                           type={showPassword ? "text" : "password"}
+                          placeholder="Password"
                           {...field}
+                          className="h-10 rounded-lg border-gray-300 bg-white focus-visible:ring-1 focus-visible:ring-[#4F8B52] focus-visible:border-[#4F8B52] transition-all duration-200 shadow-sm text-sm pl-3 pr-8"
                         />
                         <Button
                           variant="ghost"
                           type="button"
                           onClick={() => setShowPassword((v) => !v)}
-                          className="absolute inset-y-0 right-0 px-2 md:px-3 flex items-center hover:bg-transparent"
+                          className="absolute inset-y-0 right-0 px-2 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4F8B52] rounded-r-lg"
                           aria-label={showPassword ? "Hide password" : "Show password"}
                         >
-                          {showPassword ? 
-                            <EyeOff className="w-4 h-4 md:w-5 md:h-5 text-gray-400" /> : 
-                            <Eye className="w-4 h-4 md:w-5 md:h-5 text-gray-400" />
-                          }
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </Button>
                       </div>
                     </FormControl>
-                    <FormMessage className="text-xs text-red-500">
+                    <FormMessage className="text-xs text-red-500 mt-1">
                       {getTranslatedError(form.formState.errors.password)}
                     </FormMessage>
                   </FormItem>
                 )}
               />
 
-              {/* Remember me and forgot password */}
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 md:gap-4">
+              {/* Remember me */}
+              <div className="flex items-center justify-start mt-3">
                 <FormField
                   control={form.control}
                   name="rememberMe"
@@ -215,74 +165,45 @@ export default function LoginPage() {
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          className="data-[state=checked]:bg-[#4CAF50] data-[state=checked]:border-[#4CAF50]"
+                          className="h-4 w-4 rounded border-gray-300 data-[state=checked]:bg-[#4F8B52] data-[state=checked]:border-[#4F8B52] focus-visible:ring-1 focus-visible:ring-[#4F8B52] focus-visible:ring-offset-1"
                         />
                       </FormControl>
-                      <FormLabel className="text-xs md:text-sm font-normal text-gray-700 cursor-pointer">
-                        {t("rememberMe")}
+                      <FormLabel className="text-sm font-normal text-gray-700 cursor-pointer select-none">
+                        Remember me
                       </FormLabel>
                     </FormItem>
                   )}
                 />
-
-                <Link
-                  href="/forgot-password"
-                  className="text-xs md:text-sm text-[#4CAF50] hover:text-[#2E7D32] font-medium underline-offset-2 md:underline-offset-4 hover:underline transition-colors duration-200"
-                >
-                  {t("forgotPassword")}
-                </Link>
               </div>
 
-              {form.formState.errors.root && (
-                <div className="p-3 md:p-4 bg-red-50 border border-red-200 rounded-lg md:rounded-xl text-red-600 text-xs md:text-sm">
-                  {form.formState.errors.root.message}
-                </div>
-              )}
-
-              {/* Submit button */}
               <Button
                 type="submit"
-                className="w-full h-10 md:h-12 bg-gradient-to-r from-[#4CAF50] to-[#2E7D32] hover:from-[#45a049] hover:to-[#1B5E20] text-white font-semibold text-sm md:text-base rounded-lg md:rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border-0 mt-4 md:mt-6"
+                className="w-full h-10 bg-gradient-to-r from-[#5AA45D] to-[#4F8B52] hover:from-[#4F8B52] hover:to-[#5AA45D] text-white font-semibold text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F8B52] focus-visible:ring-offset-2 mt-4"
                 disabled={isPending}
               >
                 {isPending ? (
-                  <div className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 md:mr-3 h-4 w-4 md:h-5 md:w-5 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span className="text-xs md:text-sm">{t("loginButton")}...</span>
-                  </div>
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.062 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    Logging In...
+                  </span>
                 ) : (
-                  <div className="flex items-center justify-center">
-                    <svg className="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                    </svg>
-                    <span className="text-xs md:text-sm">{t("loginButton")}</span>
-                  </div>
+                  "Login"
                 )}
               </Button>
+
+              <p className="mt-4 text-center text-xs text-gray-600">
+                Don&apos;t have your account?{" "}
+                <Link
+                  href="/register"
+                  className="text-[#4F8B52] hover:text-[#5AA45D] font-semibold underline-offset-2 hover:underline transition-colors duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4F8B52] rounded"
+                >
+                  Register
+                </Link>
+              </p>
             </form>
           </Form>
-
-          {/* Sign up link */}
-          <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-200">
-            <p className="text-center text-xs md:text-sm text-gray-600">
-              {t("noAccount")}{" "}
-              <Link href="/register" className="text-[#4CAF50] hover:text-[#2E7D32] font-semibold underline-offset-2 md:underline-offset-4 hover:underline transition-colors duration-200">
-                {t("registerLink")}
-              </Link>
-            </p>
-          </div>
         </div>
       </div>
-
-      {/* Add CSS for leaf pattern */}
-      <style jsx>{`
-        .bg-leaf-pattern {
-          background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 1C5 1 1 5 1 10C1 15 5 19 10 19C15 19 19 15 19 10C19 5 15 1 10 1Z' stroke='%23ffffff' stroke-width='0.5'/%3E%3Cpath d='M10 1C7 3 5 6 5 10C5 14 7 17 10 19C13 17 15 14 15 10C15 6 13 3 10 1Z' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E");
-        }
-      `}</style>
     </div>
-  );
+  )
 }

@@ -4,9 +4,20 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
-import Image from "next/image";
-import Logo from "@/components/common/logo"; 
+import { Link } from "@/i18n/routing";
+import { 
+  Eye, 
+  EyeOff, 
+  Leaf, 
+  User, 
+  MapPin, 
+  Mail, 
+  Lock, 
+  CheckCircle2,
+  ArrowRight,
+  Sparkles
+} from "lucide-react";
+import Logo from "@/components/common/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
@@ -18,17 +29,19 @@ export default function RegisterPage() {
   const t = useTranslations("register");
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
 
-  // Dynamic schema with translations
   const registerSchema = z.object({
-    firstName: z.string().min(1, { message: t("firstNameInvalid") }),
-    lastName: z.string().min(1, { message: t("lastNameInvalid") }),
-    district: z.string().min(1, { message: t("districtInvalid") }),
-    email: z.string()
-      .min(1, { message: t("emailRequired") })
-      .email({ message: t("emailInvalid") }),
-    password: z.string().min(8, { message: t("passwordMin") }),
+    firstName: z.string().min(2, { message: t("firstNameInvalid") }).max(50),
+    lastName: z.string().min(2, { message: t("lastNameInvalid") }).max(50),
+    district: z.string().min(2, { message: t("districtInvalid") }),
+    email: z.string().min(1, { message: t("emailRequired") }).email({ message: t("emailInvalid") }),
+    password: z.string().min(8, { message: t("passwordMin") })
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, { message: t("passwordComplexity") }),
     confirmPassword: z.string().min(8, { message: t("passwordMin") }),
+    terms: z.boolean().refine(val => val === true, { message: t("termsRequired") }),
   }).refine((data) => data.password === data.confirmPassword, {
     message: t("confirmPasswordMatch"),
     path: ["confirmPassword"],
@@ -45,14 +58,24 @@ export default function RegisterPage() {
       email: "",
       password: "",
       confirmPassword: "",
+      terms: false,
     },
   });
+
+  const calculatePasswordStrength = (password: string) => {
+    let strength = 0;
+    if (password.length >= 8) strength += 25;
+    if (/[A-Z]/.test(password)) strength += 25;
+    if (/[a-z]/.test(password)) strength += 25;
+    if (/[0-9]/.test(password)) strength += 25;
+    setPasswordStrength(strength);
+  };
 
   const onSubmit = async (data: RegisterFormInputs) => {
     setIsPending(true);
     try {
-      // Replace with your registration API call
-      // await registerUser(data);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
       toast.success(t("success"));
       router.push("/login");
     } catch (error: any) {
@@ -62,251 +85,407 @@ export default function RegisterPage() {
     }
   };
 
+  const features = [
+    {
+      icon: <Sparkles className="w-5 h-5" />,
+      text: "Smart Farming Analytics"
+    },
+    {
+      icon: <Leaf className="w-5 h-5" />,
+      text: "Crop Management Tools"
+    },
+    {
+      icon: <MapPin className="w-5 h-5" />,
+      text: "Local Market Insights"
+    },
+    {
+      icon: <User className="w-5 h-5" />,
+      text: "Expert Community Access"
+    }
+  ];
+
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-amber-50 via-green-50 to-amber-100 flex items-center justify-center px-4 py-8">
-      {/* Main container with agricultural aesthetic */}
-      <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col lg:flex-row min-h-[600px] max-h-[90vh] border border-green-100">
-        
-        {/* Left side - Image and branding */}
-        <div className="lg:w-2/5 bg-gradient-to-br from-[#2E7D32] to-[#4CAF50] relative overflow-hidden flex items-center justify-center p-6 md:p-8">
-          {/* Subtle agricultural pattern overlay */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-4 left-4 md:top-10 md:left-10 w-20 h-20 md:w-32 md:h-32 bg-leaf-pattern bg-contain"></div>
-            <div className="absolute bottom-4 right-4 md:bottom-20 md:right-16 w-16 h-16 md:w-24 md:h-24 bg-leaf-pattern bg-contain rotate-45"></div>
-            <div className="absolute top-1/3 right-4 md:right-20 w-12 h-12 md:w-20 md:h-20 bg-leaf-pattern bg-contain rotate-12"></div>
+    <div className="min-h-screen w-full bg-gradient-to-br from-emerald-50 via-white to-amber-50 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+      <div className="absolute top-0 right-0 w-72 h-72 bg-amber-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute bottom-0 left-1/2 w-72 h-72 bg-green-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+
+      <div className="w-full max-w-7xl mx-auto bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-[700px] border border-green-100/50">
+        {/* Left side - Premium Branding */}
+        <div className="lg:w-2/5 bg-gradient-to-br from-emerald-900 via-green-900 to-teal-800 relative overflow-hidden flex items-center justify-center p-8 lg:p-12">
+          {/* Animated background pattern */}
+          <div className="absolute inset-0 opacity-[0.03]">
+            <div className="absolute top-10 left-10 w-20 h-20 bg-leaf-pattern bg-contain animate-float"></div>
+            <div className="absolute bottom-20 right-16 w-16 h-16 bg-leaf-pattern bg-contain animate-float animation-delay-2000"></div>
+            <div className="absolute top-1/3 right-20 w-12 h-12 bg-leaf-pattern bg-contain animate-float animation-delay-4000"></div>
+            <div className="absolute bottom-1/4 left-16 w-14 h-14 bg-leaf-pattern bg-contain animate-float animation-delay-3000"></div>
           </div>
-          
-          {/* Content container */}
-          <div className="relative z-10 text-center text-white w-full max-w-xs md:max-w-none">
+
+          {/* Shimmer effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12 animate-shimmer"></div>
+
+          <div className="relative z-10 text-center text-white w-full max-w-sm">
             {/* Logo */}
-            <div className="flex justify-center mb-6 md:mb-8">
+            <div className="flex justify-center mb-8">
               <Link href="/" className="group">
                 <div className="relative">
-                  <div className="absolute -inset-2 md:-inset-4 bg-white/10 rounded-2xl blur-md group-hover:bg-white/20 transition-all duration-300"></div>
-                  <Logo />
+                  <div className="absolute -inset-4 bg-white/10 rounded-2xl blur-xl group-hover:bg-white/20 transition-all duration-500"></div>
+                  <div className="relative bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20 group-hover:border-white/30 transition-all duration-300">
+                    <Logo  />
+                  </div>
                 </div>
               </Link>
             </div>
 
-            {/* Agricultural image - using your crop.png */}
-            <div className="relative w-32 h-32 md:w-48 md:h-48 mx-auto mb-6 md:mb-8">
-              <div className="absolute inset-0 bg-white/20 rounded-2xl transform rotate-3 md:rotate-6 scale-105"></div>
-              <div className="relative w-full h-full bg-white rounded-2xl shadow-2xl flex items-center justify-center p-3 md:p-4">
-                <Image
-                  src="/image/crop.png"
-                  alt="Agriculture"
-                  width={120}
-                  height={120}
-                  className="object-contain w-20 h-20 md:w-32 md:h-32"
-                  priority
-                />
+            {/* Main heading */}
+            <div className="mb-8">
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 border border-white/20 mb-4">
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span className="text-sm font-medium text-amber-100">Join 10,000+ Farmers</span>
               </div>
+              <h1 className="text-3xl lg:text-4xl font-bold mb-4 bg-gradient-to-br from-white to-emerald-100 bg-clip-text text-transparent">
+                Grow Your Farm's Potential
+              </h1>
+              <p className="text-emerald-100 text-lg leading-relaxed">
+                Join the most trusted agricultural platform and transform your farming journey.
+              </p>
             </div>
 
-            {/* Welcome text */}
-            <h1 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 text-white">Join Our Farming Community</h1>
-            <p className="text-green-100 text-sm md:text-lg leading-relaxed">
-              Connect with farmers, share knowledge, and grow together in our agricultural network.
-            </p>
+            {/* Features list */}
+            <div className="space-y-4 mb-8">
+              {features.map((feature, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 group"
+                >
+                  <div className="p-2 bg-emerald-500/20 rounded-lg group-hover:bg-emerald-500/30 transition-colors duration-300">
+                    {feature.icon}
+                  </div>
+                  <span className="text-emerald-50 font-medium">{feature.text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Trust indicators */}
+            <div className="flex items-center justify-center gap-6 text-sm text-emerald-200">
+              <div className="text-center">
+                <div className="font-bold text-white">99.9%</div>
+                <div>Uptime</div>
+              </div>
+              <div className="w-px h-6 bg-emerald-400/30"></div>
+              <div className="text-center">
+                <div className="font-bold text-white">24/7</div>
+                <div>Support</div>
+              </div>
+              <div className="w-px h-6 bg-emerald-400/30"></div>
+              <div className="text-center">
+                <div className="font-bold text-white">SSL</div>
+                <div>Secure</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Right side - Registration form */}
-        <div className="lg:w-3/5 p-6 md:p-8 lg:p-12 flex flex-col justify-center overflow-y-auto">
-          {/* Form header */}
-          <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 md:mb-3">{t("title")}</h2>
-            <p className="text-gray-600 text-sm md:text-base">{t("subtitle")}</p>
-          </div>
+        {/* Right side - Registration Form */}
+        <div className="lg:w-3/5 p-8 lg:p-12 flex flex-col justify-center bg-white/90 backdrop-blur-sm">
+          <div className="max-w-md mx-auto w-full">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                Create Your Account
+              </h2>
+              <p className="text-gray-600 text-lg">
+                Start your journey with Farmlytics today
+              </p>
+            </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
-              {/* Name fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {/* Name fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                          <User className="w-4 h-4" />
+                          First Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your first name"
+                            {...field}
+                            className="h-12 rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 shadow-sm"
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs text-red-500 mt-1" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700">
+                          Last Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your last name"
+                            {...field}
+                            className="h-12 rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 shadow-sm"
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs text-red-500 mt-1" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* District */}
                 <FormField
                   control={form.control}
-                  name="firstName"
+                  name="district"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">{t("firstName")}</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                        <MapPin className="w-4 h-4" />
+                        District
+                      </FormLabel>
                       <FormControl>
                         <Input
-                          className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base"
-                          placeholder={t("firstNamePlaceholder")}
+                          placeholder="Enter your district"
                           {...field}
+                          className="h-12 rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 shadow-sm"
                         />
                       </FormControl>
-                      <FormMessage className="text-xs text-red-500" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
+
+                {/* Email */}
                 <FormField
                   control={form.control}
-                  name="lastName"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">{t("lastName")}</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                        <Mail className="w-4 h-4" />
+                        Email Address
+                      </FormLabel>
                       <FormControl>
                         <Input
-                          className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base"
-                          placeholder={t("lastNamePlaceholder")}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs text-red-500" />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* District field */}
-              <FormField
-                control={form.control}
-                name="district"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">{t("district")}</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base pl-9 md:pl-11"
-                          placeholder={t("districtPlaceholder")}
-                          {...field}
-                        />
-                        <svg className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500" />
-                  </FormItem>
-                )}
-              />
-
-              {/* Email field */}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">{t("email")}</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base pl-9 md:pl-11"
-                          placeholder={t("emailPlaceholder")}
                           type="email"
+                          placeholder="Enter your email address"
                           {...field}
+                          className="h-12 rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 shadow-sm"
                         />
-                        <svg className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500" />
-                  </FormItem>
-                )}
-              />
+                      </FormControl>
+                      <FormMessage className="text-xs text-red-500 mt-1" />
+                    </FormItem>
+                  )}
+                />
 
-              {/* Password fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                {/* Password */}
                 <FormField
                   control={form.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">{t("password")}</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                        <Lock className="w-4 h-4" />
+                        Password
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
-                            className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base pl-9 md:pl-11"
-                            placeholder={t("passwordPlaceholder")}
-                            type="password"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Create a strong password"
                             {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              calculatePasswordStrength(e.target.value);
+                            }}
+                            className="h-12 rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 shadow-sm pr-12"
                           />
-                          <svg className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent text-gray-400 hover:text-gray-600"
+                          >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </Button>
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs text-red-500" />
+                      {field.value && (
+                        <div className="mt-2">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-xs text-gray-500">Password strength</span>
+                            <span className="text-xs font-medium text-gray-700">{passwordStrength}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full transition-all duration-300 ${
+                                passwordStrength < 50 ? "bg-red-500" :
+                                passwordStrength < 75 ? "bg-amber-500" : "bg-emerald-500"
+                              }`}
+                              style={{ width: `${passwordStrength}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
+
+                {/* Confirm Password */}
                 <FormField
                   control={form.control}
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-gray-700 font-semibold text-xs md:text-sm">{t("confirmPassword")}</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Confirm Password
+                      </FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
-                            className="h-10 md:h-12 rounded-lg md:rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-[#4CAF50] focus-visible:border-[#4CAF50] transition-all duration-200 shadow-sm text-sm md:text-base pl-9 md:pl-11"
-                            placeholder={t("confirmPasswordPlaceholder")}
-                            type="password"
+                            type={showConfirmPassword ? "text" : "password"}
+                            placeholder="Confirm your password"
                             {...field}
+                            className="h-12 rounded-xl border-gray-300 bg-white focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:border-emerald-500 transition-all duration-200 shadow-sm pr-12"
                           />
-                          <svg className="absolute left-2.5 md:left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                          </svg>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-0 top-0 h-12 px-3 hover:bg-transparent text-gray-400 hover:text-gray-600"
+                          >
+                            {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </Button>
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs text-red-500" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
-              </div>
 
-              {form.formState.errors.root && (
-                <div className="p-3 md:p-4 bg-red-50 border border-red-200 rounded-lg md:rounded-xl text-red-600 text-xs md:text-sm">
-                  {form.formState.errors.root.message}
+                {/* Terms and Conditions */}
+                <FormField
+                  control={form.control}
+                  name="terms"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-gray-200 p-4 bg-gray-50/50">
+                      <FormControl>
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={field.onChange}
+                          className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 mt-0.5"
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="text-sm text-gray-700 font-normal">
+                          I agree to the{" "}
+                          <Link href="/terms" className="text-emerald-600 hover:text-emerald-700 font-medium underline">
+                            Terms of Service
+                          </Link>{" "}
+                          and{" "}
+                          <Link href="/privacy" className="text-emerald-600 hover:text-emerald-700 font-medium underline">
+                            Privacy Policy
+                          </Link>
+                        </FormLabel>
+                        <FormMessage className="text-xs text-red-500" />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="w-full h-12 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold text-base rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border-0 mt-2 group"
+                >
+                  {isPending ? (
+                    <div className="flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                      Creating Account...
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      <span>Create Account</span>
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                    </div>
+                  )}
+                </Button>
+
+                {/* Login link */}
+                <div className="text-center pt-4">
+                  <p className="text-gray-600 text-sm">
+                    Already have an account?{" "}
+                    <Link 
+                      href="/login" 
+                      className="text-emerald-600 hover:text-emerald-700 font-semibold underline-offset-2 hover:underline transition-colors duration-200 inline-flex items-center gap-1"
+                    >
+                      Sign in here
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </p>
                 </div>
-              )}
-
-              {/* Submit button */}
-              <Button
-                type="submit"
-                className="w-full h-10 md:h-12 bg-gradient-to-r from-[#4CAF50] to-[#2E7D32] hover:from-[#45a049] hover:to-[#1B5E20] text-white font-semibold text-sm md:text-base rounded-lg md:rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border-0 mt-4 md:mt-6"
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <div className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 md:mr-3 h-4 w-4 md:h-5 md:w-5 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span className="text-xs md:text-sm">{t("registering")}</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center">
-                    <svg className="w-4 h-4 md:w-5 md:h-5 mr-1 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                    </svg>
-                    <span className="text-xs md:text-sm">{t("registerButton")}</span>
-                  </div>
-                )}
-              </Button>
-            </form>
-          </Form>
-
-          {/* Login link */}
-          <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-gray-200">
-            <p className="text-center text-xs md:text-sm text-gray-600">
-              {t("haveAccount")}{" "}
-              <Link href="/login" className="text-[#4CAF50] hover:text-[#2E7D32] font-semibold underline-offset-2 md:underline-offset-4 hover:underline transition-colors duration-200">
-                {t("loginLink")}
-              </Link>
-            </p>
+              </form>
+            </Form>
           </div>
         </div>
       </div>
 
-      {/* Add CSS for leaf pattern */}
       <style jsx>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+        .animation-delay-3000 {
+          animation-delay: 3s;
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+          0% { transform: translateX(-100%) skewX(-12deg); }
+          100% { transform: translateX(200%) skewX(-12deg); }
+        }
+        .animate-shimmer {
+          animation: shimmer 3s infinite;
+        }
+
         .bg-leaf-pattern {
-          background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 1C5 1 1 5 1 10C1 15 5 19 10 19C15 19 19 15 19 10C19 5 15 1 10 1Z' stroke='%23ffffff' stroke-width='0.5'/%3E%3Cpath d='M10 1C7 3 5 6 5 10C5 14 7 17 10 19C13 17 15 14 15 10C15 6 13 3 10 1Z' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E");
+          background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 5C12 5 5 12 5 20C5 28 12 35 20 35C28 35 35 28 35 20C35 12 28 5 20 5Z' stroke='%23ffffff' stroke-width='0.5'/%3E%3Cpath d='M20 5C16 8 14 12 14 20C14 28 16 32 20 35C24 32 26 28 26 20C26 12 24 8 20 5Z' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E");
         }
       `}</style>
     </div>

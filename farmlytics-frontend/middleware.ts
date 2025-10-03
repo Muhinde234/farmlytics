@@ -1,21 +1,33 @@
-import { NextRequest, NextResponse } from 'next/server'
- 
-const PUBLIC_FILE = /\.(.*)$/
- 
-export async function middleware(req: NextRequest) {
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import createMiddleware from "next-intl/middleware";
+import { routing } from "@/i18n/routing";
+
+const intlMiddleware = createMiddleware(routing);
+
+export function middleware(req: NextRequest) {
+  const { pathname, search } = req.nextUrl;
+
+  // Ignore Next internals and static files
   if (
-    req.nextUrl.pathname.startsWith('/_next') ||
-    req.nextUrl.pathname.includes('/api/') ||
-    PUBLIC_FILE.test(req.nextUrl.pathname)
+    pathname.startsWith("/_next") ||
+    pathname.includes("/api/") ||
+    /\.(.*)$/.test(pathname)
   ) {
-    return
+    return;
   }
- 
-  if (req.nextUrl.locale === 'default') {
-    const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en'
- 
-    return NextResponse.redirect(
-      new URL(`/${locale}${req.nextUrl.pathname}${req.nextUrl.search}`, req.url)
-    )
+
+  // Redirect if no locale in URL
+  const localePattern = new RegExp(`^/(${routing.locales.join("|")})(/|$)`);
+  if (!localePattern.test(pathname)) {
+    const defaultLocale = routing.defaultLocale || "en";
+    return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}${search}`, req.url));
   }
+
+  // Otherwise handle intl middleware
+  return intlMiddleware(req);
 }
+
+export const config = {
+  matcher: "/((?!api|trpc|_next|_vercel|.*\\..*).*)",
+};
