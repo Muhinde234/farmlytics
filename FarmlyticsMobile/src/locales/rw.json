@@ -1,0 +1,57 @@
+{
+  "common": {
+    "welcome": "Murakaza neza",
+    "login": "Injira",
+    "register": "Iyandikishe",
+    "email": "Imeri",
+    "password": "Ijambo ry'ibanga",
+    "submit": "Ohereza",
+    "networkError": "Ikibazo cy'interineti. Ongera ugerageze.",
+    "loading": "Birakinishwa...",
+    "error": "Ikosa",
+    "success": "Byakunze",
+    "back": "Subira inyuma"
+  },
+  "auth": {
+    "loginTitle": "Injira muri Farmlytics",
+    "registerTitle": "Fungura konti yawe",
+    "noAccount": "Ntabwo ufite konti? Iyandikishe",
+    "loginFailed": "Kwinjira byanze. Nyamuneka reba amakuru yinjira.",
+    "loginSuccess": "Kwinjira byakunze!",
+    "registrationSuccess": "Kwandikisha byakunze! Nyamuneka reba imeri yawe uhamyeho konti.",
+    "registrationFailed": "Kwandikisha byanze. Nyamuneka ongera ugerageze.",
+    "confirmPassword": "Hamya ijambo ry'ibanga",
+    "alreadyHaveAccount": "Usanzwe ufite konti? Injira",
+    "passwordsMismatch": "Amagambo y'ibanga ntabwo ahura.",
+    "welcomePrompt": "Hitamo uburyo bwo gukomeza na Farmlytics.",
+    "name": "Izina",
+    "logout": "Sohoka",
+    "verificationNeededTitle": "Imeri Ntabwo Yahamyijwe",
+    "verificationNeededMessage": "Nyamuneka reba imeri yawe uhamyeyo konti kugirango winjire.",
+    "role": "Umwanya",
+    "roleFarmer": "Umuhinzi",
+    "roleBuyer": "Umuguzi",
+    "yourRole": "Umwanya wawe",
+    "roleUnknown": "Ntuzwi",
+    "sendingVerificationEmail": "Imeri yo guhamya iratumizwa..."
+  },
+  "home": {
+    "cropPlannerTitle": "Umushyikirano w'Ubuhinzi",
+    "cropPlannerSubtitle": "Bona inama z'ibihingwa bijyanye nawe.",
+    "marketInsightsTitle": "Isoko n'Amakuru",
+    "marketInsightsSubtitle": "Menya ibikenewe n'aho wabigura.",
+    "harvestTrackerTitle": "Gukurikirana Ibisarurwa",
+    "harvestTrackerSubtitle": "Komeza ugenzure ibihingwa n'inyungu zawe."
+  },
+  "tab": {
+    "home": "Ahabanza",
+    "cropPlanner": "Umushyikirano",
+    "market": "Isoko",
+    "tracker": "Gukurikirana",
+    "profile": "Umwirondoro"
+  },
+  "cropPlan": {
+    "addTitle": "Ongeramo Ibihingwa",
+    "detailTitle": "Amakuru y'Ibihingwa"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "common": {
+    "welcome": "Bienvenue",
+    "login": "Se connecter",
+    "register": "S'inscrire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "submit": "Envoyer",
+    "networkError": "Erreur réseau. Veuillez réessayer.",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "back": "Retour"
+  },
+  "auth": {
+    "loginTitle": "Connectez-vous à Farmlytics",
+    "registerTitle": "Créez votre compte",
+    "noAccount": "Vous n'avez pas de compte ? S'inscrire",
+    "loginFailed": "Échec de la connexion. Veuillez vérifier vos identifiants.",
+    "loginSuccess": "Connexion réussie !",
+    "registrationSuccess": "Inscription réussie ! Veuillez vérifier votre e-mail pour le lien de vérification.",
+    "registrationFailed": "Échec de l'inscription. Veuillez réessayer.",
+    "confirmPassword": "Confirmer le mot de passe",
+    "alreadyHaveAccount": "Vous avez déjà un compte ? Connectez-vous",
+    "passwordsMismatch": "Les mots de passe ne correspondent pas.",
+    "welcomePrompt": "Choisissez une option pour continuer avec Farmlytics.",
+    "name": "Nom",
+    "logout": "Se déconnecter",
+    "verificationNeededTitle": "E-mail non vérifié",
+    "verificationNeededMessage": "Veuillez vérifier votre e-mail et confirmer votre compte pour vous connecter.",
+    "role": "Rôle",
+    "roleFarmer": "Agriculteur",
+    "roleBuyer": "Acheteur",
+    "yourRole": "Votre rôle",
+    "roleUnknown": "Inconnu",
+    "sendingVerificationEmail": "Envoi de l'e-mail de vérification..."
+  },
+  "home": {
+    "cropPlannerTitle": "Planificateur de cultures",
+    "cropPlannerSubtitle": "Obtenez des recommandations de cultures personnalisées.",
+    "marketInsightsTitle": "Infos sur le marché",
+    "marketInsightsSubtitle": "Découvrez la demande et les opportunités.",
+    "harvestTrackerTitle": "Suivi des récoltes",
+    "harvestTrackerSubtitle": "Suivez vos cultures et vos revenus."
+  },
+  "tab": {
+    "home": "Accueil",
+    "cropPlanner": "Planificateur",
+    "market": "Marché",
+    "tracker": "Suivi",
+    "profile": "Profil"
+  },
+  "cropPlan": {
+    "addTitle": "Ajouter un plan de culture",
+    "detailTitle": "Détails du plan de culture"
+  }
+}
