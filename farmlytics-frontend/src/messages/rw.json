@@ -2,14 +2,22 @@
   "common": {
     "learnMore": "Menya Byinshi",
     "signIn": "Injira",
-    "signUp": "Iyandikishe"
+    "signUp": "Iyandikishe",
+    "smartFarmingPlatform": "Urubuga rw'Ubuhinzi Bw'ubwenge",
+    "platform": "Urubuga",
+    "support": "Ubufasha"
   },
   "home": {
     "hero": {
       "headline": "Guha Abahinzi Imbaraga n'Amakuru Ashingiye ku Makuru",
       "subHeadline": "Tegura neza, usarure neza, kandi uhurire n'abaguzi. Farmlytics izana isesengura rya kijyambere ku murima wawe.",
       "ctaPrimary": "Tangira Ubuntu",
-      "ctaSecondary": "Reba Ibiranga"
+      "ctaSecondary": "Reba Ibiranga",
+      "revolution": "Impinduramatwara mu Buhinzi bw'Ubwenge",
+      "taglinePlaceholder": "Fungura ubushobozi bwose bw'umurima wawe n'amakuru ashingiye ku bigaragara no gutegura neza.",
+      "trustedFarmers": "Bizewe n'Abahinzi barenga 10.000",
+      "successAnalytics": "98% by'Isesengura Ryagenze Neza",
+      "cropGrowthProgress": "Ubwiza bw'Umusaruro w'Ibihingwa"
     },
     "features": {
       "title": "Ibyo Ukeneye Byose Kugirango Uterambere Umurima Wawe",
@@ -33,6 +41,18 @@
       "exportInsights": {
         "title": "Kohereza no Gusangira Raporo",
         "description": "Kora raporo z'umwuga zo gusangira n'abafatanyabikorwa, abatanga inguzanyo, cyangwa ku bijanye nawe."
+      },
+      "cropMonitoring": {
+        "title": "Gukurikirana Ibihingwa",
+        "description": "Guhindura ubuhinzi n'amakuru. Shakisha amakuru agaragara mu gihe nyacyo ku buzima bw'ibihingwa byawe."
+      },
+      "analyticsDashboard": {
+        "title": "Ikibaho cy'Isesengura",
+        "description": "Uburyo bwo guhuza imirimo butuma umusaruro w'umurima wawe wiyongera kandi ugakora neza."
+      },
+      "marketplace": {
+        "title": "Isoko",
+        "description": "Kuguhuza n'abaguzi kugirango ubone ibiciro byiza ku musaruro wawe."
       }
     },
     "ctaSection": {
@@ -41,7 +61,11 @@
       "button": "Tangira Igerageza Ryawe Ubuntu"
     },
     "footer": {
-      "copyright": "© {year} Farmlytics. Uburenganzira bwose burahawe."
+      "copyright": "© {year} Farmlytics. Uburenganzira bwose burahawe.",
+      "platformLink1": "Flercoois (Umwanya)",
+      "platformLink2": "Alscit (Umwanya)",
+      "supportLink1": "Fodrniizntop xqruers (Umwanya)",
+      "supportLink2": "Ruapbupis (Umwanya)"
     }
   },
   "login": {

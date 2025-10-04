@@ -2,14 +2,22 @@
   "common": {
     "learnMore": "En savoir plus",
     "signIn": "Se connecter",
-    "signUp": "S'inscrire"
+    "signUp": "S'inscrire",
+    "smartFarmingPlatform": "Plateforme Agricole Intelligente",
+    "platform": "Plateforme",
+    "support": "Assistance"
   },
   "home": {
     "hero": {
       "headline": "Autonomiser les agriculteurs avec des informations basées sur les données",
       "subHeadline": "Planifiez plus intelligemment, récoltez mieux et connectez-vous directement avec les acheteurs. Farmlytics apporte des analyses modernes à votre ferme.",
       "ctaPrimary": "Commencer gratuitement",
-      "ctaSecondary": "Explorer les fonctionnalités"
+      "ctaSecondary": "Explorer les fonctionnalités",
+      "revolution": "Révolution de l'Agriculture Intelligente",
+      "taglinePlaceholder": "Libérez tout le potentiel de votre ferme grâce à des informations basées sur les données et une planification intelligente.",
+      "trustedFarmers": "Approuvé par plus de 10 000 agriculteurs",
+      "successAnalytics": "98% de succès en analyse",
+      "cropGrowthProgress": "Progression de la Croissance des Cultures"
     },
     "features": {
       "title": "Tout ce dont vous avez besoin pour développer votre ferme",
@@ -33,6 +41,18 @@
       "exportInsights": {
         "title": "Exporter et partager des rapports",
         "description": "Générez des rapports professionnels à partager avec des partenaires, des prêteurs ou pour vos propres dossiers."
+      },
+      "cropMonitoring": {
+        "title": "Surveillance des Cultures",
+        "description": "Transformer l'agriculture avec des données. Obtenez des informations en temps réel sur la santé de vos cultures."
+      },
+      "analyticsDashboard": {
+        "title": "Tableau de Bord Analytique",
+        "description": "Interface transversale qui maximise les revenus de votre ferme et optimise les opérations."
+      },
+      "marketplace": {
+        "title": "Marché",
+        "description": "Vous connecte directement avec les acheteurs pour obtenir les meilleurs prix pour vos produits."
       }
     },
     "ctaSection": {
@@ -41,7 +61,11 @@
       "button": "Commencer votre essai gratuit"
     },
     "footer": {
-      "copyright": "© {year} Farmlytics. Tous droits réservés."
+      "copyright": "© {year} Farmlytics. Tous droits réservés.",
+      "platformLink1": "Flercoois (Espace réservé)",
+      "platformLink2": "Alscit (Espace réservé)",
+      "supportLink1": "Fodrniizntop xqruers (Espace réservé)",
+      "supportLink2": "Ruapbupis (Espace réservé)"
     }
   },
   "login": {
