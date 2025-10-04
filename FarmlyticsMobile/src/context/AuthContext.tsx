@@ -17,6 +17,7 @@ interface User {
   email: string;
   role: 'admin' | 'farmer' | 'buyer';
   isVerified: boolean;
+  // Add any other user properties from your /auth/me endpoint
 }
 
 interface AuthContextType {
@@ -24,8 +25,9 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string, role: 'farmer' | 'buyer') => Promise<boolean>; // Role added
+  register: (name: string, email: string, password: string, role: 'farmer' | 'buyer') => Promise<boolean>;
   logout: () => void;
+  authenticatedFetch: (url: string, options?: RequestInit) => Promise<Response>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,34 +40,77 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
 
+  const logout = async () => {
+    await AsyncStorage.removeItem('userToken');
+    setToken(null);
+    setUser(null);
+  };
+
+  const authenticatedFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
+    if (!token) {
+      if (!isLoading) { // Only alert if not initial app load
+        Alert.alert(t('auth.noAuthTokenTitle'), t('auth.noAuthTokenMessage'));
+        await logout();
+      }
+      throw new Error(t('auth.noAuthToken') || 'No authentication token found.');
+    }
+
+    const headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      ...options,
+      headers,
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      Alert.alert(t('auth.sessionExpiredTitle'), t('auth.sessionExpiredMessage'));
+      await logout();
+      throw new Error(t('auth.sessionExpiredTitle') || 'Session expired, please log in.');
+    }
+
+    return response;
+  };
+
+
   useEffect(() => {
     const loadUserFromStorage = async () => {
       try {
         const storedToken = await AsyncStorage.getItem('userToken');
         if (storedToken) {
           setToken(storedToken);
-          const response = await fetch(`${API_BASE_URL}/auth/me`, {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-            },
-          });
+          const response = await authenticatedFetch('/auth/me'); // This will handle 401/403 and logout
           if (response.ok) {
             const data = await response.json();
             setUser(data.data);
           } else {
-            await AsyncStorage.removeItem('userToken');
-            setToken(null);
-            setUser(null);
+            // If response not ok but authenticatedFetch didn't throw (e.g. 500 from backend)
+            console.error('Failed to fetch user details during loadUserFromStorage:', response.status);
+            await logout(); // Ensure clean state
           }
         }
-      } catch (error) {
-        console.error('Failed to load user from storage:', error);
+      } catch (error: unknown) { // Explicitly type error as unknown
+        console.error('Failed to load user from storage (catch block):', error); // Keep console.error for debugging
+
+        // Safely extract message
+        const errorMessage = (error instanceof Error) ? error.message : String(error);
+
+        // Don't re-alert if authenticatedFetch already handled session expiry/no token
+        if (errorMessage !== (t('auth.sessionExpiredTitle') || 'Session expired, please log in.') &&
+            errorMessage !== (t('auth.noAuthToken') || 'No authentication token found.')) {
+            Alert.alert(t('common.error'), t('auth.initialLoadError') || 'Failed to load user session. Please log in.');
+        }
+        await logout(); // Ensure clean state after any error during initial load
       } finally {
         setIsLoading(false);
       }
     };
     loadUserFromStorage();
   }, []);
+
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
@@ -96,7 +141,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(false);
         return false;
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
       Alert.alert(t('common.error'), t('common.networkError'));
       setIsLoading(false);
@@ -104,7 +149,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Updated register function to include role
   const register = async (name: string, email: string, password: string, role: 'farmer' | 'buyer'): Promise<boolean> => {
     setIsLoading(true);
     try {
@@ -113,7 +157,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password, role }), // Role included in body
+        body: JSON.stringify({ name, email, password, role }),
       });
       const data = await response.json();
 
@@ -127,7 +171,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(false);
         return false;
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Register error:', error);
       Alert.alert(t('common.error'), t('common.networkError'));
       setIsLoading(false);
@@ -135,13 +179,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = async () => {
-    await AsyncStorage.removeItem('userToken');
-    setToken(null);
-    setUser(null);
-  };
 
-  const value = { user, token, isLoading, login, register, logout };
+  const value = { user, token, isLoading, login, register, logout, authenticatedFetch };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

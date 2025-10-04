@@ -20,73 +20,76 @@ const Container = styled(KeyboardAvoidingView).attrs({
 
 const ScrollContent = styled(ScrollView).attrs({
   contentContainerStyle: {
-    padding: defaultTheme.spacing.large, // This is a numeric value from theme
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: defaultTheme.spacing.large,
   },
 })`
   width: 100%;
 `;
 
 const LogoContainer = styled(View)`
-  margin-bottom: ${props => props.theme.spacing.xl}px; /* Explicitly 'px' string */
+  margin-bottom: ${props => props.theme.spacing.xl}px;
   align-items: center;
 `;
 
 const AppLogo = styled(Image)`
-  width: 180px; /* Explicitly 'px' string */
-  height: 180px; /* Explicitly 'px' string */
+  width: 180px;
+  height: 180px;
   resize-mode: contain;
-  margin-bottom: ${props => props.theme.spacing.medium}px; /* Explicitly 'px' string */
+  margin-bottom: ${props => props.theme.spacing.medium}px;
 `;
 
 const Title = styled(Text)`
-  font-size: ${props => props.theme.fontSizes.xxl}px; /* Explicitly 'px' string */
+  font-size: ${props => props.theme.fontSizes.xxl}px;
   font-weight: bold;
   color: ${props => props.theme.colors.primary};
-  margin-bottom: ${props => props.theme.spacing.xxl}px; /* Explicitly 'px' string */
+  margin-bottom: ${props => props.theme.spacing.xxl}px;
   text-align: center;
 `;
 
 const Input = styled.TextInput`
   width: 100%;
-  padding: ${props => props.theme.spacing.medium + 4}px; /* Explicitly 'px' string */
-  margin-bottom: ${props => props.theme.spacing.medium}px; /* Explicitly 'px' string */
-  border-width: 1px; /* Explicitly 'px' string */
+  padding: ${props => props.theme.spacing.medium + 4}px;
+  margin-bottom: ${props => props.theme.spacing.medium}px;
+  border-width: 1px;
   border-color: ${props => props.theme.colors.border};
-  border-radius: ${props => props.theme.borderRadius.medium}px; /* Explicitly 'px' string */
+  border-radius: ${props => props.theme.borderRadius.medium}px;
   background-color: ${props => props.theme.colors.cardBackground};
   color: ${props => props.theme.colors.text};
-  font-size: ${props => props.theme.fontSizes.medium}px; /* Explicitly 'px' string */
+  font-size: ${props => props.theme.fontSizes.medium}px;
   elevation: 1;
-  shadow-color: #000;
+  shadow-color: '#000';
   shadow-offset: 0px 1px;
   shadow-opacity: 0.08;
-  shadow-radius: 1.84px; /* Explicitly 'px' string */
+  shadow-radius: 1.84px;
 `;
 
 const Button = styled.TouchableOpacity`
   width: 100%;
-  padding: ${props => props.theme.spacing.medium + 6}px; /* Explicitly 'px' string */
+  padding: ${props => props.theme.spacing.medium + 6}px;
   background-color: ${props => props.theme.colors.primary};
-  border-radius: ${props => props.theme.borderRadius.pill}px; /* Explicitly 'px' string */
+  border-radius: ${props => props.theme.borderRadius.pill}px;
   align-items: center;
-  margin-top: ${props => props.theme.spacing.large}px; /* Explicitly 'px' string */
+  margin-top: ${props => props.theme.spacing.large}px;
   elevation: 5;
-  shadow-color: #000;
+  shadow-color: '#000';
   shadow-offset: 0px 4px;
   shadow-opacity: 0.3;
-  shadow-radius: 4.65px; /* Explicitly 'px' string */
+  shadow-radius: 4.65px;
 `;
 
 const ButtonText = styled(Text)`
   color: ${props => props.theme.colors.lightText};
-  font-size: ${props => props.theme.fontSizes.large}px; /* Explicitly 'px' string */
+  font-size: ${props => props.theme.fontSizes.large}px;
   font-weight: bold;
 `;
 
 const LinkText = styled(Text)`
   color: ${props => props.theme.colors.primary};
-  font-size: ${props => props.theme.fontSizes.medium}px; /* Explicitly 'px' string */
-  margin-top: ${props => props.theme.spacing.xl}px; /* Explicitly 'px' string */
+  font-size: ${props => props.theme.fontSizes.medium}px;
+  margin-top: ${props => props.theme.spacing.xl}px;
   font-weight: 600;
   text-decoration-line: underline;
 `;
@@ -107,7 +110,7 @@ const LoginScreen: React.FC = () => {
 
   return (
     <Container>
-      <CustomHeader title={t('auth.loginTitle')} showBack={true} />
+      <CustomHeader title={String(t('auth.loginTitle'))} showBack={true} showLogo={true} showLanguageSwitcher={true} />
       <ScrollContent>
         <LogoContainer>
           <AppLogo source={require('../../../assets/logo.png')} />
@@ -115,7 +118,7 @@ const LoginScreen: React.FC = () => {
         </LogoContainer>
 
         <Input
-          placeholder={t('common.email')}
+          placeholder={String(t('common.email'))} // Explicit String()
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -123,7 +126,7 @@ const LoginScreen: React.FC = () => {
           placeholderTextColor={defaultTheme.colors.placeholder}
         />
         <Input
-          placeholder={t('common.password')}
+          placeholder={String(t('common.password'))} // Explicit String()
           secureTextEntry
           value={password}
           onChangeText={setPassword}

@@ -1,12 +1,11 @@
 // src/screens/Auth/RegisterScreen.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components/native';
 import { Image, ActivityIndicator, Alert, Platform, ScrollView, Text, View, KeyboardAvoidingView } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Picker } from '@react-native-picker/picker';
-import { useCallback } from 'react';
 
 import { defaultTheme } from '../../config/theme';
 import { RootStackNavigationProp } from '../../navigation/types';
@@ -32,86 +31,87 @@ const ScrollContent = styled(ScrollView).attrs({
 `;
 
 const LogoContainer = styled(View)`
-  margin-bottom: ${props => props.theme.spacing.xl}px; /* Explicitly 'px' string */
+  margin-bottom: ${props => props.theme.spacing.xl}px;
   align-items: center;
 `;
 
 const AppLogo = styled(Image)`
-  width: 180px; /* Explicitly 'px' string */
-  height: 180px; /* Explicitly 'px' string */
+  width: 180px;
+  height: 180px;
   resize-mode: contain;
-  margin-bottom: ${props => props.theme.spacing.medium}px; /* Explicitly 'px' string */
+  margin-bottom: ${props => props.theme.spacing.medium}px;
 `;
 
 const Title = styled(Text)`
-  font-size: ${props => props.theme.fontSizes.xxl}px; /* Explicitly 'px' string */
+  font-size: ${props => props.theme.fontSizes.xxl}px;
   font-weight: bold;
   color: ${props => props.theme.colors.primary};
-  margin-bottom: ${props => props.theme.spacing.xxl}px; /* Explicitly 'px' string */
+  margin-bottom: ${props => props.theme.spacing.xxl}px;
   text-align: center;
 `;
 
 const Input = styled.TextInput`
   width: 100%;
-  padding: ${props => props.theme.spacing.medium + 4}px; /* Explicitly 'px' string */
-  margin-bottom: ${props => props.theme.spacing.medium}px; /* Explicitly 'px' string */
-  border-width: 1px; /* Explicitly 'px' string */
+  padding: ${props => props.theme.spacing.medium + 4}px;
+  margin-bottom: ${props => props.theme.spacing.medium}px;
+  border-width: 1px;
   border-color: ${props => props.theme.colors.border};
-  border-radius: ${props => props.theme.borderRadius.medium}px; /* Explicitly 'px' string */
+  border-radius: ${props => props.theme.borderRadius.medium}px;
   background-color: ${props => props.theme.colors.cardBackground};
   color: ${props => props.theme.colors.text};
-  font-size: ${props => props.theme.fontSizes.medium}px; /* Explicitly 'px' string */
+  font-size: ${props => props.theme.fontSizes.medium}px;
   elevation: 1;
-  shadow-color: #000;
+  shadow-color: '#000';
   shadow-offset: 0px 1px;
   shadow-opacity: 0.08;
-  shadow-radius: 1.84px; /* Explicitly 'px' string */
+  shadow-radius: 1.84px;
 `;
 
 const PickerContainer = styled(View)`
   width: 100%;
-  border-width: 1px; /* Explicitly 'px' string */
+  border-width: 1px;
   border-color: ${props => props.theme.colors.border};
-  border-radius: ${props => props.theme.borderRadius.medium}px; /* Explicitly 'px' string */
+  border-radius: ${props => props.theme.borderRadius.medium}px;
   background-color: ${props => props.theme.colors.cardBackground};
-  margin-bottom: ${props => props.theme.spacing.large}px; /* Explicitly 'px' string */
+  margin-bottom: ${props => props.theme.spacing.large}px;
   overflow: hidden;
   elevation: 1;
-  shadow-color: #000;
+  shadow-color: '#000';
   shadow-offset: 0px 1px;
   shadow-opacity: 0.08;
-  shadow-radius: 1.84px; /* Explicitly 'px' string */
+  shadow-radius: 1.84px;
 `;
 
 const StyledPicker = styled(Picker)`
   width: 100%;
   color: ${props => props.theme.colors.text};
+  height: 50px;
 `;
 
 const Button = styled.TouchableOpacity`
   width: 100%;
-  padding: ${props => props.theme.spacing.medium + 6}px; /* Explicitly 'px' string */
+  padding: ${props => props.theme.spacing.medium + 6}px;
   background-color: ${props => props.theme.colors.tertiary};
-  border-radius: ${props => props.theme.borderRadius.pill}px; /* Explicitly 'px' string */
+  border-radius: ${props => props.theme.borderRadius.pill}px;
   align-items: center;
-  margin-top: ${props => props.theme.spacing.large}px; /* Explicitly 'px' string */
+  margin-top: ${props => props.theme.spacing.large}px;
   elevation: 5;
-  shadow-color: #000;
+  shadow-color: '#000';
   shadow-offset: 0px 4px;
   shadow-opacity: 0.3;
-  shadow-radius: 4.65px; /* Explicitly 'px' string */
+  shadow-radius: 4.65px;
 `;
 
 const ButtonText = styled(Text)`
   color: ${props => props.theme.colors.lightText};
-  font-size: ${props => props.theme.fontSizes.large}px; /* Explicitly 'px' string */
+  font-size: ${props => props.theme.fontSizes.large}px;
   font-weight: bold;
 `;
 
 const LinkText = styled(Text)`
   color: ${props => props.theme.colors.primary};
-  font-size: ${props => props.theme.fontSizes.medium}px; /* Explicitly 'px' string */
-  margin-top: ${props => props.theme.spacing.xl}px; /* Explicitly 'px' string */
+  font-size: ${props => props.theme.fontSizes.medium}px;
+  margin-top: ${props => props.theme.spacing.xl}px;
   font-weight: 600;
   text-decoration-line: underline;
 `;
@@ -148,7 +148,7 @@ const RegisterScreen: React.FC = () => {
   const handleRegister = async () => {
     setLoading(true);
     if (password !== confirmPassword) {
-      Alert.alert(t('common.error'), t('auth.passwordsMismatch'));
+      Alert.alert(String(t('common.error')), String(t('auth.passwordsMismatch'))); // Explicit String()
       setLoading(false);
       return;
     }
@@ -161,7 +161,7 @@ const RegisterScreen: React.FC = () => {
 
   return (
     <Container>
-      <CustomHeader title={t('auth.registerTitle')} showBack={true} />
+      <CustomHeader title={String(t('auth.registerTitle'))} showBack={true} showLogo={true} showLanguageSwitcher={true} />
       <ScrollContent>
         <LogoContainer>
           <AppLogo source={require('../../../assets/logo.png')} />
@@ -169,7 +169,7 @@ const RegisterScreen: React.FC = () => {
         </LogoContainer>
 
         <Input
-          placeholder={t('auth.name')}
+          placeholder={String(t('auth.name'))} // Explicit String()
           autoCapitalize="words"
           value={name}
           onChangeText={setName}
@@ -177,7 +177,7 @@ const RegisterScreen: React.FC = () => {
           editable={!loading}
         />
         <Input
-          placeholder={t('common.email')}
+          placeholder={String(t('common.email'))} // Explicit String()
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -186,7 +186,7 @@ const RegisterScreen: React.FC = () => {
           editable={!loading}
         />
         <Input
-          placeholder={t('common.password')}
+          placeholder={String(t('common.password'))} // Explicit String()
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -194,7 +194,7 @@ const RegisterScreen: React.FC = () => {
           editable={!loading}
         />
         <Input
-          placeholder={t('auth.confirmPassword')}
+          placeholder={String(t('auth.confirmPassword'))} // Explicit String()
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
@@ -208,8 +208,8 @@ const RegisterScreen: React.FC = () => {
             onValueChange={(itemValue: unknown, itemIndex: number) => setRole(itemValue as 'farmer' | 'buyer')}
             enabled={!loading}
           >
-            <Picker.Item label={t('auth.roleFarmer')} value="farmer" />
-            <Picker.Item label={t('auth.roleBuyer')} value="buyer" />
+            <Picker.Item label={String(t('auth.roleFarmer'))} value="farmer" /> {/* Explicit String() */}
+            <Picker.Item label={String(t('auth.roleBuyer'))} value="buyer" /> {/* Explicit String() */}
           </StyledPicker>
         </PickerContainer>
 

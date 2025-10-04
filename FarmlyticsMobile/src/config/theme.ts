@@ -3,18 +3,18 @@
 export const colors = {
   primary: '#00A1DE',      // Rwandan Flag Blue
   secondary: '#FDC400',    // Rwandan Flag Yellow
-  tertiary: '#23B24F',      // Original Rwandan Flag Green
+  tertiary: '#187B3D',      // Original Rwandan Flag Green
   darkGreen: '#187B3D',    // NEW: Darker Green for depth/accents
   text: '#333333',
   lightText: '#FFFFFF',
   background: '#F9F9F9',
   cardBackground: '#FFFFFF',
   border: '#E0E0E0',
-  success: '#28A745',
+  success: '#187B3D',
   error: '#DC3545',
   placeholder: '#999999',
   gradientStart: '#00A1DE', // Blue for gradient start
-  gradientEnd: '#23B24F',   // Original Green for gradient end
+  gradientEnd: '#187B3D',   // Original Green for gradient end
   darkGradientEnd: '#187B3D', // Darker green for gradient end for more contrast
 };
 
