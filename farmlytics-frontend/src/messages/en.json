@@ -1,57 +1,153 @@
 {
+  "common": {
+    "learnMore": "Learn More",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "home": {
+    "hero": {
+      "headline": "Empowering Farmers with Data-Driven Insights",
+      "subHeadline": "Plan smarter, harvest better, and connect directly with buyers. Farmlytics brings modern analytics to your farm.",
+      "ctaPrimary": "Get Started ",
+      "ctaSecondary": "Explore Features"
+    },
+    "features": {
+      "title": "Everything You Need to Grow Your Farm",
+      "subtitle": "Comprehensive tools designed specifically for modern farmers to maximize productivity and profitability.",
+      "cropPlanner": {
+        "title": "Personalized Crop Planner",
+        "description": "Get AI-powered recommendations based on your soil, climate, and market demand to optimize your planting decisions."
+      },
+      "marketConnection": {
+        "title": "Market Connection Module",
+        "description": "Connect directly with buyers and access real-time market prices to get the best value for your harvest."
+      },
+      "harvestTracker": {
+        "title": "Harvest & Revenue Tracker",
+        "description": "Track your yields, expenses, and revenue in one place. Understand your farm's financial health at a glance."
+      },
+      "visualInsights": {
+        "title": "Visual Insights Dashboard",
+        "description": "Beautiful charts and graphs that make complex farm data easy to understand and act upon."
+      },
+      "exportInsights": {
+        "title": "Export & Share Reports",
+        "description": "Generate professional reports to share with partners, lenders, or for your own records."
+      }
+    },
+    "ctaSection": {
+      "headline": "Ready to Transform Your Farming?",
+      "subHeadline": "Join thousands of farmers already using Farmlytics to make smarter decisions and increase their yields.",
+      "button": "Start Your Free Trial"
+    },
+    "footer": {
+      "copyright": "© {year} Farmlytics. All rights reserved."
+    }
+  },
   "login": {
     "title": "Welcome Back to Our Farming Community",
     "subtitle": "Sign in to continue your journey with fellow farmers and buyers.",
+    "welcomeTitle": "Welcome to Farmlytics",
+    "welcomeSubtitle": "Connecting Farmers, Growing Futures",
+    "pageTitle": "Welcome to Farmlytics",
+    "pageSubtitle": "Connect to your account",
     "email": {
       "label": "Email Address",
-      "placeholder": "Enter your email",
+      "placeholder": "Email",
       "invalid": "Invalid email address",
       "required": "Email is required"
     },
     "password": {
       "label": "Password",
-      "placeholder": "Enter your password",
+      "placeholder": "Password",
       "invalid": "Invalid password",
       "min": "Password must be at least 8 characters",
       "required": "Password is required"
     },
     "rememberMe": "Remember me",
-    "forgotPassword": "Forgot password?",
-    "loginButton": "Sign In",
-    "noAccount": "Don't have an account?",
-    "registerLink": "Register"
+    "forgotPassword": "Forgot Password?",
+    "loginButton": "Login",
+    "loggingIn": "Logging In...",
+    "noAccount": "Don't have your account?",
+    "registerLink": "Register",
+    "success": "Login successful!",
+    "error": "Login failed. Please try again.",
+    "backToHome": "Back to Home"
   },
-  
   "register": {
     "title": "Create Your Account",
     "subtitle": "Join us today and start exploring",
-    "firstName": "First Name",
-    "firstNamePlaceholder": "Enter your first name",
-    "firstNameInvalid": "First name is required",
-    "lastName": "Last Name",
-    "lastNamePlaceholder": "Enter your last name",
-    "lastNameInvalid": "Last name is required",
-    "district": "District",
-    "districtPlaceholder": "Enter your district",
-    "districtInvalid": "District is required",
-    "email": "Email",
-    "emailPlaceholder": "Enter your email address",
-    "emailInvalid": "Invalid email address",
-    "emailRequired": "Email is required",
-    "password": "Password",
-    "passwordPlaceholder": "Enter a password",
-    "passwordInvalid": "Invalid password",
-    "passwordMin": "Password must be at least 8 characters",
-    "passwordRequired": "Password is required",
-    "confirmPassword": "Confirm Password",
-    "confirmPasswordPlaceholder": "Re-enter your password",
-    "confirmPasswordInvalid": "Passwords do not match",
-    "confirmPasswordMatch": "Passwords do not match",
+    "welcomeTitle": "Join Farmlytics",
+    "welcomeSubtitle": "Start your journey with us today",
+    "pageTitle": "Create Your Account",
+    "pageSubtitle": "Fill in your details to get started",
+    "firstName": {
+      "label": "First Name",
+      "placeholder": "First Name",
+      "invalid": "First name must be at least 2 characters"
+    },
+    "lastName": {
+      "label": "Last Name",
+      "placeholder": "Last Name",
+      "invalid": "Last name must be at least 2 characters"
+    },
+    "district": {
+      "label": "District",
+      "placeholder": "District",
+      "invalid": "District is required"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Email",
+      "invalid": "Invalid email address",
+      "required": "Email is required"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password",
+      "invalid": "Invalid password",
+      "min": "Password must be at least 8 characters",
+      "complexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+      "required": "Password is required"
+    },
+    "confirmPassword": {
+      "label": "Confirm Password",
+      "placeholder": "Confirm Password",
+      "invalid": "Passwords do not match",
+      "match": "Passwords do not match"
+    },
+    "termsLabel": "I agree to the Terms and Privacy Policy",
+    "termsLink": "Terms",
+    "andText": "and",
+    "privacyLink": "Privacy Policy",
+    "termsRequired": "You must agree to the terms and privacy policy",
     "registerButton": "Register",
-    "registering": "Registering...",
+    "registering": "Creating Account...",
     "success": "Registration successful!",
     "error": "Something went wrong, please try again.",
     "haveAccount": "Already have an account?",
-    "loginLink": "Login here"
+    "loginLink": "Login",
+    "backToHome": "Back to Home"
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "subtitle": "Reset your password",
+    "welcomeTitle": "Reset Password",
+    "welcomeSubtitle": "We'll help you get back to your account",
+    "pageTitle": "Forgot Your Password?",
+    "pageSubtitle": "Enter your email address and we'll send you a reset link",
+    "email": {
+      "label": "Email Address",
+      "placeholder": "Email",
+      "invalid": "Invalid email address",
+      "required": "Email is required"
+    },
+    "submitButton": "Send Reset Link",
+    "sending": "Sending...",
+    "success": "Password reset link sent! Check your email.",
+    "error": "Failed to send reset link. Please try again.",
+    "backToLogin": "Back to Login",
+    "backToHome": "Back to Home",
+    "rememberPassword": "Remember your password?"
   }
 }

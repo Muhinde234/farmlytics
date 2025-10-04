@@ -1,333 +1,204 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/routing"
-import { Eye, EyeOff } from "lucide-react"
-import Logo from "@/components/common/logo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { z } from "zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { ArrowLeft, Leaf } from "lucide-react"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "sonner"
+import * as z from "zod"
+
+const registerSchema = z
+  .object({
+    firstName: z.string().min(2, "First name must be at least 2 characters"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    district: z.string().min(2, "District is required"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+    terms: z.boolean().refine((val) => val === true, "You must accept the terms and conditions"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  })
+
+type RegisterFormData = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
   const t = useTranslations("register")
-  const router = useRouter()
-  const [isPending, setIsPending] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const registerSchema = z
-    .object({
-      firstName: z
-        .string()
-        .min(2, { message: t("firstNameInvalid") })
-        .max(50),
-      lastName: z
-        .string()
-        .min(2, { message: t("lastNameInvalid") })
-        .max(50),
-      district: z.string().min(2, { message: t("districtInvalid") }),
-      email: z
-        .string()
-        .min(1, { message: t("emailRequired") })
-        .email({ message: t("emailInvalid") }),
-      password: z
-        .string()
-        .min(8, { message: t("passwordMin") })
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, { message: t("passwordComplexity") }),
-      confirmPassword: z.string().min(8, { message: t("passwordMin") }),
-      terms: z.boolean().refine((val) => val === true, { message: t("termsRequired") }),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: t("confirmPasswordMatch"),
-      path: ["confirmPassword"],
-    })
-
-  type RegisterFormInputs = z.infer<typeof registerSchema>
-
-  const form = useForm<RegisterFormInputs>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      district: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      terms: false,
-    },
   })
 
-  const onSubmit = async (data: RegisterFormInputs) => {
-    setIsPending(true)
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      toast.success(t("success"))
-      router.push("/login")
-    } catch (error: any) {
-      toast.error(error.message || t("error"))
-    } finally {
-      setIsPending(false)
-    }
+  const onSubmit = async (data: RegisterFormData) => {
+    setIsLoading(true)
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    console.log("Registration data:", data)
+    setIsLoading(false)
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#EBF0E6] flex items-center justify-center p-4 md:p-8 font-sans antialiased">
-      <div className="w-full max-w-[900px] mx-auto bg-white rounded-[20px] shadow-xl overflow-hidden flex flex-col lg:flex-row min-h-[550px] border border-[#DCE4D6]">
-        <div className="lg:w-2/5 bg-[#4F8B52] relative overflow-hidden flex flex-col items-center justify-center p-6 md:p-8 rounded-b-[20px] lg:rounded-bl-[20px] lg:rounded-tr-none text-white">
-          <div className="absolute inset-0 bg-gradient-to-tr from-[#4F8B52] to-[#76B77D] opacity-90"></div>
-          <div className="relative z-10">
-            <div className="flex items-center justify-center">
-              <Link href="/" className="">
-                <Logo />
-              </Link>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-[#00A651]/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-20 w-80 h-80 bg-[#00A1DE]/10 rounded-full blur-3xl animate-float-delayed" />
+      </div>
+
+      {/* Back to Home Button */}
+      <Link
+        href="/"
+        className="fixed top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm text-[#00A651] rounded-lg shadow-md hover:bg-[#00A651] hover:text-white transition-all duration-300 font-medium"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        {t("backToHome")}
+      </Link>
+
+      <div className="w-full max-w-6xl bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden relative z-10">
+        <div className="flex flex-col lg:flex-row min-h-[700px]">
+          <div className="lg:w-2/5 bg-gradient-to-br from-[#00A651] via-[#00A651] to-[#00A1DE] p-12 flex flex-col justify-center relative overflow-hidden">
+            {/* Simplified animated background */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full animate-pulse" />
+              <div className="absolute bottom-20 right-10 w-40 h-40 bg-[#FCDC04]/20 rounded-2xl animate-pulse" />
             </div>
 
-            <div className="my-12 flex justify-center space-x-4">
-              <div className="w-14 h-14 bg-white/20 rounded-full animate-pulse"></div>
-              <div className="w-20 h-20 bg-white/30 rounded-2xl animate-pulse delay-150"></div>
-              <div className="w-12 h-12 bg-white/10 rounded-full animate-pulse delay-300"></div>
+            {/* Color accent bars - green first */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#00A651] via-[#FCDC04] to-[#00A1DE]" />
+
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                  <Leaf className="w-7 h-7 text-[#00A651]" />
+                </div>
+                <span className="text-2xl font-bold text-white">Farmlytics</span>
+              </div>
+              <h1 className="text-4xl font-bold text-white mb-4 leading-tight">{t("welcomeTitle")}</h1>
+              <p className="text-white/90 text-lg leading-relaxed">{t("welcomeSubtitle")}</p>
             </div>
-
-            <h1 className="text-2xl font-bold mb-2 text-white drop-shadow-sm">Join Farmlytics</h1>
-            <p className="text-[#DCE4D6] text-sm leading-relaxed opacity-90 font-light">
-              Start your journey with us today
-            </p>
-          </div>
-        </div>
-
-        <div className="lg:w-3/5 p-6 md:p-8 lg:p-10 flex flex-col justify-center bg-white rounded-t-[20px] lg:rounded-tr-[20px] lg:rounded-bl-none">
-          <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Create Your Account</h2>
-            <p className="text-gray-600 text-sm">Fill in your details to get started</p>
           </div>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="sr-only">First Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="First Name"
-                          {...field}
-                          className="h-10 rounded-lg border-gray-300 bg-white focus-visible:ring-1 focus-visible:ring-[#4F8B52] focus-visible:border-[#4F8B52] transition-all duration-200 shadow-sm text-sm pl-3 pr-8"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs text-red-500 mt-1" />
-                    </FormItem>
-                  )}
-                />
+          {/* Right Side - Form */}
+          <div className="lg:w-3/5 p-12 flex items-center justify-center">
+            <div className="w-full max-w-md">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">{t("pageTitle")}</h2>
+              <p className="text-gray-600 mb-8">{t("pageSubtitle")}</p>
 
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="sr-only">Last Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Last Name"
-                          {...field}
-                          className="h-10 rounded-lg border-gray-300 bg-white focus-visible:ring-1 focus-visible:ring-[#4F8B52] focus-visible:border-[#4F8B52] transition-all duration-200 shadow-sm text-sm pl-3 pr-8"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs text-red-500 mt-1" />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">{t("firstName.label")}</Label>
+                    <Input
+                      id="firstName"
+                      type="text"
+                      placeholder={t("firstName.placeholder")}
+                      className="h-11 focus:ring-2 focus:ring-[#00A651] transition-all"
+                      {...register("firstName")}
+                    />
+                    {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">{t("lastName.label")}</Label>
+                    <Input
+                      id="lastName"
+                      type="text"
+                      placeholder={t("lastName.placeholder")}
+                      className="h-11 focus:ring-2 focus:ring-[#00A651] transition-all"
+                      {...register("lastName")}
+                    />
+                    {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
+                  </div>
+                </div>
 
-              <FormField
-                control={form.control}
-                name="district"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="sr-only">District</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="District"
-                        {...field}
-                        className="h-10 rounded-lg border-gray-300 bg-white focus-visible:ring-1 focus-visible:ring-[#4F8B52] focus-visible:border-[#4F8B52] transition-all duration-200 shadow-sm text-sm pl-3 pr-8"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 mt-1" />
-                  </FormItem>
-                )}
-              />
+                <div className="space-y-2">
+                  <Label htmlFor="district">{t("district.label")}</Label>
+                  <Input
+                    id="district"
+                    type="text"
+                    placeholder={t("district.placeholder")}
+                    className="h-11 focus:ring-2 focus:ring-[#00A651] transition-all"
+                    {...register("district")}
+                  />
+                  {errors.district && <p className="text-sm text-red-500">{errors.district.message}</p>}
+                </div>
 
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="sr-only">Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Email"
-                        {...field}
-                        className="h-10 rounded-lg border-gray-300 bg-white focus-visible:ring-1 focus-visible:ring-[#4F8B52] focus-visible:border-[#4F8B52] transition-all duration-200 shadow-sm text-sm pl-3 pr-8"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 mt-1" />
-                  </FormItem>
-                )}
-              />
+                <div className="space-y-2">
+                  <Label htmlFor="email">{t("email.label")}</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder={t("email.placeholder")}
+                    className="h-11 focus:ring-2 focus:ring-[#00A651] transition-all"
+                    {...register("email")}
+                  />
+                  {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+                </div>
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="sr-only">Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Password"
-                          {...field}
-                          className="h-10 rounded-lg border-gray-300 bg-white focus-visible:ring-1 focus-visible:ring-[#4F8B52] focus-visible:border-[#4F8B52] transition-all duration-200 shadow-sm text-sm pl-3 pr-8"
-                        />
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => setShowPassword((v) => !v)}
-                          className="absolute inset-y-0 right-0 px-2 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4F8B52] rounded-r-lg"
-                          aria-label={showPassword ? "Hide password" : "Show password"}
-                        >
-                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 mt-1" />
-                  </FormItem>
-                )}
-              />
+                <div className="space-y-2">
+                  <Label htmlFor="password">{t("password.label")}</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder={t("password.placeholder")}
+                    className="h-11 focus:ring-2 focus:ring-[#00A651] transition-all"
+                    {...register("password")}
+                  />
+                  {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+                </div>
 
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="sr-only">Confirm Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="Confirm Password"
-                          {...field}
-                          className="h-10 rounded-lg border-gray-300 bg-white focus-visible:ring-1 focus-visible:ring-[#4F8B52] focus-visible:border-[#4F8B52] transition-all duration-200 shadow-sm text-sm pl-3 pr-8"
-                        />
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          onClick={() => setShowConfirmPassword((v) => !v)}
-                          className="absolute inset-y-0 right-0 px-2 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4F8B52] rounded-r-lg"
-                          aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                        >
-                          {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 mt-1" />
-                  </FormItem>
-                )}
-              />
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">{t("confirmPassword.label")}</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder={t("confirmPassword.placeholder")}
+                    className="h-11 focus:ring-2 focus:ring-[#00A651] transition-all"
+                    {...register("confirmPassword")}
+                  />
+                  {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
+                </div>
 
-              <div className="flex items-start space-x-2 mt-3">
-                <FormField
-                  control={form.control}
-                  name="terms"
-                  render={({ field }) => (
-                    <FormItem className="flex items-start space-x-2">
-                      <FormControl>
-                        <input
-                          type="checkbox"
-                          checked={field.value}
-                          onChange={field.onChange}
-                          className="h-4 w-4 rounded border-gray-300 text-[#4F8B52] focus:ring-[#4F8B52] focus:ring-1 mt-0.5 cursor-pointer"
-                        />
-                      </FormControl>
-                      <FormLabel className="text-sm font-normal text-gray-700 cursor-pointer select-none leading-tight">
-                        I agree to the{" "}
-                        <Link
-                          href="/terms"
-                          className="text-[#4F8B52] hover:text-[#5AA45D] font-semibold underline-offset-2 hover:underline transition-colors duration-200"
-                        >
-                          Terms
-                        </Link>{" "}
-                        and{" "}
-                        <Link
-                          href="/privacy"
-                          className="text-[#4F8B52] hover:text-[#5AA45D] font-semibold underline-offset-2 hover:underline transition-colors duration-200"
-                        >
-                          Privacy Policy
-                        </Link>
-                      </FormLabel>
-                    </FormItem>
-                  )}
-                />
-              </div>
-              {form.formState.errors.terms && (
-                <p className="text-xs text-red-500 mt-1">{form.formState.errors.terms.message}</p>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full h-10 bg-gradient-to-r from-[#5AA45D] to-[#4F8B52] hover:from-[#4F8B52] hover:to-[#5AA45D] text-white font-semibold text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F8B52] focus-visible:ring-offset-2 mt-4"
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <span className="flex items-center justify-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                <div className="space-y-2">
+                  <div className="flex items-start space-x-2">
+                    <Checkbox id="terms" {...register("terms")} className="mt-1" />
+                    <label
+                      htmlFor="terms"
+                      className="text-sm font-medium leading-relaxed peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Creating Account...
-                  </span>
-                ) : (
-                  "Register"
-                )}
-              </Button>
+                      {t("termsLabel")}
+                    </label>
+                  </div>
+                  {errors.terms && <p className="text-sm text-red-500">{errors.terms.message}</p>}
+                </div>
 
-              <p className="mt-4 text-center text-xs text-gray-600">
-                Already have an account?{" "}
-                <Link
-                  href="/login"
-                  className="text-[#4F8B52] hover:text-[#5AA45D] font-semibold underline-offset-2 hover:underline transition-colors duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4F8B52] rounded"
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-11 bg-[#00A651] hover:bg-[#008F45] text-white font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  Login
+                  {isLoading ? t("registering") : t("registerButton")}
+                </Button>
+              </form>
+
+              <p className="mt-6 text-center text-sm text-gray-600">
+                {t("haveAccount")}{" "}
+                <Link href="/login" className="font-medium text-[#00A651] hover:text-[#008F45] transition-colors">
+                  {t("loginLink")}
                 </Link>
               </p>
-            </form>
-          </Form>
+            </div>
+          </div>
         </div>
       </div>
     </div>

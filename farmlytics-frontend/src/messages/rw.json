@@ -1,16 +1,65 @@
 {
+  "common": {
+    "learnMore": "Menya Byinshi",
+    "signIn": "Injira",
+    "signUp": "Iyandikishe"
+  },
+  "home": {
+    "hero": {
+      "headline": "Guha Abahinzi Imbaraga n'Amakuru Ashingiye ku Makuru",
+      "subHeadline": "Tegura neza, usarure neza, kandi uhurire n'abaguzi. Farmlytics izana isesengura rya kijyambere ku murima wawe.",
+      "ctaPrimary": "Tangira Ubuntu",
+      "ctaSecondary": "Reba Ibiranga"
+    },
+    "features": {
+      "title": "Ibyo Ukeneye Byose Kugirango Uterambere Umurima Wawe",
+      "subtitle": "Ibikoresho byuzuye byakozwe ku bahinzi ba none kugirango barusheho gukora no kubona inyungu.",
+      "cropPlanner": {
+        "title": "Gahunda y'Ibihingwa Yihariye",
+        "description": "Bona inama zishingiye kuri AI zishingiye ku butaka bwawe, ikirere, n'ibyo isoko risaba kugirango unoze ibyemezo byawe byo gutera."
+      },
+      "marketConnection": {
+        "title": "Modire yo Guhuza Isoko",
+        "description": "Hura n'abaguzi kandi ubone ibiciro by'isoko mu gihe nyacyo kugirango ubone agaciro keza ku musaruro wawe."
+      },
+      "harvestTracker": {
+        "title": "Gukurikirana Umusaruro n'Amafaranga",
+        "description": "Kurikirana umusaruro wawe, amafaranga yakoreshejwe, n'amafaranga yinjiye ahantu hamwe. Sobanukirwa ubuzima bw'imari bw'umurima wawe mu kanya."
+      },
+      "visualInsights": {
+        "title": "Ikibaho cy'Amakuru Agaragara",
+        "description": "Ibishushanyo byiza n'ibishushanyo bituma amakuru y'umurima akomeye yoroshye gusobanukirwa no gukora."
+      },
+      "exportInsights": {
+        "title": "Kohereza no Gusangira Raporo",
+        "description": "Kora raporo z'umwuga zo gusangira n'abafatanyabikorwa, abatanga inguzanyo, cyangwa ku bijanye nawe."
+      }
+    },
+    "ctaSection": {
+      "headline": "Witeguye Guhindura Ubuhinzi Bwawe?",
+      "subHeadline": "Injira mu bahinzi ibihumbi bakoresha Farmlytics kugirango bafate ibyemezo byiza kandi bongere umusaruro wabo.",
+      "button": "Tangira Igerageza Ryawe Ubuntu"
+    },
+    "footer": {
+      "copyright": "© {year} Farmlytics. Uburenganzira bwose burahawe."
+    }
+  },
   "login": {
     "title": "Injira",
     "subtitle": "Urakaza neza",
+    "welcomeTitle": "Murakaza neza kuri Farmlytics",
+    "welcomeSubtitle": "Guhuza Abahinzi, Gukura Ejo hazaza",
+    "pageTitle": "Murakaza neza kuri Farmlytics",
+    "pageSubtitle": "Injira kuri konti yawe",
     "email": {
       "label": "Imeyili",
-      "placeholder": "Andika imeyili yawe",
+      "placeholder": "Imeyili",
       "invalid": "Imeyili si yo",
       "required": "Imeyili irasabwa"
     },
     "password": {
       "label": "Ijambo ry'ibanga",
-      "placeholder": "Andika ijambo ry'ibanga",
+      "placeholder": "Ijambo ry'ibanga",
       "invalid": "Ijambo ry'ibanga si ryo",
       "min": "Ijambo ry'ibanga rigomba kuba nibura inyuguti 8",
       "required": "Ijambo ry'ibanga rirasabwa"
@@ -18,40 +67,87 @@
     "rememberMe": "Unyibuke",
     "forgotPassword": "Wibagiwe ijambo ry'ibanga?",
     "loginButton": "Injira",
+    "loggingIn": "Birimo kwinjira...",
     "noAccount": "Nta konti ufite?",
-    "registerLink": "Iyandikishe"
+    "registerLink": "Iyandikishe",
+    "success": "Kwinjira byagenze neza!",
+    "error": "Kwinjira byanze. Ongera ugerageze.",
+    "backToHome": "Subira Ahabanza"
   },
-  
   "register": {
     "title": "Iyandikishe",
     "subtitle": "Tangira kugendana natwe uyu munsi",
-    "firstName": "Izina rya mbere",
-    "firstNamePlaceholder": "Andika izina rya mbere",
-    "firstNameInvalid": "Izina rya mbere rirasabwa",
-    "lastName": "Izina ry'umuryango",
-    "lastNamePlaceholder": "Andika izina ry'umuryango",
-    "lastNameInvalid": "Izina ry'umuryango rirasabwa",
-    "district": "Akarere",
-    "districtPlaceholder": "Andika akarere kawe",
-    "districtInvalid": "Akarere karasabwa",
-    "email": "Imeyili",
-    "emailPlaceholder": "Andika aderesi yawe ya imeyili",
-    "emailInvalid": "Imeyili si yo",
-    "emailRequired": "Imeyili irasabwa",
-    "password": "Ijambo ry'ibanga",
-    "passwordPlaceholder": "Andika ijambo ry'ibanga",
-    "passwordInvalid": "Ijambo ry'ibanga si ryo",
-    "passwordMin": "Ijambo ry'ibanga rigomba kuba nibura inyuguti 8",
-    "passwordRequired": "Ijambo ry'ibanga rirasabwa",
-    "confirmPassword": "Emeza ijambo ry'ibanga",
-    "confirmPasswordPlaceholder": "Andika ijambo ry'ibanga ukundi",
-    "confirmPasswordInvalid": "Amagambo y'ibanga ntabwo ahura",
-    "confirmPasswordMatch": "Amagambo y'ibanga ntabwo ahura",
+    "welcomeTitle": "Injira muri Farmlytics",
+    "welcomeSubtitle": "Tangira urugendo rwawe natwe uyu munsi",
+    "pageTitle": "Kora Konti Yawe",
+    "pageSubtitle": "Uzuza amakuru yawe kugirango utangire",
+    "firstName": {
+      "label": "Izina rya mbere",
+      "placeholder": "Izina rya mbere",
+      "invalid": "Izina rya mbere rigomba kuba nibura inyuguti 2"
+    },
+    "lastName": {
+      "label": "Izina ry'umuryango",
+      "placeholder": "Izina ry'umuryango",
+      "invalid": "Izina ry'umuryango rigomba kuba nibura inyuguti 2"
+    },
+    "district": {
+      "label": "Akarere",
+      "placeholder": "Akarere",
+      "invalid": "Akarere karasabwa"
+    },
+    "email": {
+      "label": "Imeyili",
+      "placeholder": "Imeyili",
+      "invalid": "Imeyili si yo",
+      "required": "Imeyili irasabwa"
+    },
+    "password": {
+      "label": "Ijambo ry'ibanga",
+      "placeholder": "Ijambo ry'ibanga",
+      "invalid": "Ijambo ry'ibanga si ryo",
+      "min": "Ijambo ry'ibanga rigomba kuba nibura inyuguti 8",
+      "complexity": "Ijambo ryibanga rigomba kuba ririmo nibura inyuguti nkuru imwe, inyuguti ntoya imwe, n'umubare umwe",
+      "required": "Ijambo ry'ibanga rirasabwa"
+    },
+    "confirmPassword": {
+      "label": "Emeza ijambo ry'ibanga",
+      "placeholder": "Emeza ijambo ry'ibanga",
+      "invalid": "Amagambo y'ibanga ntabwo ahura",
+      "match": "Amagambo y'ibanga ntabwo ahura"
+    },
+    "termsLabel": "Nemera Amabwiriza n'Amategeko y'ubuzima bwite",
+    "termsLink": "Amabwiriza",
+    "andText": "na",
+    "privacyLink": "Amategeko y'ubuzima bwite",
+    "termsRequired": "Ugomba kwemera amabwiriza n'amategeko y'ubuzima bwite",
     "registerButton": "Iyandikishe",
     "registering": "Birimo kwiyandikisha...",
     "success": "Kwiyandikisha byagenze neza!",
     "error": "Habaye ikibazo, ongera ugerageze.",
     "haveAccount": "Usanzwe ufite konti?",
-    "loginLink": "Injira hano"
+    "loginLink": "Injira",
+    "backToHome": "Subira Ahabanza"
+  },
+  "forgotPassword": {
+    "title": "Wibagiwe ijambo ry'ibanga",
+    "subtitle": "Subiza ijambo ry'ibanga",
+    "welcomeTitle": "Subiza Ijambo ry'ibanga",
+    "welcomeSubtitle": "Tuzagufasha gusubira kuri konti yawe",
+    "pageTitle": "Wibagiwe Ijambo ry'ibanga?",
+    "pageSubtitle": "Andika aderesi yawe ya imeyili tuzakwohereze link yo kurisubiza",
+    "email": {
+      "label": "Aderesi ya Imeyili",
+      "placeholder": "Imeyili",
+      "invalid": "Imeyili si yo",
+      "required": "Imeyili irasabwa"
+    },
+    "submitButton": "Ohereza Link yo Kurisubiza",
+    "sending": "Birimo kohereza...",
+    "success": "Link yo kurisubiza yoherejwe! Reba imeyili yawe.",
+    "error": "Byanze kohereza link. Ongera ugerageze.",
+    "backToLogin": "Subira ku Kwinjira",
+    "backToHome": "Subira Ahabanza",
+    "rememberPassword": "Wibuka ijambo ry'ibanga?"
   }
 }
