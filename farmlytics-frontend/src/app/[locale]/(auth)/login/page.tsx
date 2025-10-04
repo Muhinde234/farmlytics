@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslations } from "next-intl"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { Link } from "@/i18n/routing"
 import Logo from "@/components/common/logo"
 import { Button } from "@/components/ui/button"
@@ -57,6 +57,14 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen w-full bg-[#EBF0E6] flex items-center justify-center p-4 md:p-8 font-sans antialiased">
+      <Link
+        href="/"
+        className="fixed top-4 left-4 md:top-6 md:left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white text-[#4F8B52] rounded-lg shadow-md hover:shadow-lg hover:bg-[#4F8B52] hover:text-white transition-all duration-300 font-medium text-sm border border-[#DCE4D6] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4F8B52] focus-visible:ring-offset-2"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <span>Back to Home</span>
+      </Link>
+
       {/* Main container */}
       <div className="w-full max-w-[900px] mx-auto bg-white rounded-[20px] shadow-xl overflow-hidden flex flex-col lg:flex-row min-h-[550px] border border-[#DCE4D6]">
         {/* Left side - Branding with professional abstract background */}
@@ -66,7 +74,6 @@ export default function LoginPage() {
             <div className="flex items-center justify-center">
               <Link href="/" className=" ">
                 <Logo />
-               
               </Link>
             </div>
 
@@ -77,9 +84,7 @@ export default function LoginPage() {
               <div className="w-12 h-12 bg-white/10 rounded-full animate-pulse delay-300"></div>
             </div>
 
-            <h1 className="text-2xl font-bold mb-2 text-white drop-shadow-sm">
-              Welcome to Farmlytics
-            </h1>
+            <h1 className="text-2xl font-bold mb-2 text-white drop-shadow-sm">Welcome to Farmlytics</h1>
             <p className="text-[#DCE4D6] text-sm leading-relaxed opacity-90 font-light">
               Connecting Farmers, Growing Futures
             </p>
@@ -89,12 +94,8 @@ export default function LoginPage() {
         {/* Right side - Login form */}
         <div className="lg:w-3/5 p-6 md:p-8 lg:p-10 flex flex-col justify-center bg-white rounded-t-[20px] lg:rounded-tr-[20px] lg:rounded-bl-none">
           <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
-              Welcome to Farmlytics
-            </h2>
-            <p className="text-gray-600 text-sm">
-              Connect to your account
-            </p>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome to Farmlytics</h2>
+            <p className="text-gray-600 text-sm">Connect to your account</p>
           </div>
 
           <Form {...form}>
@@ -155,7 +156,7 @@ export default function LoginPage() {
               />
 
               {/* Remember me */}
-              <div className="flex items-center justify-start mt-3">
+              <div className="flex items-center justify-between mt-3">
                 <FormField
                   control={form.control}
                   name="rememberMe"
@@ -174,6 +175,13 @@ export default function LoginPage() {
                     </FormItem>
                   )}
                 />
+
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-[#4F8B52] hover:text-[#5AA45D] font-medium hover:underline underline-offset-2 transition-colors duration-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4F8B52] rounded"
+                >
+                  Forgot Password?
+                </Link>
               </div>
 
               <Button
@@ -183,7 +191,26 @@ export default function LoginPage() {
               >
                 {isPending ? (
                   <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.062 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.062 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
                     Logging In...
                   </span>
                 ) : (
