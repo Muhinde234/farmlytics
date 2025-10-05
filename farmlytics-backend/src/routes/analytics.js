@@ -1,6 +1,10 @@
-// src/routes/analytics.js
 const express = require('express');
-const { getYieldTrends, getDemandTrends } = require('../controllers/analyticsController');
+const { 
+    getYieldTrends, 
+    getDemandTrends,
+    getMyYieldPerformance, // NEW: Personal Yield Performance
+    getMyRevenueTrends     // NEW: Personal Revenue Trends
+} = require('../controllers/analyticsController');
 const { protect, authorize } = require('../middlewares/auth');
 
 const router = express.Router();
@@ -19,7 +23,7 @@ router.use(protect);
  * @swagger
  * /analytics/yield-trends:
  *   get:
- *     summary: Get historical yield trends for a crop in a district
+ *     summary: Get historical yield trends for a crop in a district (Mock Data)
  *     tags: [Analytics & Reporting]
  *     security:
  *       - bearerAuth: []
@@ -60,7 +64,7 @@ router.use(protect);
  *               type: object
  *               properties:
  *                 success: { type: boolean, example: true }
- *                 message: { type: string, example: "This is mock historical yield trend data. Full implementation requires historical data sources." }
+ *                 message: { type: string, example: "This is mock historical yield trend data. Full implementation requires multiple years of SAS-like data." }
  *                 data:
  *                   type: array
  *                   items:
@@ -80,13 +84,13 @@ router.use(protect);
  *       404:
  *         description: Invalid district or crop.
  */
-router.get('/yield-trends', authorize('farmer', 'admin'), getYieldTrends);
+router.get('/yield-trends', authorize('farmer', 'admin', 'buyer'), getYieldTrends); // Allow buyers to see trends
 
 /**
  * @swagger
  * /analytics/demand-trends:
  *   get:
- *     summary: Get historical demand trends for a crop in a location
+ *     summary: Get historical demand trends for a crop in a location (Mock Data)
  *     tags: [Analytics & Reporting]
  *     security:
  *       - bearerAuth: []
@@ -135,7 +139,7 @@ router.get('/yield-trends', authorize('farmer', 'admin'), getYieldTrends);
  *               type: object
  *               properties:
  *                 success: { type: boolean, example: true }
- *                 message: { type: string, example: "This is mock historical demand trend data. Full implementation requires historical data sources." }
+ *                 message: { type: string, example: "This is mock historical demand trend data. Full implementation requires multiple years of EICV-like data." }
  *                 data:
  *                   type: array
  *                   items:
@@ -156,6 +160,138 @@ router.get('/yield-trends', authorize('farmer', 'admin'), getYieldTrends);
  *       404:
  *         description: Invalid location or crop.
  */
-router.get('/demand-trends', authorize('farmer', 'buyer', 'admin'), getDemandTrends);
+router.get('/demand-trends', authorize('farmer', 'admin', 'buyer'), getDemandTrends);
+
+/**
+ * @swagger
+ * /analytics/my-yield-performance:
+ *   get:
+ *     summary: Get logged-in user's personal yield performance trends (Real Data from MongoDB)
+ *     tags: [Analytics & Reporting]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: crop
+ *         schema:
+ *           type: string
+ *           enum: [Maize, Beans, Irish potatoes, Cassava, Tomatoes]
+ *         description: Filter by specific crop.
+ *         example: Maize
+ *       - in: query
+ *         name: year_start
+ *         schema:
+ *           type: integer
+ *         description: Start year for the trend data (e.g., 2022). Defaults to 3 years ago.
+ *         example: 2022
+ *       - in: query
+ *         name: year_end
+ *         schema:
+ *           type: integer
+ *         description: End year for the trend data (e.g., 2025). Defaults to current year.
+ *         example: 2025
+ *       - in: query
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         description: (Admin only) Filter by a specific user ID.
+ *         example: 60c72b2f9c1e4b001c8e4d3a
+ *     responses:
+ *       200:
+ *         description: User's personal yield performance from their recorded crop plans.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Personal yield performance data from your recorded crop plans." }
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: object
+ *                         properties:
+ *                           year: { type: integer, example: 2024 }
+ *                           crop: { type: string, example: "Maize" }
+ *                       avgEstimatedYieldKgPerHa: { type: number, format: float, example: 700.0 }
+ *                       avgActualYieldKgPerHa: { type: number, format: float, example: 650.0 }
+ *                       totalEstimatedProductionKg: { type: number, format: float, example: 1400.0 }
+ *                       totalActualProductionKg: { type: number, format: float, example: 1300.0 }
+ *                       count: { type: integer, example: 2 }
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/my-yield-performance', authorize('farmer', 'admin'), getMyYieldPerformance);
+
+/**
+ * @swagger
+ * /analytics/my-revenue-trends:
+ *   get:
+ *     summary: Get logged-in user's personal revenue trends (Real Data from MongoDB)
+ *     tags: [Analytics & Reporting]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: crop
+ *         schema:
+ *           type: string
+ *           enum: [Maize, Beans, Irish potatoes, Cassava, Tomatoes]
+ *         description: Filter by specific crop.
+ *         example: Maize
+ *       - in: query
+ *         name: year_start
+ *         schema:
+ *           type: integer
+ *         description: Start year for the trend data (e.g., 2022). Defaults to 3 years ago.
+ *         example: 2022
+ *       - in: query
+ *         name: year_end
+ *         schema:
+ *           type: integer
+ *         description: End year for the trend data (e.g., 2025). Defaults to current year.
+ *         example: 2025
+ *       - in: query
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         description: (Admin only) Filter by a specific user ID.
+ *         example: 60c72b2f9c1e4b001c8e4d3a
+ *     responses:
+ *       200:
+ *         description: User's personal revenue performance from their recorded crop plans.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Personal revenue performance data from your recorded crop plans." }
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: object
+ *                         properties:
+ *                           year: { type: integer, example: 2024 }
+ *                           crop: { type: string, example: "Maize" }
+ *                       avgEstimatedRevenueRwf: { type: number, format: float, example: 420000.0 }
+ *                       avgActualRevenueRwf: { type: number, format: float, example: 390000.0 }
+ *                       totalEstimatedRevenueRwf: { type: number, format: float, example: 840000.0 }
+ *                       totalActualRevenueRwf: { type: number, format: float, example: 780000.0 }
+ *                       count: { type: integer, example: 2 }
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/my-revenue-trends', authorize('farmer', 'admin'), getMyRevenueTrends);
 
 module.exports = router;

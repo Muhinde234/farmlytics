@@ -4,8 +4,9 @@ const {
     getCropPlan,
     createCropPlan,
     updateCropPlan,
-    deleteCropPlan
-} = require('../controllers/cropPlanController'); 
+    deleteCropPlan,
+    recordHarvest // New: Import recordHarvest
+} = require('../controllers/cropPlanController');
 const { protect, authorize } = require('../middlewares/auth');
 
 const router = express.Router();
@@ -17,7 +18,9 @@ const router = express.Router();
  *   description: Manage farmer's crop planting plans and estimates
  */
 
-router.use(protect); 
+// All crop plan routes require authentication
+router.use(protect);
+
 /**
  * @swagger
  * /crop-plans:
@@ -104,13 +107,13 @@ router.route('/')
      *               type: object
      *               properties:
      *                 success: { type: boolean, example: true }
- *                 data:
- *                   $ref: '#/components/schemas/CropPlan'
- *       400:
- *         description: Bad request (e.g., validation error, missing fields)
- *       401:
- *         description: Unauthorized
- *       403:
+     *                 data:
+     *                   $ref: '#/components/schemas/CropPlan'
+     *       400:
+     *         description: Bad request (e.g., validation error, missing fields)
+     *       401:
+     *         description: Unauthorized
+     *       403:
  *         description: Forbidden (only farmers/admin can create plans)
  *       500:
  *         description: Error generating estimates or server error
@@ -188,6 +191,9 @@ router.route('/')
  *                 type: string
  *                 enum: [Planned, Planted, Harvested, Completed, Cancelled]
  *                 example: Harvested
+ *               harvestNotes:
+ *                 type: string
+ *                 example: "Good harvest, mild rain"
  *     responses:
  *       200:
  *         description: Crop plan updated successfully. Estimates are automatically re-generated if relevant fields change.
@@ -242,5 +248,70 @@ router.route('/:id')
     .get(authorize('farmer', 'admin'), getCropPlan)
     .put(authorize('farmer', 'admin'), updateCropPlan)
     .delete(authorize('farmer', 'admin'), deleteCropPlan);
+
+/**
+ * @swagger
+ * /crop-plans/{id}/record-harvest:
+ *   post:
+ *     summary: Record actual harvest data for a specific crop plan
+ *     tags: [Crop Plans]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the crop plan to record harvest for.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - actualHarvestDate
+ *               - actualYieldKgPerHa
+ *               - actualSellingPricePerKgRwf
+ *             properties:
+ *               actualHarvestDate:
+ *                 type: string
+ *                 format: date
+ *                 example: 2025-09-15
+ *               actualYieldKgPerHa:
+ *                 type: number
+ *                 format: float
+ *                 minimum: 0
+ *                 example: 12000.0
+ *               actualSellingPricePerKgRwf:
+ *                 type: number
+ *                 format: float
+ *                 minimum: 0
+ *                 example: 300.0
+ *               harvestNotes:
+ *                 type: string
+ *                 example: "Harvested earlier than expected, good yield."
+ *     responses:
+ *       200:
+ *         description: Actual harvest data recorded successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data:
+ *                   $ref: '#/components/schemas/CropPlan'
+ *       400:
+ *         description: Bad request (e.g., missing data, invalid numbers)
+ *       401:
+ *         description: Unauthorized (user does not own this plan)
+ *       404:
+ *         description: Crop plan not found
+ *       500:
+ *         description: Server error
+ */
+router.post('/:id/record-harvest', authorize('farmer', 'admin'), recordHarvest);
 
 module.exports = router;
