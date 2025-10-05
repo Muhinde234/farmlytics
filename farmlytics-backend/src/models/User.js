@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto'); 
-const config = require('../config'); 
+const crypto = require('crypto'); // Import crypto for token generation
+const config = require('../config'); // Import our config for JWT secret
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -22,26 +22,45 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a password'],
         minlength: 6,
-        select: false 
+        select: false // Don't return password in query results by default
     },
     role: {
         type: String,
         enum: ['admin', 'farmer', 'buyer'],
-        default: 'farmer' 
+        default: 'farmer' // Default role for new users
     },
-    isVerified: { 
+    isVerified: { // For email verification
         type: Boolean,
         default: false
     },
-    emailVerificationToken: String, 
-    emailVerificationExpire: Date, 
+    emailVerificationToken: String, // For email verification
+    emailVerificationExpire: Date, // For email verification
+    resetPasswordToken: String, // For password reset
+    resetPasswordExpire: Date, // For password reset token expiration
+    preferredDistrictName: { // New: For user personalization
+        type: String,
+        trim: true,
+        default: null
+    },
+    preferredProvinceName: { // New: For user personalization
+        type: String,
+        trim: true,
+        default: null
+    },
+    preferredLanguage: { // New: For user personalization
+        type: String,
+        enum: ['en', 'fr', 'rw'],
+        default: 'en'
+    },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
 
+// Encrypt password using bcrypt before saving
 UserSchema.pre('save', async function(next) {
+    // Only hash if password has been modified or is new
     if (!this.isModified('password')) {
         next();
     }
@@ -49,31 +68,44 @@ UserSchema.pre('save', async function(next) {
     this.password = await bcrypt.hash(this.password, salt);
 });
 
-
+// Sign JWT and return
 UserSchema.methods.getSignedJwtToken = function() {
     return jwt.sign({ id: this._id, role: this.role }, config.jwtSecret, {
         expiresIn: config.jwtExpire
     });
 };
 
-
+// Match user entered password to hashed password in database
 UserSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
+// Generate and hash email verification token
 UserSchema.methods.generateEmailVerificationToken = function() {
-    
     const verificationToken = crypto.randomBytes(20).toString('hex');
-
     this.emailVerificationToken = crypto
         .createHash('sha256')
         .update(verificationToken)
         .digest('hex');
-
-
-    this.emailVerificationExpire = Date.now() + 60 * 60 * 1000;
-
+    this.emailVerificationExpire = Date.now() + 60 * 60 * 1000; // 1 hour
     return verificationToken;
+};
+
+// Generate and hash password reset token
+UserSchema.methods.getResetPasswordToken = function() {
+    // Generate token
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // Hash token and set to resetPasswordToken field
+    this.resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    // Set expire (e.g., 10 minutes)
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+    return resetToken;
 };
 
 module.exports = mongoose.model('User', UserSchema);

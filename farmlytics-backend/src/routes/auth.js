@@ -1,6 +1,15 @@
 const express = require('express');
-const { register, login, getMe, verifyEmail } = require('../controllers/authController'); 
-const { protect } = require('../middlewares/auth');
+const { 
+    register, 
+    login, 
+    getMe, 
+    updateMe, // New: Update profile
+    verifyEmail,
+    forgotPassword, // New: Forgot password flow
+    resetPassword,  // New: Reset password with token
+    updatePassword  // New: Change password while logged in
+} = require('../controllers/authController');
+const { protect, authorize } = require('../middlewares/auth');
 
 const router = express.Router();
 
@@ -30,11 +39,11 @@ const router = express.Router();
  *             properties:
  *               name:
  *                 type: string
- *                 example: Aline KIM
+ *                 example: John Doe
  *               email:
  *                 type: string
  *                 format: email
- *                 example: newfarmer@gmail.com
+ *                 example: new.user@example.com
  *               password:
  *                 type: string
  *                 format: password
@@ -63,8 +72,8 @@ const router = express.Router();
  *                   type: object
  *                   properties:
  *                     id: { type: string, example: "60c72b2f9c1e4b001c8e4d3a" }
- *                     name: { type: string, example: "KIM Aline" }
- *                     email: { type: string, example: "newfarmerlytics@gmail.com" }
+ *                     name: { type: string, example: "John Doe" }
+ *                     email: { type: string, example: "new.user@example.com" }
  *                     role: { type: string, example: "farmer" }
  *                     isVerified: { type: boolean, example: false }
  *       400:
@@ -93,7 +102,7 @@ router.post('/register', register);
  *               email:
  *                 type: string
  *                 format: email
- *                 example: newfarmer@gmail.com
+ *                 example: john.doe@example.com
  *               password:
  *                 type: string
  *                 format: password
@@ -116,10 +125,13 @@ router.post('/register', register);
  *                   type: object
  *                   properties:
  *                     id: { type: string, example: "60c72b2f9c1e4b001c8e4d3a" }
- *                     name: { type: string, example: "Aline KIM" }
- *                     email: { type: string, example: "newfarmer@gmail.com" }
+ *                     name: { type: string, example: "John Doe" }
+ *                     email: { type: string, example: "john.doe@example.com" }
  *                     role: { type: string, example: "farmer" }
  *                     isVerified: { type: boolean, example: true }
+ *                     preferredDistrictName: { type: string, example: "Gasabo" }
+ *                     preferredProvinceName: { type: string, example: "Kigali City" }
+ *                     preferredLanguage: { type: string, example: "en" }
  *       400:
  *         description: Bad request (e.g., missing fields)
  *       401:
@@ -150,15 +162,62 @@ router.post('/login', login);
  *                   type: object
  *                   properties:
  *                     _id: { type: string, example: "60c72b2f9c1e4b001c8e4d3a" }
- *                     name: { type: string, example: "Aline KIM" }
- *                     email: { type: string, example: "newfarmer@gmail.com" }
+ *                     name: { type: string, example: "John Doe" }
+ *                     email: { type: string, example: "john.doe@example.com" }
  *                     role: { type: string, example: "farmer" }
  *                     isVerified: { type: boolean, example: true }
+ *                     preferredDistrictName: { type: string, example: "Gasabo" }
+ *                     preferredProvinceName: { type: string, example: "Kigali City" }
+ *                     preferredLanguage: { type: string, example: "en" }
  *                     createdAt: { type: string, format: date-time }
  *       401:
  *         description: Unauthorized (e.g., no token, invalid token)
+ *   put:
+ *     summary: Update current logged in user's profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Johnathan Doe
+ *               preferredDistrictName:
+ *                 type: string
+ *                 example: Nyamagabe
+ *               preferredProvinceName:
+ *                 type: string
+ *                 example: Southern Province
+ *               preferredLanguage:
+ *                 type: string
+ *                 enum: [en, fr, rw]
+ *                 example: fr
+ *     responses:
+ *       200:
+ *         description: User profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request (e.g., validation error)
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
  */
-router.get('/me', protect, getMe);
+router.route('/me')
+    .get(protect, getMe)
+    .put(protect, updateMe);
 
 /**
  * @swagger
@@ -174,13 +233,153 @@ router.get('/me', protect, getMe);
  *         required: true
  *         description: The email verification token received in the user's email.
  *     responses:
- *       302:
- *         description: Redirects to frontend login page on successful verification.
+ *       200:
+ *         description: HTML page indicating successful verification.
  *       400:
- *         description: Invalid or expired verification token.
+ *         description: HTML page indicating invalid or expired verification token.
  *       500:
  *         description: Server error during verification.
  */
 router.get('/verifyemail/:token', verifyEmail);
+
+/**
+ * @swagger
+ * /auth/forgotpassword:
+ *   post:
+ *     summary: Initiate password reset by sending a reset email
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *     responses:
+ *       200:
+ *         description: Email sent for password reset.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "Email sent for password reset." }
+ *       404:
+ *         description: No user found with that email address.
+ *       500:
+ *         description: Email could not be sent (server issue).
+ */
+router.post('/forgotpassword', forgotPassword);
+
+/**
+ * @swagger
+ * /auth/resetpassword/{token}:
+ *   put:
+ *     summary: Reset password using a valid token
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The password reset token received in the email.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *               - confirmPassword
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 example: newpassword123
+ *               confirmPassword:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 example: newpassword123
+ *     responses:
+ *       200:
+ *         description: Password reset successfully. User logged in.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 token: { type: string, example: "eyJ..." }
+ *                 user: { type: object, properties: { id: { type: string }, email: { type: string } } }
+ *       400:
+ *         description: Invalid or expired reset token, or passwords do not match.
+ *       500:
+ *         description: Server error.
+ */
+router.put('/resetpassword/:token', resetPassword);
+
+/**
+ * @swagger
+ * /auth/updatepassword:
+ *   put:
+ *     summary: Update password for the logged-in user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *               - confirmNewPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 format: password
+ *                 example: password123
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 example: brandnewpassword
+ *               confirmNewPassword:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 example: brandnewpassword
+ *     responses:
+ *       200:
+ *         description: Password updated successfully. User logged in with new token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 token: { type: string, example: "eyJ..." }
+ *                 user: { type: object, properties: { id: { type: string }, email: { type: string } } }
+ *       400:
+ *         description: New passwords do not match.
+ *       401:
+ *         description: Unauthorized (e.g., current password incorrect, invalid token).
+ *       500:
+ *         description: Server error.
+ */
+router.put('/updatepassword', protect, updatePassword);
 
 module.exports = router;
