@@ -63,6 +63,13 @@ const swaggerOptions = {
                         estimatedTotalProductionKg: { type: 'number', format: 'float', example: 1500.0 },
                         estimatedPricePerKgRwf: { type: 'number', format: 'float', example: 350.0 },
                         estimatedRevenueRwf: { type: 'number', format: 'float', example: 525000.0 },
+                        // NEW ACTUAL FIELDS
+                        actualHarvestDate: { type: 'string', format: 'date', example: '2025-09-15', nullable: true },
+                        actualYieldKgPerHa: { type: 'number', format: 'float', example: 580.0, nullable: true },
+                        actualTotalProductionKg: { type: 'number', format: 'float', example: 1450.0, nullable: true },
+                        actualSellingPricePerKgRwf: { type: 'number', format: 'float', example: 370.0, nullable: true },
+                        actualRevenueRwf: { type: 'number', format: 'float', example: 536500.0, nullable: true },
+                        harvestNotes: { type: 'string', example: 'Good yield, slightly above average.', nullable: true },
                         status: { type: 'string', enum: ['Planned', 'Planted', 'Harvested', 'Completed', 'Cancelled'], example: 'Planted' },
                         createdAt: { type: 'string', format: 'date-time' }
                     }
@@ -90,15 +97,15 @@ const marketRoutes = require('./routes/market');
 const trackerRoutes = require('./routes/tracker');
 const cropPlanRoutes = require('./routes/cropPlan');
 const referenceDataRoutes = require('./routes/referenceData');
-const analyticsRoutes = require('./routes/analytics'); // New: Import analytics routes
+const analyticsRoutes = require('./routes/analytics');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/crops', cropPlannerRoutes);
 app.use('/api/v1/market', marketRoutes);
 app.use('/api/v1/tracker', trackerRoutes);
 app.use('/api/v1/crop-plans', cropPlanRoutes);
-app.use('/api/v1', referenceDataRoutes); // Reference data mounted at /api/v1 base
-app.use('/api/v1', analyticsRoutes); // New: Mount analytics routes at /api/v1 base
+app.use('/api/v1', referenceDataRoutes);
+app.use('/api/v1', analyticsRoutes);
 
 
 app.get('/', (req, res) => {
