@@ -26,3 +26,5 @@
 {"level":"info","message":"::1 - - [07/Oct/2025:17:06:33 +0000] \"GET /api/v1/auth/verifyemail/4129d5b5f216dd6b1a8fff8f93d32c03247a5f38 HTTP/1.1\" 200 2177 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0\"","timestamp":"2025-10-07 10:06:33"}
 {"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:06:55"}
 {"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:06:55"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:16:22"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:16:23"}
