@@ -27,8 +27,9 @@ app.use(limiter);
 // Morgan for HTTP request logging, piped to Winston
 app.use(morgan('combined', { stream: logger.stream })); 
 
-// Allow all origins for CORS (IMPORTANT: RESTRICT IN PRODUCTION!)
-app.use(cors({ origin: '*' })); // FIX: Allow all origins explicitly
+app.use(cors({
+  origin: ['*', 'https://farmlytics1-1.onrender.com'],
+}));
 
 app.use(express.json());
 
