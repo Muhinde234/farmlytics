@@ -2,11 +2,13 @@ const app = require('./app');
 const connectDB = require('./config/db');
 const config = require('./config');
 const User = require('./models/User');
-const analyticsService = require('./utils/analyticsService'); 
+const analyticsService = require('./utils/analyticsService');
+const logger = require('./config/winston'); // NEW: Import Winston logger
 
-
+// Connect to database
 connectDB();
 
+// Function to seed admin user
 const seedAdmin = async () => {
     try {
         const adminExists = await User.findOne({ email: config.adminEmail });
@@ -17,29 +19,37 @@ const seedAdmin = async () => {
                 password: config.adminPassword,
                 role: 'admin'
             });
-            console.log('Admin user seeded successfully.');
+            logger.info('Admin user seeded successfully.'); // Use logger
         } else {
-            console.log('Admin user already exists.');
+            logger.info('Admin user already exists.'); // Use logger
         }
     } catch (error) {
-        console.error('Error seeding admin user:', error.message);
+        logger.error(`Error seeding admin user: ${error.message}`); // Use logger
     }
 };
 
-
+// Start the server and initialize analytics services
 const startServer = async () => {
-    await analyticsService.init();
-    const PORT = config.port;
+    try {
+        await analyticsService.init(); // Initialize analytics services first
 
-    app.listen(PORT, () => {
-        console.log(`Server running in ${config.nodeEnv} mode on port ${PORT}`);
-        seedAdmin(); 
-    });
+        const PORT = config.port;
+
+        app.listen(PORT, () => {
+            logger.info(`Server running in ${config.nodeEnv} mode on port ${PORT}`); // Use logger
+            seedAdmin(); // Seed admin after server starts
+        });
+    } catch (error) {
+        logger.error(`CRITICAL SERVER ERROR: Failed to initialize analytics services or start server: ${error.message}`); // Use logger
+        process.exit(1); // Exit process with failure
+    }
 };
 
-startServer(); 
+startServer(); // Call the async function to start the server
 
+// Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
-    console.error(`Error: ${err.message}`);
-   
+    logger.error(`Unhandled Rejection Error: ${err.message}`, { stack: err.stack }); // Use logger, include stack
+    // Close server & exit process
+    // server.close(() => process.exit(1)); // Uncomment if you want to gracefully shut down the server
 });

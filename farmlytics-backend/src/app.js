@@ -3,6 +3,10 @@ const app = express();
 const config = require('./config');
 const errorHandler = require('./middlewares/error');
 const cors = require('cors');
+const morgan = require('morgan');
+const logger = require('./config/winston');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 // Swagger setup
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -63,7 +67,6 @@ const swaggerOptions = {
                         estimatedTotalProductionKg: { type: 'number', format: 'float', example: 1500.0 },
                         estimatedPricePerKgRwf: { type: 'number', format: 'float', example: 350.0 },
                         estimatedRevenueRwf: { type: 'number', format: 'float', example: 525000.0 },
-                        // NEW ACTUAL FIELDS
                         actualHarvestDate: { type: 'string', format: 'date', example: '2025-09-15', nullable: true },
                         actualYieldKgPerHa: { type: 'number', format: 'float', example: 580.0, nullable: true },
                         actualTotalProductionKg: { type: 'number', format: 'float', example: 1450.0, nullable: true },
@@ -87,6 +90,22 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+// Helmet for security headers
+app.use(helmet()); 
+
+// Rate Limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use(limiter);
+
+// Morgan for HTTP request logging, piped to Winston
+app.use(morgan('combined', { stream: logger.stream })); 
+
 app.use(cors());
 app.use(express.json());
 
@@ -98,14 +117,18 @@ const trackerRoutes = require('./routes/tracker');
 const cropPlanRoutes = require('./routes/cropPlan');
 const referenceDataRoutes = require('./routes/referenceData');
 const analyticsRoutes = require('./routes/analytics');
+const adminRoutes = require('./routes/admin');
+const mlRoutes = require('./routes/ml'); // NEW: Import ML routes
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/crops', cropPlannerRoutes);
 app.use('/api/v1/market', marketRoutes);
 app.use('/api/v1/tracker', trackerRoutes);
 app.use('/api/v1/crop-plans', cropPlanRoutes);
-app.use('/api/v1', referenceDataRoutes);
-app.use('/api/v1', analyticsRoutes);
+app.use('/api/v1', referenceDataRoutes); // Reference data mounted at /api/v1 base
+app.use('/api/v1', analyticsRoutes);     // Analytics routes mounted at /api/v1 base
+app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/ml', mlRoutes);         // NEW: Mount ML routes
 
 
 app.get('/', (req, res) => {

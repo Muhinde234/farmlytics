@@ -8,13 +8,12 @@ module.exports = {
     jwtExpire: process.env.JWT_EXPIRE,
     adminEmail: process.env.ADMIN_EMAIL,
     adminPassword: process.env.ADMIN_PASSWORD,
-    
     emailHost: process.env.EMAIL_HOST,
     emailPort: process.env.EMAIL_PORT,
     emailUser: process.env.EMAIL_USER,
     emailPass: process.env.EMAIL_PASS,
-    baseFrontendUrl: process.env.BASE_FRONTEND_URL,
-
     noReplyEmail: process.env.NOREPLY_EMAIL,
-    senderName: process.env.SENDER_NAME
+    senderName: process.env.SENDER_NAME,
+    baseFrontendUrl: process.env.BASE_FRONTEND_URL,
+    notificationServiceApiKey: process.env.NOTIFICATION_SERVICE_API_KEY 
 };

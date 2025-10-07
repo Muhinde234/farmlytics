@@ -37,20 +37,24 @@ const UserSchema = new mongoose.Schema({
     emailVerificationExpire: Date, // For email verification
     resetPasswordToken: String, // For password reset
     resetPasswordExpire: Date, // For password reset token expiration
-    preferredDistrictName: { // New: For user personalization
+    preferredDistrictName: { // For user personalization
         type: String,
         trim: true,
         default: null
     },
-    preferredProvinceName: { // New: For user personalization
+    preferredProvinceName: { // For user personalization
         type: String,
         trim: true,
         default: null
     },
-    preferredLanguage: { // New: For user personalization
+    preferredLanguage: { // For user personalization
         type: String,
         enum: ['en', 'fr', 'rw'],
         default: 'en'
+    },
+    deviceTokens: { // NEW: Array to store device tokens for push notifications
+        type: [String],
+        default: []
     },
     createdAt: {
         type: Date,

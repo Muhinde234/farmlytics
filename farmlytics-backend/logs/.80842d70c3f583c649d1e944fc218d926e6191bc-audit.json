@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Users\\iTEK\\Desktop\\Projects\\farmlytics\\farmlytics-backend\\logs\\.80842d70c3f583c649d1e944fc218d926e6191bc-audit.json",
+    "files": [
+        {
+            "date": 1759812607680,
+            "name": "C:\\Users\\iTEK\\Desktop\\Projects\\farmlytics\\farmlytics-backend\\logs\\application-2025-10-06.log",
+            "hash": "bcccaa7944b24b36fd92f4efe5b62cdaf647c2ec9fd333cf0422fe70428bc761"
+        }
+    ],
+    "hashType": "sha256"
+}
