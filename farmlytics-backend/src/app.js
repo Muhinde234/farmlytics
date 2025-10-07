@@ -28,7 +28,12 @@ app.use(limiter);
 app.use(morgan('combined', { stream: logger.stream })); 
 
 // Allow all origins for CORS (IMPORTANT: RESTRICT IN PRODUCTION!)
-app.use(cors({ origin: '*' })); // FIX: Allow all origins explicitly
+// Explicitly allow common methods and headers for development
+app.use(cors({ 
+    origin: '*', // Allow all for development
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow common methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'] // Allow common headers
+})); 
 
 app.use(express.json());
 
@@ -50,8 +55,9 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: `http://localhost:${config.port}/api/v1`,
-                description: 'Development server'
+                // CRITICAL FIX: Use https for Swagger UI base URL for deployments
+                url: `${config.nodeEnv === 'production' ? 'https' : 'http'}://${process.env.RENDER_EXTERNAL_HOSTNAME || `localhost:${config.port}`}/api/v1`,
+                description: 'Deployment / Development server'
             }
         ],
         components: {

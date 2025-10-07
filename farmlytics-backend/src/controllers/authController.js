@@ -3,7 +3,7 @@ const User = require('../models/User');
 const config = require('../config');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
-const logger = require('../config/winston'); // Import Winston logger
+const logger = require('../config/winston'); 
 
 // Helper function to send JWT response (already defined, but ensuring it's here)
 const sendTokenResponse = (user, statusCode, res) => {
@@ -58,10 +58,11 @@ exports.register = asyncHandler(async (req, res, next) => {
     const verificationToken = user.generateEmailVerificationToken();
     await user.save({ validateBeforeSave: false });
 
-    // Create verification URL (always pointing to backend endpoint for handling)
-    const verificationLink = `${req.protocol}://${req.get('host')}/api/v1/auth/verifyemail/${verificationToken}`;
+    // CRITICAL FIX: Dynamically determine protocol for verification link
+    const currentProtocol = req.protocol === 'https' ? 'https' : 'http';
+    const currentHost = req.get('host');
+    const verificationLink = `${currentProtocol}://${currentHost}/api/v1/auth/verifyemail/${verificationToken}`;
 
-    // Construct email message with Rwandan flag colors (conceptually)
     const message = `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <p style="color: #007A3D;">Hello ${user.name},</p>
@@ -138,7 +139,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
     if (!user.isVerified) {
         res.status(401);
-        throw new new Error('Please verify your email to log in. Check your inbox for a verification link.');
+        throw new Error('Please verify your email to log in. Check your inbox for a verification link.');
     }
 
     const isMatch = await user.matchPassword(password);
@@ -204,6 +205,11 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
         emailVerificationExpire: { $gt: Date.now() }
     });
 
+    // CRITICAL FIX: Dynamically determine protocol for all links in rendered HTML
+    const currentProtocol = req.protocol === 'https' ? 'https' : 'http';
+    const currentHost = req.get('host');
+
+
     if (!user) {
         logger.warn('Email verification failed: Invalid or expired token.', { token: req.params.token });
         res.status(400).send(`
@@ -227,7 +233,7 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
                     <h1>Email Verification Failed!</h1>
                     <p>The verification link is invalid or has expired.</p>
                     <p>Please try registering again or contact support if you continue to experience issues.</p>
-                    <p><a href="${req.protocol}://${req.get('host')}/api-docs">Go to API Documentation</a></p>
+                    <p><a href="${currentProtocol}://${currentHost}/api-docs">Go to API Documentation</a></p>
                 </div>
             </body>
             </html>
@@ -241,7 +247,6 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
     await user.save();
     logger.info(`User ${user.email} successfully verified their email.`);
 
-    
     res.status(200).send(`
         <!DOCTYPE html>
         <html lang="en">
@@ -269,10 +274,15 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
         </head>
         <body>
             <div class="container">
-                <h1>Email Successfully Verified!</h1>
+                <h1>✅ Email Successfully Verified!</h1>
                 <p>Your Farmlytics account is now active and ready to use.</p>
                 <p>You can now close this window and log in to the Farmlytics application.</p>
-            
+                <p>
+                    <a href="${currentProtocol}://${currentHost}/api/v1/auth/login">Continue to Login (Backend API endpoint)</a>
+                </p>
+                <p>
+                    <a href="${currentProtocol}://${currentHost}/api-docs">Explore API Documentation</a>
+                </p>
                 <div class="flag-colors">
                     <div class="flag-color-green"></div>
                     <div class="flag-color-yellow"></div>
@@ -299,8 +309,10 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false });
 
-    // Create reset URL (always pointing to backend for now)
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword-form/${resetToken}`; // A new endpoint to render the form
+    // CRITICAL FIX: Dynamically determine protocol for reset URL
+    const currentProtocol = req.protocol === 'https' ? 'https' : 'http';
+    const currentHost = req.get('host');
+    const resetUrl = `${currentProtocol}://${currentHost}/api/v1/auth/resetpassword-form/${resetToken}`;
 
     const message = `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -362,6 +374,10 @@ exports.renderResetPasswordForm = asyncHandler(async (req, res, next) => {
         resetPasswordExpire: { $gt: Date.now() }
     });
 
+    // CRITICAL FIX: Dynamically determine protocol for all links in rendered HTML
+    const currentProtocol = req.protocol === 'https' ? 'https' : 'http';
+    const currentHost = req.get('host');
+
     if (!user) {
         logger.warn('Password reset form requested with invalid or expired token.', { token: req.params.token });
         res.status(400).send(`
@@ -385,7 +401,7 @@ exports.renderResetPasswordForm = asyncHandler(async (req, res, next) => {
                     <h1>Password Reset Failed!</h1>
                     <p>The password reset link is invalid or has expired.</p>
                     <p>Please request a new password reset or contact support.</p>
-                    <p><a href="${req.protocol}://${req.get('host')}/api-docs">Go to API Documentation</a></p>
+                    <p><a href="${currentProtocol}://${currentHost}/api-docs">Go to API Documentation</a></p>
                 </div>
             </body>
             </html>
@@ -436,7 +452,7 @@ exports.renderResetPasswordForm = asyncHandler(async (req, res, next) => {
         <body>
             <div class="container">
                 <h1>Set New Password</h1>
-                <form action="/api/v1/auth/resetpassword/${req.params.token}" method="POST" onsubmit="return validatePassword()">
+                <form action="${currentProtocol}://${currentHost}/api/v1/auth/resetpassword/${req.params.token}" method="POST" onsubmit="return validatePassword()">
                     <input type="hidden" name="_method" value="PUT"> <!-- Method override for PUT -->
                     <input type="password" id="password" name="password" placeholder="New Password" required minlength="6">
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm New Password" required minlength="6">
@@ -494,7 +510,7 @@ exports.renderResetPasswordForm = asyncHandler(async (req, res, next) => {
                             messageDiv.textContent = 'Password has been reset successfully. You can now login!';
                             messageDiv.classList.add('success');
                             // Optionally, redirect after a short delay
-                            // setTimeout(() => { window.location.href = '${req.protocol}://${req.get('host')}/api/v1/auth/login'; }, 3000);
+                            // setTimeout(() => { window.location.href = '${currentProtocol}://${currentHost}/api/v1/auth/login'; }, 3000);
                         } else {
                             messageDiv.textContent = data.error || 'Failed to reset password.';
                             messageDiv.classList.add('error');
@@ -552,7 +568,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 // @route     PUT /api/v1/auth/updatepassword
 // @access    Private
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id).select('+password'); 
+    const user = await User.findById(req.user.id).select('+password'); // Select password to compare
 
     // Check current password
     if (!(await user.matchPassword(req.body.currentPassword))) {
@@ -566,8 +582,8 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
         throw new Error('New passwords do not match.');
     }
 
-    user.password = req.body.newPassword; 
-    await user.save(); 
+    user.password = req.body.newPassword; // Mongoose pre-save hook will hash this
+    await user.save(); // This will trigger the pre-save hook to hash the new password
 
     sendTokenResponse(user, 200, res);
 });
