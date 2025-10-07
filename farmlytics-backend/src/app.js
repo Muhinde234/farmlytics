@@ -27,9 +27,12 @@ app.use(limiter);
 // Morgan for HTTP request logging, piped to Winston
 app.use(morgan('combined', { stream: logger.stream })); 
 
-app.use(cors({
-  origin: ['*', 'https://farmlytics1-1.onrender.com'],
-}));
+app.use(cors({ 
+    origin: '*', // Allow all for development
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow common methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'] // Allow common headers
+})); 
+
 
 app.use(express.json());
 
@@ -51,8 +54,9 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: `http://localhost:${config.port}/api/v1`,
-                description: 'Development server'
+                // CRITICAL FIX: Use https for Swagger UI base URL for deployments
+                url: `${config.nodeEnv === 'production' ? 'https' : 'http'}://${process.env.RENDER_EXTERNAL_HOSTNAME || `localhost:${config.port}`}/api/v1`,
+                description: 'Deployment / Development server'
             }
         ],
         components: {
