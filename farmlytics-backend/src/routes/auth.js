@@ -3,11 +3,12 @@ const {
     register, 
     login, 
     getMe, 
-    updateMe, // New: Update profile
+    updateMe, 
     verifyEmail,
-    forgotPassword, // New: Forgot password flow
-    resetPassword,  // New: Reset password with token
-    updatePassword  // New: Change password while logged in
+    forgotPassword, 
+    resetPassword,  
+    renderResetPasswordForm, // NEW: Render the password reset form
+    updatePassword  
 } = require('../controllers/authController');
 const { protect, authorize } = require('../middlewares/auth');
 
@@ -62,12 +63,8 @@ const router = express.Router();
  *             schema:
  *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: User registered. Please check your email for verification link.
+ *                 success: { type: boolean, example: true }
+ *                 message: { type: string, example: "User registered. Please check your email for verification link." }
  *                 user:
  *                   type: object
  *                   properties:
@@ -115,12 +112,8 @@ router.post('/register', register);
  *             schema:
  *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 token:
- *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 success: { type: boolean, example: true }
+ *                 token: { type: string, example: "eyJ..." }
  *                 user:
  *                   type: object
  *                   properties:
@@ -155,9 +148,7 @@ router.post('/login', login);
  *             schema:
  *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
+ *                 success: { type: boolean, example: true }
  *                 data:
  *                   type: object
  *                   properties:
@@ -223,7 +214,7 @@ router.route('/me')
  * @swagger
  * /auth/verifyemail/{token}:
  *   get:
- *     summary: Verify user email using token
+ *     summary: Verify user email using token (Backend renders success/failure page)
  *     tags: [Auth]
  *     parameters:
  *       - in: path
@@ -280,9 +271,9 @@ router.post('/forgotpassword', forgotPassword);
 
 /**
  * @swagger
- * /auth/resetpassword/{token}:
- *   put:
- *     summary: Reset password using a valid token
+ * /auth/resetpassword-form/{token}:
+ *   get:
+ *     summary: Render HTML form to reset password (Backend renders form)
  *     tags: [Auth]
  *     parameters:
  *       - in: path
@@ -291,6 +282,27 @@ router.post('/forgotpassword', forgotPassword);
  *           type: string
  *         required: true
  *         description: The password reset token received in the email.
+ *     responses:
+ *       200:
+ *         description: HTML page with password reset form.
+ *       400:
+ *         description: HTML page indicating invalid or expired reset token.
+ */
+router.get('/resetpassword-form/:token', renderResetPasswordForm); // NEW route for form
+
+/**
+ * @swagger
+ * /auth/resetpassword/{token}:
+ *   put:
+ *     summary: Reset password using a valid token (handles form submission)
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The password reset token.
  *     requestBody:
  *       required: true
  *       content:
@@ -313,15 +325,14 @@ router.post('/forgotpassword', forgotPassword);
  *                 example: newpassword123
  *     responses:
  *       200:
- *         description: Password reset successfully. User logged in.
+ *         description: Password reset successfully. User can now login.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
  *                 success: { type: boolean, example: true }
- *                 token: { type: string, example: "eyJ..." }
- *                 user: { type: object, properties: { id: { type: string }, email: { type: string } } }
+ *                 message: { type: string, example: "Password reset successfully. You can now login." }
  *       400:
  *         description: Invalid or expired reset token, or passwords do not match.
  *       500:

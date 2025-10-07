@@ -8,7 +8,7 @@ This repository contains the backend API for **Farmlytics**, a comprehensive agr
 
 ## Deployed API Link
 
-`https://farmlytics1.onrender.com/api-docs/`
+`https://farmlytics1-1.onrender.com/api-docs/`
 
 ---
 
