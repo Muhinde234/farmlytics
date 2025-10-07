@@ -27,13 +27,12 @@ app.use(limiter);
 // Morgan for HTTP request logging, piped to Winston
 app.use(morgan('combined', { stream: logger.stream })); 
 
-// Allow all origins for CORS (IMPORTANT: RESTRICT IN PRODUCTION!)
-// Explicitly allow common methods and headers for development
 app.use(cors({ 
     origin: '*', // Allow all for development
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow common methods
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'] // Allow common headers
 })); 
+
 
 app.use(express.json());
 
