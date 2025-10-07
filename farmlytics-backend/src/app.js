@@ -1,20 +1,20 @@
 const express = require('express');
 const app = express();
 const config = require('./config');
-const errorHandler = require('./middlewares/error'); // CORRECTED: Ensure this is correct
-const cors = require('cors');
+const errorHandler = require('./middlewares/error'); 
+const cors = require('cors'); 
 const morgan = require('morgan');
 const logger = require('./config/winston');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-// NEW: Trust proxy for express-rate-limit when deployed behind a proxy (like Render)
+// Trust proxy for express-rate-limit when deployed behind a proxy (like Render)
 app.set('trust proxy', 1);
 
 // Helmet for security headers (applied early)
 app.use(helmet()); 
 
-// Rate Limiting (applied before most routes, except potentially auth if you want different limits)
+// Rate Limiting (applied before most routes)
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // Limit each IP to 100 requests per windowMs
@@ -27,7 +27,9 @@ app.use(limiter);
 // Morgan for HTTP request logging, piped to Winston
 app.use(morgan('combined', { stream: logger.stream })); 
 
-app.use(cors());
+// Allow all origins for CORS (IMPORTANT: RESTRICT IN PRODUCTION!)
+app.use(cors({ origin: '*' })); // FIX: Allow all origins explicitly
+
 app.use(express.json());
 
 // Swagger setup (moved after core middleware for consistent headers)
