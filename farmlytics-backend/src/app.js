@@ -1,14 +1,36 @@
 const express = require('express');
 const app = express();
 const config = require('./config');
-const errorHandler = require('./middlewares/error');
+const errorHandler = require('./middlewares/error'); // CORRECTED: Ensure this is correct
 const cors = require('cors');
 const morgan = require('morgan');
 const logger = require('./config/winston');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-// Swagger setup
+// NEW: Trust proxy for express-rate-limit when deployed behind a proxy (like Render)
+app.set('trust proxy', 1);
+
+// Helmet for security headers (applied early)
+app.use(helmet()); 
+
+// Rate Limiting (applied before most routes, except potentially auth if you want different limits)
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use(limiter);
+
+// Morgan for HTTP request logging, piped to Winston
+app.use(morgan('combined', { stream: logger.stream })); 
+
+app.use(cors());
+app.use(express.json());
+
+// Swagger setup (moved after core middleware for consistent headers)
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -85,29 +107,9 @@ const swaggerOptions = {
     },
     apis: ['./src/routes/*.js', './src/models/*.js', './src/controllers/*.js'],
 };
-
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// Helmet for security headers
-app.use(helmet()); 
-
-// Rate Limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again after 15 minutes',
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-app.use(limiter);
-
-// Morgan for HTTP request logging, piped to Winston
-app.use(morgan('combined', { stream: logger.stream })); 
-
-app.use(cors());
-app.use(express.json());
 
 // Mount routers
 const authRoutes = require('./routes/auth');
@@ -118,23 +120,26 @@ const cropPlanRoutes = require('./routes/cropPlan');
 const referenceDataRoutes = require('./routes/referenceData');
 const analyticsRoutes = require('./routes/analytics');
 const adminRoutes = require('./routes/admin');
-const mlRoutes = require('./routes/ml'); // NEW: Import ML routes
+const mlRoutes = require('./routes/ml');
+const notificationRoutes = require('./routes/notifications');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/crops', cropPlannerRoutes);
 app.use('/api/v1/market', marketRoutes);
 app.use('/api/v1/tracker', trackerRoutes);
 app.use('/api/v1/crop-plans', cropPlanRoutes);
-app.use('/api/v1', referenceDataRoutes); // Reference data mounted at /api/v1 base
-app.use('/api/v1', analyticsRoutes);     // Analytics routes mounted at /api/v1 base
+app.use('/api/v1', referenceDataRoutes);
+app.use('/api/v1', analyticsRoutes);
 app.use('/api/v1/admin', adminRoutes);
-app.use('/api/v1/ml', mlRoutes);         // NEW: Mount ML routes
+app.use('/api/v1/ml', mlRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
 
 
 app.get('/', (req, res) => {
     res.send('Farmlytics API is running...');
 });
 
+// Error handling middleware MUST be after all routes
 app.use(errorHandler);
 
 module.exports = app;

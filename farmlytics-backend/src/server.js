@@ -3,7 +3,9 @@ const connectDB = require('./config/db');
 const config = require('./config');
 const User = require('./models/User');
 const analyticsService = require('./utils/analyticsService');
-const logger = require('./config/winston'); // NEW: Import Winston logger
+const logger = require('./config/winston');
+// REMOVED: const { emailQueue } = require('./config/queue');
+// REMOVED: const emailWorker = require('./workers/emailWorker');
 
 // Connect to database
 connectDB();
@@ -19,37 +21,38 @@ const seedAdmin = async () => {
                 password: config.adminPassword,
                 role: 'admin'
             });
-            logger.info('Admin user seeded successfully.'); // Use logger
+            logger.info('Admin user seeded successfully.');
         } else {
-            logger.info('Admin user already exists.'); // Use logger
+            logger.info('Admin user already exists.');
         }
     } catch (error) {
-        logger.error(`Error seeding admin user: ${error.message}`); // Use logger
+        logger.error(`Error seeding admin user: ${error.message}`);
     }
 };
 
-// Start the server and initialize analytics services
+// Start the server and initialize services
 const startServer = async () => {
     try {
         await analyticsService.init(); // Initialize analytics services first
+        // await connectRedis();       // Skipping Redis caching for now
+        // REMOVED: emailWorker; // No worker to start if feature is skipped
 
         const PORT = config.port;
 
         app.listen(PORT, () => {
-            logger.info(`Server running in ${config.nodeEnv} mode on port ${PORT}`); // Use logger
+            logger.info(`Server running in ${config.nodeEnv} mode on port ${PORT}`);
             seedAdmin(); // Seed admin after server starts
         });
     } catch (error) {
-        logger.error(`CRITICAL SERVER ERROR: Failed to initialize analytics services or start server: ${error.message}`); // Use logger
+        logger.error(`CRITICAL SERVER ERROR: Failed to initialize services or start server: ${error.message}`, { stack: error.stack });
         process.exit(1); // Exit process with failure
     }
 };
 
-startServer(); // Call the async function to start the server
+startServer();
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
-    logger.error(`Unhandled Rejection Error: ${err.message}`, { stack: err.stack }); // Use logger, include stack
-    // Close server & exit process
-    // server.close(() => process.exit(1)); // Uncomment if you want to gracefully shut down the server
+    logger.error(`Unhandled Rejection Error: ${err.message}`, { stack: err.stack });
+    // server.close(() => process.exit(1)); 
 });

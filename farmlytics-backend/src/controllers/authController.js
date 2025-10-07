@@ -3,6 +3,7 @@ const User = require('../models/User');
 const config = require('../config');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
+const logger = require('../config/winston'); // Import Winston logger
 
 // Helper function to send JWT response (already defined, but ensuring it's here)
 const sendTokenResponse = (user, statusCode, res) => {
@@ -55,13 +56,10 @@ exports.register = asyncHandler(async (req, res, next) => {
 
     // Generate verification token
     const verificationToken = user.generateEmailVerificationToken();
-    await user.save({ validateBeforeSave: false }); // Save user with token (skip validation for password hashing pre-hook as it's already hashed)
+    await user.save({ validateBeforeSave: false });
 
-    // Create verification URL
-    // Use config.baseFrontendUrl for email verification, or if not set, use backend's current host
-    const frontendVerifyUrl = `${config.baseFrontendUrl}/verifyemail/${verificationToken}`;
-    const backendVerifyUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/verifyemail/${verificationToken}`;
-    const verificationLink = config.baseFrontendUrl ? frontendVerifyUrl : backendVerifyUrl; // Prefer frontend link
+    // Create verification URL (always pointing to backend endpoint for handling)
+    const verificationLink = `${req.protocol}://${req.get('host')}/api/v1/auth/verifyemail/${verificationToken}`;
 
     // Construct email message with Rwandan flag colors (conceptually)
     const message = `
@@ -99,7 +97,7 @@ exports.register = asyncHandler(async (req, res, next) => {
         res.status(201).json({
             success: true,
             message: 'User registered. Please check your email for verification link.',
-            user: { // Still return user data, but mark as unverified
+            user: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
@@ -109,7 +107,7 @@ exports.register = asyncHandler(async (req, res, next) => {
         });
 
     } catch (err) {
-        console.error(err);
+        logger.error(`Error sending email for registration: ${err.message}`, { email: user.email, stack: err.stack });
         user.emailVerificationToken = undefined;
         user.emailVerificationExpire = undefined;
         await user.save({ validateBeforeSave: false });
@@ -140,7 +138,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
     if (!user.isVerified) {
         res.status(401);
-        throw new Error('Please verify your email to log in. Check your inbox for a verification link.');
+        throw new new Error('Please verify your email to log in. Check your inbox for a verification link.');
     }
 
     const isMatch = await user.matchPassword(password);
@@ -177,11 +175,11 @@ exports.updateMe = asyncHandler(async (req, res, next) => {
     };
 
     const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
-        new: true, // Return the updated document
-        runValidators: true // Run schema validators
+        new: true,
+        runValidators: true
     });
 
-    if (!user) { // This case should ideally not happen if req.user.id is valid
+    if (!user) {
         res.status(404);
         throw new Error('User not found.');
     }
@@ -207,6 +205,7 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
     });
 
     if (!user) {
+        logger.warn('Email verification failed: Invalid or expired token.', { token: req.params.token });
         res.status(400).send(`
             <!DOCTYPE html>
             <html lang="en">
@@ -240,38 +239,40 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
     user.emailVerificationToken = undefined;
     user.emailVerificationExpire = undefined;
     await user.save();
+    logger.info(`User ${user.email} successfully verified their email.`);
 
+    
     res.status(200).send(`
         <!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Farmlytics - Email Verified</title>
+            <title>Farmlytics - Email Verified Successfully</title>
             <style>
-                body { font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-                .container { background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 30px; text-align: center; max-width: 500px; width: 100%; }
-                h1 { color: #28a745; margin-bottom: 20px; }
-                p { color: #6c757d; margin-bottom: 10px; }
-                a { color: #007bff; text-decoration: none; }
+                body { font-family: Arial, sans-serif; background-color: #e6ffe6; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+                .container { background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 40px; text-align: center; max-width: 550px; width: 100%; }
+                h1 { color: #007A3D; margin-bottom: 20px; font-size: 28px; } /* Rwandan Green */
+                p { color: #333333; margin-bottom: 15px; font-size: 16px; line-height: 1.5; }
+                a { color: #00A3DD; text-decoration: none; font-weight: bold; } /* Rwandan Blue */
                 a:hover { text-decoration: underline; }
                 .flag-colors {
                     display: flex;
                     justify-content: center;
-                    margin-top: 20px;
+                    margin-top: 30px;
+                    gap: 8px; /* Space between colors */
                 }
-                .flag-color-green { background-color: #007A3D; width: 40px; height: 10px; }
-                .flag-color-yellow { background-color: #FFD200; width: 40px; height: 10px; }
-                .flag-color-blue { background-color: #00A3DD; width: 40px; height: 10px; }
+                .flag-color-green { background-color: #007A3D; width: 50px; height: 12px; border-radius: 3px; }
+                .flag-color-yellow { background-color: #FFD200; width: 50px; height: 12px; border-radius: 3px; }
+                .flag-color-blue { background-color: #00A3DD; width: 50px; height: 12px; border-radius: 3px; }
             </style>
         </head>
         <body>
             <div class="container">
                 <h1>Email Successfully Verified!</h1>
-                <p>Your Farmlytics account is now active.</p>
-                <p>You can now log in to the Farmlytics application.</p>
-                <p><a href="${config.baseFrontendUrl}/login?status=emailVerifiedSuccess">Proceed to Login (Frontend)</a></p>
-                <p><a href="${req.protocol}://${req.get('host')}/api-docs">Go to API Documentation (Backend)</a></p>
+                <p>Your Farmlytics account is now active and ready to use.</p>
+                <p>You can now close this window and log in to the Farmlytics application.</p>
+            
                 <div class="flag-colors">
                     <div class="flag-color-green"></div>
                     <div class="flag-color-yellow"></div>
@@ -296,16 +297,16 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 
     // Get reset token
     const resetToken = user.getResetPasswordToken();
-    await user.save({ validateBeforeSave: false }); // Save token (skip validation for password hashing pre-hook)
+    await user.save({ validateBeforeSave: false });
 
-    // Create reset URL
-    const resetUrl = `${config.baseFrontendUrl}/resetpassword/${resetToken}`; // Frontend URL
+    // Create reset URL (always pointing to backend for now)
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword-form/${resetToken}`; // A new endpoint to render the form
 
     const message = `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <p style="color: #007A3D;">Hello,</p>
             <p>You are receiving this email because you (or someone else) has requested the reset of a password for your account.</p>
-            <p>Please make a PUT request to: </p>
+            <p>To reset your password, please click the button below:</p>
             <p style="margin: 20px 0;">
                 <a href="${resetUrl}" style="
                     display: inline-block;
@@ -337,7 +338,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
         res.status(200).json({ success: true, message: 'Email sent for password reset.' });
 
     } catch (err) {
-        console.error(err);
+        logger.error(`Error sending email for password reset: ${err.message}`, { email: req.body.email, stack: err.stack });
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
         await user.save({ validateBeforeSave: false });
@@ -347,7 +348,171 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     }
 });
 
-// @desc      Reset Password
+// NEW: @desc   Render password reset form
+// @route     GET /api/v1/auth/resetpassword-form/:token
+// @access    Public
+exports.renderResetPasswordForm = asyncHandler(async (req, res, next) => {
+    const resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(req.params.token)
+        .digest('hex');
+
+    const user = await User.findOne({
+        resetPasswordToken: resetPasswordToken,
+        resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        logger.warn('Password reset form requested with invalid or expired token.', { token: req.params.token });
+        res.status(400).send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Farmlytics - Password Reset Failed</title>
+                <style>
+                    body { font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+                    .container { background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 30px; text-align: center; max-width: 500px; width: 100%; }
+                    h1 { color: #dc3545; margin-bottom: 20px; }
+                    p { color: #6c757d; margin-bottom: 10px; }
+                    a { color: #007bff; text-decoration: none; }
+                    a:hover { text-decoration: underline; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Password Reset Failed!</h1>
+                    <p>The password reset link is invalid or has expired.</p>
+                    <p>Please request a new password reset or contact support.</p>
+                    <p><a href="${req.protocol}://${req.get('host')}/api-docs">Go to API Documentation</a></p>
+                </div>
+            </body>
+            </html>
+        `);
+        return;
+    }
+
+    // Render HTML form to collect new password
+    res.status(200).send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Farmlytics - Reset Password</title>
+            <style>
+                body { font-family: Arial, sans-serif; background-color: #f0f8ff; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+                .container { background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 40px; text-align: center; max-width: 450px; width: 100%; }
+                h1 { color: #007A3D; margin-bottom: 25px; font-size: 26px; }
+                form { display: flex; flex-direction: column; gap: 15px; }
+                input[type="password"] {
+                    padding: 12px;
+                    border: 1px solid #cccccc;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    width: 100%;
+                    box-sizing: border-box; /* Include padding in width */
+                }
+                button {
+                    padding: 12px 20px;
+                    background-color: #00A3DD; /* Rwandan Blue */
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 18px;
+                    font-weight: bold;
+                    transition: background-color 0.3s ease;
+                }
+                button:hover {
+                    background-color: #007bff;
+                }
+                .message { margin-top: 20px; font-size: 14px; color: #6c757d; }
+                .error { color: #dc3545; }
+                .success { color: #28a745; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>Set New Password</h1>
+                <form action="/api/v1/auth/resetpassword/${req.params.token}" method="POST" onsubmit="return validatePassword()">
+                    <input type="hidden" name="_method" value="PUT"> <!-- Method override for PUT -->
+                    <input type="password" id="password" name="password" placeholder="New Password" required minlength="6">
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm New Password" required minlength="6">
+                    <button type="submit">Reset Password</button>
+                </form>
+                <div id="passwordMessage" class="message"></div>
+            </div>
+
+            <script>
+                function validatePassword() {
+                    const password = document.getElementById('password').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    const messageDiv = document.getElementById('passwordMessage');
+                    
+                    messageDiv.className = 'message'; // Reset class
+                    messageDiv.textContent = '';
+
+                    if (password.length < 6) {
+                        messageDiv.textContent = 'Password must be at least 6 characters long.';
+                        messageDiv.classList.add('error');
+                        return false;
+                    }
+                    if (password !== confirmPassword) {
+                        messageDiv.textContent = 'Passwords do not match.';
+                        messageDiv.classList.add('error');
+                        return false;
+                    }
+                    return true;
+                }
+
+                // Handle form submission via fetch API for PUT request
+                document.querySelector('form').addEventListener('submit', async function(event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    const password = document.getElementById('password').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+                    const messageDiv = document.getElementById('passwordMessage');
+
+                    if (!validatePassword()) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(this.action, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ password, confirmPassword })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            messageDiv.textContent = 'Password has been reset successfully. You can now login!';
+                            messageDiv.classList.add('success');
+                            // Optionally, redirect after a short delay
+                            // setTimeout(() => { window.location.href = '${req.protocol}://${req.get('host')}/api/v1/auth/login'; }, 3000);
+                        } else {
+                            messageDiv.textContent = data.error || 'Failed to reset password.';
+                            messageDiv.classList.add('error');
+                        }
+                    } catch (error) {
+                        console.error('Network error during password reset:', error);
+                        messageDiv.textContent = 'A network error occurred. Please try again.';
+                        messageDiv.classList.add('error');
+                    }
+                });
+            </script>
+        </body>
+        </html>
+    `);
+});
+
+
+// @desc      Reset Password (handles PUT request from the form)
 // @route     PUT /api/v1/auth/resetpassword/:token
 // @access    Public
 exports.resetPassword = asyncHandler(async (req, res, next) => {
@@ -378,14 +543,16 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     user.resetPasswordExpire = undefined;
     await user.save();
 
-    sendTokenResponse(user, 200, res);
+    // Instead of sending JWT directly (which the form won't use easily),
+    // we'll send a success message. The frontend can then redirect to login.
+    res.status(200).json({ success: true, message: 'Password reset successfully. You can now login.' });
 });
 
 // @desc      Update User Password (when logged in)
 // @route     PUT /api/v1/auth/updatepassword
 // @access    Private
 exports.updatePassword = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id).select('+password'); // Select password to compare
+    const user = await User.findById(req.user.id).select('+password'); 
 
     // Check current password
     if (!(await user.matchPassword(req.body.currentPassword))) {
@@ -399,8 +566,8 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
         throw new Error('New passwords do not match.');
     }
 
-    user.password = req.body.newPassword; // Mongoose pre-save hook will hash this
-    await user.save(); // This will trigger the pre-save hook to hash the new password
+    user.password = req.body.newPassword; 
+    await user.save(); 
 
     sendTokenResponse(user, 200, res);
 });
