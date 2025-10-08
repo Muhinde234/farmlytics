@@ -33,7 +33,7 @@ exports.getCropPlan = asyncHandler(async (req, res, next) => {
         throw new Error(`Crop plan not found with id of ${req.params.id}`);
     }
 
-    if (cropPlan.user.toString() !== req.user.id && req.user.role !== 'admin') {
+   if (cropPlan.user._id.toString() !== req.user.id && req.user.role !== 'admin')  {
         res.status(401);
         throw new Error(`User ${req.user.id} is not authorized to view this crop plan`);
     }
