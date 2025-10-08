@@ -19,6 +19,10 @@
       "successAnalytics": "98% de succès en analyse",
       "cropGrowthProgress": "Progression de la Croissance des Cultures"
     },
+    "main": {
+      "word": "Prêt à transformer votre agriculture ?",
+      "subword": "Rejoignez Farmlytics aujourd'hui et commencez à cultiver le succès avec des informations intelligentes basées sur les données."
+    },
     "features": {
       "title": "Tout ce dont vous avez besoin pour développer votre ferme",
       "subtitle": "Des outils complets conçus spécifiquement pour les agriculteurs modernes afin de maximiser la productivité et la rentabilité.",
@@ -172,6 +176,44 @@
     "error": "Échec de l'envoi du lien. Veuillez réessayer.",
     "backToLogin": "Retour à la connexion",
     "backToHome": "Retour à l'accueil",
-    "rememberPassword": "Vous vous souvenez de votre mot de passe ?"
+    "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+    "successTitle": "Lien Envoyé !",
+    "successMessage": "Un lien de réinitialisation de mot de passe a été envoyé à votre adresse e-mail. Veuillez vérifier votre boîte de réception.",
+    "resendButton": "Renvoyer le lien"
+  },
+  "verifyEmail": {
+    "backToHome": "Retour à l'accueil",
+    "verifyingTitle": "Vérification de l'e-mail...",
+    "verifyingMessage": "Veuillez patienter pendant que nous confirmons votre adresse e-mail.",
+    "successTitle": "E-mail Vérifié !",
+    "successMessage": "Votre adresse e-mail a été vérifiée avec succès. Vous pouvez maintenant vous connecter.",
+    "errorTitle": "Échec de la Vérification",
+    "errorMessageDefault": "Un problème est survenu lors de la vérification de votre e-mail. Le lien est peut-être invalide ou expiré.",
+    "resendingMessage": "Renvoi de l'e-mail de vérification...",
+    "resendSuccessMessage": "Un nouvel e-mail de vérification a été envoyé à votre boîte de réception. Veuillez le vérifier.",
+    "resendErrorMessage": "Échec du renvoi de l'e-mail de vérification. Veuillez réessayer plus tard.",
+    "goToLogin": "Aller à la Connexion",
+    "resendVerification": "Renvoyer l'e-mail de vérification",
+    "or": "Ou",
+    "backToLogin": "Retour à la Connexion",
+    "initialTitle": "Vérifiez Votre E-mail",
+    "initialMessage": "Un lien de vérification a été envoyé à votre adresse e-mail. Veuillez vérifier votre boîte de réception et cliquer sur le lien pour activer votre compte."
+  },
+  
+ "dashboard":{
+   "sidebar": {
+    "dashboard": "Tableau de bord",
+    "crop-planner": "Planificateur de cultures",
+    "market": "Connexion au marché",
+    "diseases": "Maladies",
+    "notification": "Notifications",
+    "harvest": "Suivi des récoltes",
+    "settings": "Paramètres",
+    "logout":"Déconnexion"
   }
+ }
+  
+ 
+
 }
+

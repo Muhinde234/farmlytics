@@ -5,7 +5,7 @@ const Logo = () => {
   return (
     <div>
       <div className="flex items-center gap-4">
-        <Image src={image} alt="logo picture" width={42} height={42}  />
+        <Image src={image} alt="logo picture" width={72} height={72}    />
         
       </div>
     </div>

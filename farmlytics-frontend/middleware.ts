@@ -1,33 +1,53 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import createMiddleware from "next-intl/middleware";
-import { routing } from "@/i18n/routing";
+// middleware.ts
+import createIntlMiddleware from 'next-intl/middleware';
+import { NextRequest, NextResponse } from 'next/server';
+import { routing } from '@/i18n/routing';
 
-const intlMiddleware = createMiddleware(routing);
+// This is your next-intl middleware for internationalization
+const handleI18nRouting = createIntlMiddleware(routing);
 
-export function middleware(req: NextRequest) {
-  const { pathname, search } = req.nextUrl;
+export default async function middleware(request: NextRequest) {
+  // 1. Apply next-intl routing first
+  const response = handleI18nRouting(request);
+  const { pathname } = request.nextUrl;
+  const locale = pathname.split('/')[1] || routing.defaultLocale; // Get the detected locale
 
-  // Ignore Next internals and static files
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.includes("/api/") ||
-    /\.(.*)$/.test(pathname)
-  ) {
-    return;
+  // Define protected routes (e.g., anything under /admin)
+  const protectedPaths = [`/${locale}/admin`]; // Add more as needed
+  const isProtectedRoute = protectedPaths.some((path) => pathname.startsWith(path));
+
+  // Get the token from cookies
+  const token = request.cookies.get('token')?.value;
+
+  // 2. Handle authentication for protected routes
+  if (isProtectedRoute) {
+    if (!token) {
+      // If no token, redirect to the login page
+      const loginUrl = new URL(`/${locale}/login`, request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+    // If token exists, allow access (middleware continues to next step or route handler)
+    // Note: We're only checking for the *presence* of a token here.
+    // Full token validation (e.g., expiry, signature) should ideally happen on the server/API.
   }
 
-  // Redirect if no locale in URL
-  const localePattern = new RegExp(`^/(${routing.locales.join("|")})(/|$)`);
-  if (!localePattern.test(pathname)) {
-    const defaultLocale = routing.defaultLocale || "en";
-    return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}${search}`, req.url));
-  }
-
-  // Otherwise handle intl middleware
-  return intlMiddleware(req);
+  // If not a protected route or if authenticated, continue with the response
+  return response;
 }
 
 export const config = {
-  matcher: "/((?!api|trpc|_next|_vercel|.*\\..*).*)",
+  // Match all pathnames except for static files, Next.js internals, and public assets.
+  // We need to match `/` for the root path and then handle locale prefixes.
+  matcher: [
+    // This matcher will apply to all routes that are handled by next-intl,
+    // which includes your localized paths.
+    // It specifically excludes static files and internal Next.js paths.
+    // This pattern should cover:
+    // /
+    // /{locale}
+    // /{locale}/admin
+    // /{locale}/login
+    // etc.
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)',
+  ]
 };

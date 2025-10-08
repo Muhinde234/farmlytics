@@ -19,6 +19,10 @@
       "successAnalytics": "98% by'Isesengura Ryagenze Neza",
       "cropGrowthProgress": "Ubwiza bw'Umusaruro w'Ibihingwa"
     },
+    "main": {
+      "word": "Witeguye Guhindura Ubuhinzi Bwawe?",
+      "subword": "Injira muri Farmlytics uyu munsi utangire guhinga intsinzi ukoresheje ubwenge bushingiye ku makuru."
+    },
     "features": {
       "title": "Ibyo Ukeneye Byose Kugirango Uterambere Umurima Wawe",
       "subtitle": "Ibikoresho byuzuye byakozwe ku bahinzi ba none kugirango barusheho gukora no kubona inyungu.",
@@ -172,6 +176,41 @@
     "error": "Byanze kohereza link. Ongera ugerageze.",
     "backToLogin": "Subira ku Kwinjira",
     "backToHome": "Subira Ahabanza",
-    "rememberPassword": "Wibuka ijambo ry'ibanga?"
-  }
+    "rememberPassword": "Wibuka ijambo ry'ibanga?",
+    "successTitle": "Inzira Yoherejwe!",
+    "successMessage": "Inzira yo gusubiza ijambo ry'ibanga yoherejwe kuri aderesi imeyili yawe. Ndakwinginze, reba muri imeyili yawe.",
+    "resendButton": "Ongera Wohereze Inzira"
+  },
+  "verifyEmail": {
+    "backToHome": "Subira ku Ahabanza",
+    "verifyingTitle": "Kwemeza Imeyili...",
+    "verifyingMessage": "Ndakwinginze, tega amatwi mugihe twemeza aderesi imeyili yawe.",
+    "successTitle": "Imeyili Yemejwe!",
+    "successMessage": "Aderesi imeyili yawe yemejwe neza. Ubu urashobora kwinjira.",
+    "errorTitle": "Kwemeza Imeyili Byananiranye",
+    "errorMessageDefault": "Habayeho ikibazo mu kwemeza imeyili yawe. Inzira ishobora kuba itari yo cyangwa yararangiye.",
+    "resendingMessage": "Kohereza bundi bushya imeyili yo kwemeza...",
+    "resendSuccessMessage": "Imeyili nshya yo kwemeza yoherejwe kuri imeyili yawe. Ndakwinginze, yirebe.",
+    "resendErrorMessage": "Kohereza bundi bushya imeyili yo kwemeza byananiranye. Ndakwinginze, ongera ugerageze nyuma.",
+    "goToLogin": "Jya kwinjira",
+    "resendVerification": "Ongera Wohereze Imeyili yo Kwemeza",
+    "or": "Cyangwa",
+    "backToLogin": "Subira ku Kwinjira",
+    "initialTitle": "Emeza Imeyili Yawe",
+    "initialMessage": "Inzira yo kwemeza yoherejwe kuri aderesi imeyili yawe. Ndakwinginze, reba muri imeyili yawe maze ukande kuri iyo nzira kugirango ukore konti yawe."
+  },
+   "dashboard":{
+    "sidebar": {
+    "dashboard": "Ahabanza",
+    "crop-planner": "Gahunda y'ibihingwa",
+    "market": "Isoko",
+    "diseases": "Indwara z’ibihingwa",
+    "notification": "Amamenyesha",
+    "harvest": "Kugenzura umusaruro",
+    "settings": "Guhindura",
+    "logout":"Gusohoka"
+
+  
+}
+   }
 }
