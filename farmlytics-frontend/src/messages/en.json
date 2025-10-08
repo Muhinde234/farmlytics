@@ -229,7 +229,41 @@
     "successCreate": "Crop plan created successfully!",
     "errorFetch": "Failed to load crop plans.",
     "errorCreate": "Failed to create crop plan. Please try again."
+  },
+  
+  "settings": {
+    "profileInfo": "Profile Information",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "district": "District",
+    "sector": "Sector",
+    "farmSize": "Farm Size (hectares)",
+    "saveChanges": "Save Changes",
+
+    "languageSettings": "Language & Localization",
+    "chooseLanguage": "Choose Language",
+
+    "notifications": "Notifications",
+    "marketUpdates": "Market Price Updates",
+    "diseaseAlerts": "Crop Disease Alerts",
+    "harvestReminders": "Harvest Reminders",
+    "weatherAlerts": "Weather Alerts",
+
+    "dataManagement": "Data Management",
+    "downloadData": "Download My Data",
+    "clearLogs": "Clear Crop Logs",
+    "deleteAccount": "Delete My Account",
+
+    "accountSecurity": "Account Security",
+    "changePassword": "Change Password",
+    "logout": "Logout",
+
+    "helpSupport": "Help & Support",
+    "contactSupport": "Contact Support",
+    "reportProblem": "Report a Problem"
   }
+
+
 
 
 

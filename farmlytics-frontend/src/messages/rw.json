@@ -232,7 +232,41 @@
     "successCreate": "Gahunda y'igihingwa yashyizweho neza!",
     "errorFetch": "Ntibishobotse kubona gahunda z'ibihingwa.",
     "errorCreate": "Ntibishobotse gushyiraho gahunda. Ongera ugerageze."
+  },
+  
+  "settings": {
+    "profileInfo": "Ibisobanuro by'umwirondoro",
+    "name": "Amazina yose",
+    "phone": "Nimero ya telefoni",
+    "district": "Akarere",
+    "sector": "Umurenge",
+    "farmSize": "Ingano y’ubutaka (hegitare)",
+    "saveChanges": "Bika impinduka",
+
+    "languageSettings": "Ururimi n'ahantu",
+    "chooseLanguage": "Hitamo ururimi",
+
+    "notifications": "Amatangazo",
+    "marketUpdates": "Amakuru y'isoko",
+    "diseaseAlerts": "Iburira ry’indwara z’ibihingwa",
+    "harvestReminders": "Ibuka igihe cyo gusarura",
+    "weatherAlerts": "Iburira ry’ibihe",
+
+    "dataManagement": "Igenzura ry’amakuru",
+    "downloadData": "Kuramo amakuru yanjye",
+    "clearLogs": "Siba amakuru y'ibihingwa",
+    "deleteAccount": "Siba konte yanjye",
+
+    "accountSecurity": "Umutekano wa konte",
+    "changePassword": "Hindura ijambo ry’ibanga",
+    "logout": "Sohoka",
+
+    "helpSupport": "Ubufasha n’inkunga",
+    "contactSupport": "Vugana n’inkunga",
+    "reportProblem": "Tanga ikibazo"
   }
+
+
 
 
 }

@@ -7,12 +7,7 @@ export interface User{
     role:UserRole;
 }
 
-export interface LocalStorageUser {
-  id: string;
-  email: string;
-  fullName: string;
-  role: UserRole;
-}
+
 export interface RegisterRequest {
   firstName: string;
   lastName: string;
@@ -118,5 +113,18 @@ export interface Crop {
 export interface CropListResponse {
   success: boolean;
   data: Crop[];
+}
+
+// src/lib/types.ts
+export interface LocalStorageUser {
+  id: string;
+  email?: string;
+  phone?: string;
+  name?: string;
+  district?: string;
+  sector?: string;
+  farmSize?: string;
+  language?: "en" | "fr" | "rw";
+  // You can add other fields you store from your backend login response
 }
 

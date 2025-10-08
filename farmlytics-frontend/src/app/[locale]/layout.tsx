@@ -8,58 +8,61 @@ import { routing } from "@/i18n/routing";
 import { UserProvider } from "@/context/userContext";
 import { ReactQueryProvider } from "@/context/react-query-provider";
 import { Toaster } from "@/components/ui/sooner";
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider } from "next-intl";
 
 const outfit = Outfit({
-    subsets: ["latin"],
-    weight: ["400", "500"],
-    display: "swap",
-    variable: "--font-outfit",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+  variable: "--font-outfit",
 });
 
 export const metadata: Metadata = {
-    title: "Farmlytics|| Digitalized farm",
-    description: "Team data scientists ",
+  title: "Farmlytics || Digitalized Farm",
+  description: "Empowering Rwandan Farmers with Data Insights",
 };
 
+// Generate static params for locales (Next.js prerenders these)
 export function generateStaticParams() {
-    return routing.locales.map((locale) => ({ locale }));
+  return routing.locales.map((locale) => ({ locale }));
 }
 
+
 export default async function LocaleLayout({
-    children,
-    params,
+  children,
+  params,
 }: {
-    children: React.ReactNode;
-    params: { locale: string };
+  children: React.ReactNode;
+  params: { locale: string };
 }) {
-    const { locale } = params;
+  const { locale } = params;
 
-    if (!routing.locales.includes(locale as any)) {
-        notFound();
-    }
+  // Validate locale against supported locales
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
 
-    let messages;
-    try {
-        messages = (await import(`@/messages/${locale}.json`)).default;
-    } catch {
-        notFound();
-    }
+  // Dynamically import locale messages
+  let messages;
+  try {
+    messages = (await import(`@/messages/${locale}.json`)).default;
+  } catch {
+    notFound();
+  }
 
-    return (
-        <html lang={locale} suppressHydrationWarning>
-            <body className={`${outfit.className} `}>
-                <NextIntlClientProvider locale={locale} messages={messages}>
-                    <ReactQueryProvider>
-                        <Toaster position="top-right" richColors />
-                        <TooltipProvider delayDuration={0}>
-                            <UserProvider>
-                                {children}
-                            </UserProvider>
-                        </TooltipProvider>
-                    </ReactQueryProvider>
-                </NextIntlClientProvider>
-            </body>
-        </html>
-    );
+  // ✅ Everything below stays exactly as your logic defined
+  return (
+    <html lang={locale} suppressHydrationWarning>
+      <body className={`${outfit.className}`}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ReactQueryProvider>
+            <Toaster position="top-right" richColors />
+            <TooltipProvider delayDuration={0}>
+              <UserProvider>{children}</UserProvider>
+            </TooltipProvider>
+          </ReactQueryProvider>
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
 }
