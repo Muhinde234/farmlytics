@@ -1,121 +1,258 @@
-const asyncHandler = require('express-async-handler');
-const User = require('../models/User');
+const express = require('express');
+const {
+    getUsers,
+    getUser,
+    createUser,
+    updateUser,
+    deleteUser
+} = require('../controllers/adminController');
+const { protect, authorize } = require('../middlewares/auth');
 
-// @desc      Get all users
-// @route     GET /api/v1/admin/users
-// @access    Private (Admin only)
-exports.getUsers = asyncHandler(async (req, res, next) => {
-    // Admins can see all users. No specific filtering needed unless requested.
-    const users = await User.find().select('-password'); // Exclude passwords from results
+const router = express.Router();
 
-    res.status(200).json({
-        success: true,
-        count: users.length,
-        data: users
-    });
-});
+/**
+ * @swagger
+ * tags:
+ *   name: Admin - User Management
+ *   description: Administrator access to manage user accounts
+ */
 
-// @desc      Get single user
-// @route     GET /api/v1/admin/users/:id
-// @access    Private (Admin only)
-exports.getUser = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.params.id).select('-password'); // Exclude password
+// All admin routes require authentication and admin authorization
+router.use(protect);
+router.use(authorize('admin')); // Ensure only 'admin' role can access these routes
 
-    if (!user) {
-        res.status(404);
-        throw new Error(`User not found with id of ${req.params.id}`);
-    }
+// --- CORRECTED ROUTES ---
 
-    res.status(200).json({
-        success: true,
-        data: user
-    });
-});
+/**
+ * @swagger
+ * /admin/users:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Admin - User Management]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of all users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 count: { type: integer, example: 2 }
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized (e.g., no token, invalid token)
+ *       403:
+ *         description: Forbidden (user is not an admin)
+ *   post:
+ *     summary: Create a new user (Admin access)
+ *     tags: [Admin - User Management]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - role
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Jane Admin
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: jane.admin@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 example: adminpass123
+ *               role:
+ *                 type: string
+ *                 enum: [admin, farmer, buyer]
+ *                 default: farmer
+ *                 example: admin
+ *               isVerified:
+ *                 type: boolean
+ *                 default: true
+ *                 description: Whether the user's email is verified. Defaults to true for admin created users.
+ *               preferredDistrictName:
+ *                 type: string
+ *                 example: Gasabo
+ *               preferredProvinceName:
+ *                 type: string
+ *                 example: Kigali City
+ *               preferredLanguage:
+ *                 type: string
+ *                 enum: [en, fr, rw]
+ *                 example: en
+ *     responses:
+ *       201:
+ *         description: User created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request (e.g., validation error, duplicate email)
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+// This route now correctly handles '/api/v1/admin/users'
+router.route('/users')
+    .get(getUsers)
+    .post(createUser);
 
-// @desc      Create user (by Admin)
-// @route     POST /api/v1/admin/users
-// @access    Private (Admin only)
-// Note: This is separate from /auth/register as it's admin-controlled without email verification initially
-exports.createUser = asyncHandler(async (req, res, next) => {
-    const { name, email, password, role, isVerified, preferredDistrictName, preferredProvinceName, preferredLanguage } = req.body;
+/**
+ * @swagger
+ * /admin/users/{id}:
+ *   get:
+ *     summary: Get a single user by ID
+ *     tags: [Admin - User Management]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the user to retrieve.
+ *     responses:
+ *       200:
+ *         description: User data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: User not found
+ *   put:
+ *     summary: Update a user's details by ID (Admin access)
+ *     tags: [Admin - User Management]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the user to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Jane Doe-Smith
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: jane.smith@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 description: Optional. If provided, the user's password will be updated (and hashed).
+ *                 example: newsecurepass
+ *               role:
+ *                 type: string
+ *                 enum: [admin, farmer, buyer]
+ *                 example: farmer
+ *               isVerified:
+ *                 type: boolean
+ *                 example: true
+ *               preferredDistrictName:
+ *                 type: string
+ *                 example: Nyanza
+ *               preferredProvinceName:
+ *                 type: string
+ *                 example: Southern Province
+ *               preferredLanguage:
+ *                 type: string
+ *                 enum: [en, fr, rw]
+ *                 example: rw
+ *     responses:
+ *       200:
+ *         description: User updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad request (e.g., validation error, invalid email format)
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: User not found
+ *   delete:
+ *     summary: Delete a user by ID (Admin access)
+ *     tags: [Admin - User Management]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID of the user to delete.
+ *     responses:
+ *       200:
+ *         description: User deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success: { type: boolean, example: true }
+ *                 data: { type: object, example: {} }
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: User not found
+ */
+// This route now correctly handles '/api/v1/admin/users/:id'
+router.route('/users/:id')
+    .get(getUser)
+    .put(updateUser)
+    .delete(deleteUser);
 
-    const user = await User.create({
-        name,
-        email,
-        password,
-        role: role || 'farmer', // Admin can set role, default to farmer
-        isVerified: isVerified !== undefined ? isVerified : true, // Admin-created users are verified by default unless specified
-        preferredDistrictName,
-        preferredProvinceName,
-        preferredLanguage
-    });
-
-    res.status(201).json({
-        success: true,
-        data: user // This will return user without password due to schema select: false
-    });
-});
-
-
-// @desc      Update user (by Admin)
-// @route     PUT /api/v1/admin/users/:id
-// @access    Private (Admin only)
-exports.updateUser = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-        res.status(404);
-        throw new Error(`User not found with id of ${req.params.id}`);
-    }
-
-    // Admins can update any field except password directly (password handled via specific reset/update flows)
-    const fieldsToUpdate = {
-        name: req.body.name,
-        email: req.body.email,
-        role: req.body.role,
-        isVerified: req.body.isVerified,
-        preferredDistrictName: req.body.preferredDistrictName,
-        preferredProvinceName: req.body.preferredProvinceName,
-        preferredLanguage: req.body.preferredLanguage
-    };
-
-    // Filter out undefined fields so Mongoose doesn't try to set them to null/undefined
-    Object.keys(fieldsToUpdate).forEach(key => fieldsToUpdate[key] === undefined && delete fieldsToUpdate[key]);
-
-    // Handle password change separately if admin provides it, otherwise existing hash remains
-    if (req.body.password) {
-        user.password = req.body.password; // Pre-save hook will hash this
-    }
-
-    // Update other fields
-    Object.assign(user, fieldsToUpdate);
-    await user.save(); // Save to trigger pre-save hook for password if updated, and run validators
-
-    res.status(200).json({
-        success: true,
-        data: user.toObject({ getters: true, virtuals: false, transform: (doc, ret) => {
-            delete ret.password; // Ensure password is removed even if set
-            return ret;
-        }})
-    });
-});
-
-
-// @desc      Delete user (by Admin)
-// @route     DELETE /api/v1/admin/users/:id
-// @access    Private (Admin only)
-exports.deleteUser = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-        res.status(404);
-        throw new Error(`User not found with id of ${req.params.id}`);
-    }
-
-    await user.deleteOne(); // Use deleteOne() on the document instance
-
-    res.status(200).json({
-        success: true,
-        data: {} // Return empty object for successful deletion
-    });
-});
+module.exports = router;
