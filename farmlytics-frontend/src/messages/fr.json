@@ -1,0 +1,241 @@
+{
+  "common": {
+    "learnMore": "En savoir plus",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "smartFarmingPlatform": "Plateforme Agricole Intelligente",
+    "platform": "Plateforme",
+    "support": "Assistance"
+  },
+  "home": {
+    "hero": {
+      "headline": "Autonomiser les agriculteurs avec des informations basées sur les données",
+      "subHeadline": "Planifiez plus intelligemment, récoltez mieux et connectez-vous directement avec les acheteurs. Farmlytics apporte des analyses modernes à votre ferme.",
+      "ctaPrimary": "Commencer gratuitement",
+      "ctaSecondary": "Explorer les fonctionnalités",
+      "revolution": "Révolution de l'Agriculture Intelligente",
+      "taglinePlaceholder": "Libérez tout le potentiel de votre ferme grâce à des informations basées sur les données et une planification intelligente.",
+      "trustedFarmers": "Approuvé par plus de 10 000 agriculteurs",
+      "successAnalytics": "98% de succès en analyse",
+      "cropGrowthProgress": "Progression de la Croissance des Cultures"
+    },
+    "main": {
+      "word": "Prêt à transformer votre agriculture ?",
+      "subword": "Rejoignez Farmlytics aujourd'hui et commencez à cultiver le succès avec des informations intelligentes basées sur les données."
+    },
+    "features": {
+      "title": "Tout ce dont vous avez besoin pour développer votre ferme",
+      "subtitle": "Des outils complets conçus spécifiquement pour les agriculteurs modernes afin de maximiser la productivité et la rentabilité.",
+      "cropPlanner": {
+        "title": "Planificateur de cultures personnalisé",
+        "description": "Obtenez des recommandations alimentées par l'IA basées sur votre sol, votre climat et la demande du marché pour optimiser vos décisions de plantation."
+      },
+      "marketConnection": {
+        "title": "Module de connexion au marché",
+        "description": "Connectez-vous directement avec les acheteurs et accédez aux prix du marché en temps réel pour obtenir la meilleure valeur pour votre récolte."
+      },
+      "harvestTracker": {
+        "title": "Suivi des récoltes et des revenus",
+        "description": "Suivez vos rendements, dépenses et revenus en un seul endroit. Comprenez la santé financière de votre ferme en un coup d'œil."
+      },
+      "visualInsights": {
+        "title": "Tableau de bord d'informations visuelles",
+        "description": "De beaux graphiques et diagrammes qui rendent les données agricoles complexes faciles à comprendre et à exploiter."
+      },
+      "exportInsights": {
+        "title": "Exporter et partager des rapports",
+        "description": "Générez des rapports professionnels à partager avec des partenaires, des prêteurs ou pour vos propres dossiers."
+      },
+      "cropMonitoring": {
+        "title": "Surveillance des Cultures",
+        "description": "Transformer l'agriculture avec des données. Obtenez des informations en temps réel sur la santé de vos cultures."
+      },
+      "analyticsDashboard": {
+        "title": "Tableau de Bord Analytique",
+        "description": "Interface transversale qui maximise les revenus de votre ferme et optimise les opérations."
+      },
+      "marketplace": {
+        "title": "Marché",
+        "description": "Vous connecte directement avec les acheteurs pour obtenir les meilleurs prix pour vos produits."
+      }
+    },
+    "ctaSection": {
+      "headline": "Prêt à transformer votre agriculture ?",
+      "subHeadline": "Rejoignez des milliers d'agriculteurs qui utilisent déjà Farmlytics pour prendre des décisions plus intelligentes et augmenter leurs rendements.",
+      "button": "Commencer votre essai gratuit"
+    },
+    "footer": {
+      "copyright": "© {year} Farmlytics. Tous droits réservés.",
+      "platformLink1": "Flercoois (Espace réservé)",
+      "platformLink2": "Alscit (Espace réservé)",
+      "supportLink1": "Fodrniizntop xqruers (Espace réservé)",
+      "supportLink2": "Ruapbupis (Espace réservé)"
+    }
+  },
+  "login": {
+    "title": "Connexion",
+    "subtitle": "Content de vous revoir",
+    "welcomeTitle": "Bienvenue sur Farmlytics",
+    "welcomeSubtitle": "Connecter les agriculteurs, cultiver l'avenir",
+    "pageTitle": "Bienvenue sur Farmlytics",
+    "pageSubtitle": "Connectez-vous à votre compte",
+    "email": {
+      "label": "Adresse e-mail",
+      "placeholder": "E-mail",
+      "invalid": "E-mail invalide",
+      "required": "L'e-mail est requis"
+    },
+    "password": {
+      "label": "Mot de passe",
+      "placeholder": "Mot de passe",
+      "invalid": "Mot de passe invalide",
+      "min": "Le mot de passe doit comporter au moins 8 caractères",
+      "required": "Le mot de passe est requis"
+    },
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "loginButton": "Se connecter",
+    "loggingIn": "Connexion en cours...",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "registerLink": "S'inscrire",
+    "success": "Connexion réussie !",
+    "error": "Échec de la connexion. Veuillez réessayer.",
+    "backToHome": "Retour à l'accueil"
+  },
+  "register": {
+    "title": "Inscription",
+    "subtitle": "Rejoignez-nous pour accéder à toutes les fonctionnalités !",
+    "welcomeTitle": "Rejoignez Farmlytics",
+    "welcomeSubtitle": "Commencez votre voyage avec nous aujourd'hui",
+    "pageTitle": "Créez votre compte",
+    "pageSubtitle": "Remplissez vos informations pour commencer",
+    "firstName": {
+      "label": "Prénom",
+      "placeholder": "Prénom",
+      "invalid": "Le prénom doit comporter au moins 2 caractères"
+    },
+    "lastName": {
+      "label": "Nom",
+      "placeholder": "Nom",
+      "invalid": "Le nom doit comporter au moins 2 caractères"
+    },
+    "district": {
+      "label": "District",
+      "placeholder": "District",
+      "invalid": "Le district est requis"
+    },
+    "email": {
+      "label": "E-mail",
+      "placeholder": "E-mail",
+      "invalid": "E-mail invalide",
+      "required": "L'e-mail est requis"
+    },
+    "password": {
+      "label": "Mot de passe",
+      "placeholder": "Mot de passe",
+      "invalid": "Mot de passe invalide",
+      "min": "Le mot de passe doit comporter au moins 8 caractères",
+      "complexity": "Le mot de passe doit contenir au moins une lettre majuscule, une lettre minuscule et un chiffre",
+      "required": "Le mot de passe est requis"
+    },
+    "confirmPassword": {
+      "label": "Confirmez le mot de passe",
+      "placeholder": "Confirmez le mot de passe",
+      "invalid": "Les mots de passe ne correspondent pas",
+      "match": "Les mots de passe ne correspondent pas"
+    },
+    "termsLabel": "J'accepte les Conditions et la Politique de confidentialité",
+    "termsLink": "Conditions",
+    "andText": "et la",
+    "privacyLink": "Politique de confidentialité",
+    "termsRequired": "Vous devez accepter les conditions et la politique de confidentialité",
+    "registerButton": "S'inscrire",
+    "registering": "Création du compte...",
+    "success": "Inscription réussie !",
+    "error": "Échec de l'inscription. Veuillez réessayer.",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "loginLink": "Se connecter",
+    "backToHome": "Retour à l'accueil"
+  },
+  "forgotPassword": {
+    "title": "Mot de passe oublié",
+    "subtitle": "Réinitialisez votre mot de passe",
+    "welcomeTitle": "Réinitialiser le mot de passe",
+    "welcomeSubtitle": "Nous vous aiderons à récupérer votre compte",
+    "pageTitle": "Mot de passe oublié ?",
+    "pageSubtitle": "Entrez votre adresse e-mail et nous vous enverrons un lien de réinitialisation",
+    "email": {
+      "label": "Adresse e-mail",
+      "placeholder": "E-mail",
+      "invalid": "E-mail invalide",
+      "required": "L'e-mail est requis"
+    },
+    "submitButton": "Envoyer le lien",
+    "sending": "Envoi en cours...",
+    "success": "Lien de réinitialisation envoyé ! Vérifiez votre e-mail.",
+    "error": "Échec de l'envoi du lien. Veuillez réessayer.",
+    "backToLogin": "Retour à la connexion",
+    "backToHome": "Retour à l'accueil",
+    "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+    "successTitle": "Lien Envoyé !",
+    "successMessage": "Un lien de réinitialisation de mot de passe a été envoyé à votre adresse e-mail. Veuillez vérifier votre boîte de réception.",
+    "resendButton": "Renvoyer le lien"
+  },
+  "verifyEmail": {
+    "backToHome": "Retour à l'accueil",
+    "verifyingTitle": "Vérification de l'e-mail...",
+    "verifyingMessage": "Veuillez patienter pendant que nous confirmons votre adresse e-mail.",
+    "successTitle": "E-mail Vérifié !",
+    "successMessage": "Votre adresse e-mail a été vérifiée avec succès. Vous pouvez maintenant vous connecter.",
+    "errorTitle": "Échec de la Vérification",
+    "errorMessageDefault": "Un problème est survenu lors de la vérification de votre e-mail. Le lien est peut-être invalide ou expiré.",
+    "resendingMessage": "Renvoi de l'e-mail de vérification...",
+    "resendSuccessMessage": "Un nouvel e-mail de vérification a été envoyé à votre boîte de réception. Veuillez le vérifier.",
+    "resendErrorMessage": "Échec du renvoi de l'e-mail de vérification. Veuillez réessayer plus tard.",
+    "goToLogin": "Aller à la Connexion",
+    "resendVerification": "Renvoyer l'e-mail de vérification",
+    "or": "Ou",
+    "backToLogin": "Retour à la Connexion",
+    "initialTitle": "Vérifiez Votre E-mail",
+    "initialMessage": "Un lien de vérification a été envoyé à votre adresse e-mail. Veuillez vérifier votre boîte de réception et cliquer sur le lien pour activer votre compte."
+  },
+  
+ "dashboard":{
+   "sidebar": {
+    "dashboard": "Tableau de bord",
+    "crop-planner": "Planificateur de cultures",
+    "market": "Connexion au marché",
+    "diseases": "Maladies",
+    "notification": "Notifications",
+    "harvest": "Suivi des récoltes",
+    "settings": "Paramètres",
+    "logout":"Déconnexion"
+  }
+ },
+ 
+  "cropPlanner": {
+    "title": "Planificateur de Culture",
+    "addButton": "Ajouter un Nouveau Plan",
+    "closeButton": "Fermer le Formulaire",
+    "form": {
+      "cropName": "Nom de la Culture",
+      "districtName": "District",
+      "area": "Superficie (Ha)",
+      "plantingDate": "Date de Plantation",
+      "submit": "Créer le Plan"
+    },
+    "listTitle": "Mes Plans de Culture",
+    "noData": "Aucun plan de culture trouvé.",
+    "status": "Statut",
+    "estRevenue": "Revenu Estimé",
+    "successCreate": "Plan de culture créé avec succès !",
+    "errorFetch": "Échec du chargement des plans de culture.",
+    "errorCreate": "Échec de la création du plan. Veuillez réessayer."
+  }
+
+
+  
+ 
+
+}
+
