@@ -6,7 +6,7 @@ import { Link } from "@/i18n/routing";
 import Logo from "@/components/common/logo";
 import { Button } from "@/components/ui/button";
 import { Globe, Menu, X, ChevronDown, ArrowRight } from "lucide-react";
-import Footer from "@/components/common/footer";
+
 import { useUser } from "@/context/userContext";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -64,7 +64,7 @@ export default function HomePage() {
       icon: "LayoutDashboard",
       title: t("features.visualInsights.title"),
       description: t("features.visualInsights.description"),
-      link: "/dashboard",
+      link: "/admin",
       gradient: "from-emerald-500 to-green-500",
       bgGradient: "from-emerald-400/10 to-green-400/10",
     },
@@ -72,7 +72,7 @@ export default function HomePage() {
       icon: "LeafyGreen",
       title: t("features.cropPlanner.title"),
       description: t("features.cropPlanner.description"),
-      link: "/crop-planner",
+      link: "/admin/crop-plan",
       gradient: "from-green-500 to-emerald-500",
       bgGradient: "from-green-400/10 to-emerald-400/10",
     },
@@ -80,7 +80,7 @@ export default function HomePage() {
       icon: "ShoppingBag",
       title: t("features.marketConnection.title"),
       description: t("features.marketConnection.description"),
-      link: "/market-connection",
+      link: "/admin/market-connection",
       gradient: "from-emerald-600 to-green-600",
       bgGradient: "from-emerald-500/10 to-green-500/10",
     },

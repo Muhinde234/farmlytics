@@ -121,10 +121,11 @@ export interface LocalStorageUser {
   email?: string;
   phone?: string;
   name?: string;
+  fullName?: string; // ✅ Add this line
   district?: string;
   sector?: string;
   farmSize?: string;
   language?: "en" | "fr" | "rw";
-  // You can add other fields you store from your backend login response
+   role?: UserRole;
 }
 
