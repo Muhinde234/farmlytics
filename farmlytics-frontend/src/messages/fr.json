@@ -231,7 +231,41 @@
     "successCreate": "Plan de culture créé avec succès !",
     "errorFetch": "Échec du chargement des plans de culture.",
     "errorCreate": "Échec de la création du plan. Veuillez réessayer."
+  },
+  
+  "settings": {
+    "profileInfo": "Informations du profil",
+    "name": "Nom complet",
+    "phone": "Numéro de téléphone",
+    "district": "District",
+    "sector": "Secteur",
+    "farmSize": "Taille de la ferme (hectares)",
+    "saveChanges": "Enregistrer les modifications",
+
+    "languageSettings": "Langue et localisation",
+    "chooseLanguage": "Choisir la langue",
+
+    "notifications": "Notifications",
+    "marketUpdates": "Mises à jour des prix du marché",
+    "diseaseAlerts": "Alertes de maladies des cultures",
+    "harvestReminders": "Rappels de récolte",
+    "weatherAlerts": "Alertes météorologiques",
+
+    "dataManagement": "Gestion des données",
+    "downloadData": "Télécharger mes données",
+    "clearLogs": "Effacer les journaux de culture",
+    "deleteAccount": "Supprimer mon compte",
+
+    "accountSecurity": "Sécurité du compte",
+    "changePassword": "Changer le mot de passe",
+    "logout": "Se déconnecter",
+
+    "helpSupport": "Aide et assistance",
+    "contactSupport": "Contacter le support",
+    "reportProblem": "Signaler un problème"
   }
+
+
 
 
   
