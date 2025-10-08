@@ -1,8 +1,11 @@
+import Topsection from '@/components/common/topsection'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div>
+      <Topsection/>
+    </div>
   )
 }
 

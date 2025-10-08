@@ -18,8 +18,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-    title: "TegaBus|Travel with us",
-    description: "Team transportation solutions",
+    title: "Farmlytics|| Digitalized farm",
+    description: "Team data scientists ",
 };
 
 export function generateStaticParams() {

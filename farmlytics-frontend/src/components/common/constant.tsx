@@ -19,7 +19,7 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   { path: "/admin", icon: LayoutDashboard, label: "sidebar.dashboard" },
-  { path: "/admin/crop-planner", icon: Sprout, label: "sidebar.crop-planner" },
+  { path: "/admin/crop-plans", icon: Sprout, label: "sidebar.crop-planner" },
   { path: "/admin/market-connection", icon: ShoppingBag, label: "sidebar.market" },
   { path: "/admin/diseases", icon: Bug, label: "sidebar.diseases" },
   { path: "/admin/notification", icon: Bell, label: "sidebar.notification" },

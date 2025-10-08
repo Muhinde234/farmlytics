@@ -211,7 +211,29 @@
     "settings": "Paramètres",
     "logout":"Déconnexion"
   }
- }
+ },
+ 
+  "cropPlanner": {
+    "title": "Planificateur de Culture",
+    "addButton": "Ajouter un Nouveau Plan",
+    "closeButton": "Fermer le Formulaire",
+    "form": {
+      "cropName": "Nom de la Culture",
+      "districtName": "District",
+      "area": "Superficie (Ha)",
+      "plantingDate": "Date de Plantation",
+      "submit": "Créer le Plan"
+    },
+    "listTitle": "Mes Plans de Culture",
+    "noData": "Aucun plan de culture trouvé.",
+    "status": "Statut",
+    "estRevenue": "Revenu Estimé",
+    "successCreate": "Plan de culture créé avec succès !",
+    "errorFetch": "Échec du chargement des plans de culture.",
+    "errorCreate": "Échec de la création du plan. Veuillez réessayer."
+  }
+
+
   
  
 

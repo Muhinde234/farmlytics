@@ -209,7 +209,29 @@
     "settings": "Settings",
     "logout":"logout"
   
-}}
+}},
+
+  "cropPlanner": {
+    "title": "Crop Planner",
+    "addButton": "Add New Plan",
+    "closeButton": "Close Form",
+    "form": {
+      "cropName": "Crop Name",
+      "districtName": "District Name",
+      "area": "Area (Ha)",
+      "plantingDate": "Planting Date",
+      "submit": "Create Plan"
+    },
+    "listTitle": "My Crop Plans",
+    "noData": "No crop plans found.",
+    "status": "Status",
+    "estRevenue": "Estimated Revenue",
+    "successCreate": "Crop plan created successfully!",
+    "errorFetch": "Failed to load crop plans.",
+    "errorCreate": "Failed to create crop plan. Please try again."
+  }
+
+
 
 
  

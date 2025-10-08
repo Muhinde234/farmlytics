@@ -60,3 +60,63 @@ export interface ValidationError {
 export interface RoleStatsResponse {
   roleCounts: Record<UserRole, number>;
 }
+
+export interface CropPlan {
+  _id: string;
+  user: string;
+  cropName: string;
+  districtName: string;
+  actualAreaPlantedHa: number;
+  plantingDate: string;
+  estimatedHarvestDate?: string;
+  estimatedYieldKgPerHa?: number;
+  estimatedTotalProductionKg?: number;
+  estimatedPricePerKgRwf?: number;
+  estimatedRevenueRwf?: number;
+  actualHarvestDate?: string;
+  actualYieldKgPerHa?: number;
+  actualTotalProductionKg?: number;
+  actualSellingPricePerKgRwf?: number;
+  actualRevenueRwf?: number;
+  harvestNotes?: string;
+  status: string;
+  createdAt?: string;
+}
+
+export interface CreateCropPlanDTO {
+  cropName: string;
+  districtName: string;
+  actualAreaPlantedHa: number;
+  plantingDate: string;
+  status: string;
+}
+
+export interface RecordHarvestDTO {
+  actualHarvestDate: string;
+  actualYieldKgPerHa: number;
+  actualSellingPricePerKgRwf: number;
+  harvestNotes?: string;
+}
+
+
+export interface District {
+  code: number;
+  name: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+}
+export interface Crop {
+  CropName: string;
+  Recommended_Area_ha: number;
+  Estimated_Yield_Kg_per_Ha: number;
+  Estimated_Total_Production_Kg: number;
+}
+
+export interface CropListResponse {
+  success: boolean;
+  data: Crop[];
+}
+

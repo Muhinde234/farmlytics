@@ -212,5 +212,27 @@
 
   
 }
-   }
+   },
+   
+  "cropPlanner": {
+    "title": "Gahunda y'Ibihingwa",
+    "addButton": "Ongeramo Igishya",
+    "closeButton": "Funga Ifishi",
+    "form": {
+      "cropName": "Izina ry'Igihingwa",
+      "districtName": "Akarere",
+      "area": "Ubuso (Ha)",
+      "plantingDate": "Itariki yo Guhinga",
+      "submit": "Tanga Gahunda"
+    },
+    "listTitle": "Ibihingwa Byanjye",
+    "noData": "Nta bihingwa birimo.",
+    "status": "Imimerere",
+    "estRevenue": "Inyungu Iteganyijwe",
+    "successCreate": "Gahunda y'igihingwa yashyizweho neza!",
+    "errorFetch": "Ntibishobotse kubona gahunda z'ibihingwa.",
+    "errorCreate": "Ntibishobotse gushyiraho gahunda. Ongera ugerageze."
+  }
+
+
 }
