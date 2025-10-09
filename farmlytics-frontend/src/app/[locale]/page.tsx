@@ -318,7 +318,7 @@ export default function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-              {features.map(({ icon, title, description, link, gradient, bgGradient }, idx) => {
+              {features.map(({ icon, title, description, link,bgGradient }, idx) => {
                 const IconComponent = iconMap[icon] // Get component from map
 
                 if (!IconComponent) {
