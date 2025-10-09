@@ -18,8 +18,8 @@ const outfit = Outfit({
 })
 
 export const metadata: Metadata = {
-  title: "TegaBus|Travel with us",
-  description: "Team transportation solutions",
+  title: "Farmlytics||Digitalize your farm",
+  description: "Team  data scientists",
 }
 
 interface RootLayoutProps {
