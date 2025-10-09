@@ -1,16 +1,17 @@
-// src/screens/Auth/LoginScreen.tsx
+// src/screens/Auth/ForgotPasswordScreen.tsx
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components/native';
-import { Image, ActivityIndicator, Alert, Platform, ScrollView, Text, View, KeyboardAvoidingView } from 'react-native';
+// CORRECTED: Added TextInput, TouchableOpacity to react-native import
+import { Image, ActivityIndicator, Alert, Platform, ScrollView, Text, View, KeyboardAvoidingView, TouchableOpacity, TextInput } from 'react-native'; 
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 
 import { defaultTheme } from '../../config/theme';
 import { RootStackNavigationProp } from '../../navigation/types';
-import { useAuth } from '../../context/AuthContext';
 import CustomHeader from '../../components/CustomHeader';
 
+// ---------------------- Styled Components ----------------------
 const Container = styled(KeyboardAvoidingView).attrs({
   behavior: Platform.OS === 'ios' ? 'padding' : 'height',
 })`
@@ -49,7 +50,7 @@ const Title = styled(Text)`
   text-align: center;
 `;
 
-const Input = styled.TextInput`
+const Input = styled(TextInput)`
   width: 100%;
   padding: ${props => props.theme.spacing.medium + 4}px;
   margin-bottom: ${props => props.theme.spacing.medium}px;
@@ -66,12 +67,13 @@ const Input = styled.TextInput`
   shadow-radius: 1.84px;
 `;
 
-const Button = styled.TouchableOpacity`
+const Button = styled(TouchableOpacity)`
   width: 100%;
   padding: ${props => props.theme.spacing.medium + 6}px;
-  background-color: ${props => props.theme.colors.primary};
+  background-color: ${props => props.theme.colors.tertiary}; /* Green for positive action */
   border-radius: ${props => props.theme.borderRadius.pill}px;
   align-items: center;
+  justify-content: center;
   margin-top: ${props => props.theme.spacing.large}px;
   elevation: 5;
   shadow-color: '#000';
@@ -86,36 +88,61 @@ const ButtonText = styled(Text)`
   font-weight: bold;
 `;
 
-const LinkText = styled(Text)`
-  color: ${props => props.theme.colors.primary};
+const FeedbackText = styled(Text)`
+  color: ${props => props.theme.colors.text};
   font-size: ${props => props.theme.fontSizes.medium}px;
-  margin-top: ${props => props.theme.spacing.xl}px;
-  font-weight: 600;
-  text-decoration-line: underline;
+  text-align: center;
+  margin-top: ${props => props.theme.spacing.medium}px;
 `;
 
-const LoginScreen: React.FC = () => {
+const ForgotPasswordScreen: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
   const { t } = useTranslation();
-  const navigation = useNavigation<RootStackNavigationProp<'Login'>>();
-  const { login } = useAuth();
+  const navigation = useNavigation<RootStackNavigationProp<'ForgotPassword'>>();
 
-  const handleLogin = async () => {
+  const handleForgotPassword = useCallback(async () => {
+    setMessage(null);
     setLoading(true);
-    await login(email, password);
-    setLoading(false);
-  };
+    try {
+      const response = await fetch('https://farmlytics1-1.onrender.com/api/v1/auth/forgotpassword', { // CORRECTED API_BASE_URL
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setMessage(String(t('auth.resetLinkSentSuccess')));
+        Alert.alert(String(t('common.success')), String(t('auth.resetLinkSentSuccess')));
+      } else {
+        setMessage(String(data.message || t('auth.resetLinkSentError')));
+        Alert.alert(String(t('common.error')), String(data.message || t('auth.resetLinkSentError')));
+      }
+    } catch (err: unknown) {
+      console.error('Forgot password error (catch block):', err);
+      setMessage(String(t('common.networkError')));
+      Alert.alert(String(t('common.error')), String(t('common.networkError')));
+    } finally {
+      setLoading(false);
+    }
+  }, [email, t]);
 
   return (
     <Container>
-      <CustomHeader title={String(t('auth.loginTitle'))} showBack={true} showLogo={true} showLanguageSwitcher={true} />
+      <CustomHeader title={String(t('auth.forgotPasswordTitle'))} showBack={true} showLogo={true} showLanguageSwitcher={true} />
       <ScrollContent>
         <LogoContainer>
           <AppLogo source={require('../../../assets/logo.png')} />
           <Title>Farmlytics</Title>
         </LogoContainer>
+
+        <FeedbackText style={{ marginBottom: defaultTheme.spacing.large }}>
+          {String(t('auth.forgotPasswordPrompt'))}
+        </FeedbackText>
 
         <Input
           placeholder={String(t('common.email'))}
@@ -124,25 +151,20 @@ const LoginScreen: React.FC = () => {
           value={email}
           onChangeText={setEmail}
           placeholderTextColor={defaultTheme.colors.placeholder}
-        />
-        <Input
-          placeholder={String(t('common.password'))}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-          placeholderTextColor={defaultTheme.colors.placeholder}
+          editable={!loading}
         />
 
-        <Button onPress={handleLogin} disabled={loading}>
-          {loading ? <ActivityIndicator color={defaultTheme.colors.lightText} /> : <ButtonText>{String(t('common.login'))}</ButtonText>}
+        <Button onPress={handleForgotPassword} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color={defaultTheme.colors.lightText} />
+          ) : (
+            <ButtonText>{String(t('auth.sendResetLinkButton'))}</ButtonText>
+          )}
         </Button>
-
-        <LinkText onPress={() => navigation.navigate('Register')}>
-          {String(t('auth.noAccount'))}
-        </LinkText>
+        {message && <FeedbackText>{message}</FeedbackText>}
       </ScrollContent>
     </Container>
   );
 };
 
-export default LoginScreen;
+export default ForgotPasswordScreen;

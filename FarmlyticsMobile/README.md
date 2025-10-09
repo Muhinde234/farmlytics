@@ -4,7 +4,7 @@
 
 Welcome to the official repository for the **Farmlytics Mobile App**! Designed to empower Rwandan farmers, this application provides data-driven insights to optimize crop planning, enhance market access, and streamline harvest tracking. Our goal is to bring modern agricultural intelligence directly to their fingertips, fostering increased productivity and prosperity.
 
-This mobile app is the frontend companion to the [Farmlytics Backend API](https://farmlytics1.onrender.com/api-docs/).
+This mobile app is the frontend companion to the [Farmlytics Backend API](https://farmlytics1-1.onrender.com/api-docs/).
 
 ---
 
@@ -62,7 +62,7 @@ Farmlytics Mobile offers a robust suite of functionalities:
     *   [**`@react-native-async-storage/async-storage`**](https://github.com/react-native-async-storage/async-storage): Secure client-side data storage.
     *   [**`@expo/vector-icons`**](https://icons.expo.fyi/): Extensive icon library.
     *   [**`react-native-safe-area-context`**](https://github.com/th3rdwave/react-native-safe-area-context): Handles device-specific safe areas.
-*   **Backend:** (Refer to the [Farmlytics Backend API Documentation](https://farmlytics1.onrender.com/api-docs/))
+*   **Backend:** (Refer to the [Farmlytics Backend API Documentation](https://farmlytics1-1.onrender.com/api-docs/))
     *   Node.js, Express.js, MongoDB, Mongoose, JWT.
 
 ---
@@ -109,7 +109,7 @@ Follow these instructions to set up and run the Farmlytics mobile app on your lo
 1.  **Create a `.env` file:** In the root of your project (`farmlytics-mobile/`), create a file named `.env`.
 2.  **Add your backend API URL:**
     ```
-    EXPO_PUBLIC_API_BASE_URL=https://farmlytics1.onrender.com/api/v1
+    EXPO_PUBLIC_API_BASE_URL=https://farmlytics1-1.onrender.com/api/v1
     ```
     *   If running your backend locally, replace the URL with your local backend address (e.g., `http://localhost:5000/api/v1`).
 3.  **Add your logo:** Place your `logo.png` file in the `assets/` directory at the project root. This is used for branding throughout the app.

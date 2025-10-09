@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient'; // Directly import LinearGradient
 
-import LanguageSelector from '../../components/LanguageSelector';
+// import LanguageSelector from '../../components/LanguageSelector'; // REMOVED - now in CustomHeader
 import CustomHeader from '../../components/CustomHeader'; // Ensure CustomHeader is imported
 import { defaultTheme } from '../../config/theme';
 import { RootStackNavigationProp } from '../../navigation/types';
@@ -17,6 +17,7 @@ const WelcomeScreenContainer = styled(View)`
   flex: 1;
   /* No background-color, LinearGradient will cover */
 `;
+
 
 const ContentContainer = styled(View)`
   flex: 1;
@@ -60,7 +61,7 @@ const Button = styled.TouchableOpacity`
   background-color: ${props => props.theme.colors.secondary};
   border-radius: ${props => props.theme.borderRadius.pill}px;
   align-items: center;
-  margin-top: ${props => props.theme.spacing.xxl}px;
+  margin-top: ${props => props.theme.spacing.xxl}px; /* Adjusted margin */
   elevation: 5;
   shadow-color: '#000';
   shadow-offset: 0px 4px;
@@ -93,7 +94,7 @@ const WelcomeScreen: React.FC = () => {
   return (
     <>
       <CustomHeader
-        title={t('common.welcome')}
+        title={String(t('common.welcome'))}
         showBack={false}
         showLogo={true}
         showLanguageSwitcher={true}
@@ -111,14 +112,14 @@ const WelcomeScreen: React.FC = () => {
             <Title>Farmlytics</Title>
           </LogoContainer>
 
-          <WelcomeMessage>{t('auth.welcomePrompt')}</WelcomeMessage>
-
+          <WelcomeMessage>{String(t('auth.welcomePrompt'))}</WelcomeMessage>
+          
           <Button onPress={() => navigation.navigate('Login')}>
-            <ButtonText>{t('common.login')}</ButtonText>
+            <ButtonText>{String(t('common.login'))}</ButtonText>
           </Button>
 
           <SecondaryButton onPress={() => navigation.navigate('Register')}>
-            <SecondaryButtonText>{t('common.register')}</SecondaryButtonText>
+            <SecondaryButtonText>{String(t('common.register'))}</SecondaryButtonText>
           </SecondaryButton>
         </ContentContainer>
       </LinearGradient>

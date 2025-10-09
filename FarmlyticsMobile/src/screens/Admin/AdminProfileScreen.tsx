@@ -1,18 +1,18 @@
-// src/screens/Main/ProfileScreen.tsx
+// src/screens/Admin/AdminProfileScreen.tsx
 
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { Text, View, ScrollView, TouchableOpacity, ActivityIndicator, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import CustomHeader from '../../components/CustomHeader';
-// CORRECTED: Import User interface from AuthContext
 import { useAuth, User } from '../../context/AuthContext'; 
 import { defaultTheme } from '../../config/theme';
 import { Ionicons } from '@expo/vector-icons';
-import LanguageSelector from '../../components/LanguageSelector'; // Import LanguageSelector
-import { Picker } from '@react-native-picker/picker'; // For preferred district/province/language selection
+import LanguageSelector from '../../components/LanguageSelector';
+import { Picker } from '@react-native-picker/picker';
+import { AdminTabNavigationProp } from '../../navigation/types'; 
+import { useNavigation } from '@react-navigation/native'; 
 
-// ---------------------- Styled Components ----------------------
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -32,7 +32,7 @@ const ContentArea = styled(ScrollView).attrs({
 const AppLogo = styled(Image)`
   width: 100px;
   height: 100px;
-  align-self: center; /* Center the logo */
+  align-self: center;
   margin-top: ${defaultTheme.spacing.medium}px;
   margin-bottom: ${defaultTheme.spacing.large}px;
   resize-mode: contain;
@@ -149,9 +149,9 @@ const SubmitButton = styled(TouchableOpacity)`
 `;
 
 const SubmitButtonText = styled(Text)`
+  color: ${props => props.theme.colors.lightText};
   font-size: ${props => props.theme.fontSizes.large}px;
   font-weight: bold;
-  color: ${props => props.theme.colors.lightText};
 `;
 
 const LogoutButton = styled(TouchableOpacity)`
@@ -162,7 +162,7 @@ const LogoutButton = styled(TouchableOpacity)`
   align-items: center;
   justify-content: center;
   margin-top: ${defaultTheme.spacing.xxl}px;
-  margin-bottom: ${defaultTheme.spacing.xl}px; /* Ensure space at bottom */
+  margin-bottom: ${defaultTheme.spacing.xl}px; 
   align-self: center;
   flex-direction: row;
   elevation: 4;
@@ -179,32 +179,24 @@ const LogoutButtonText = styled(Text)`
   margin-left: ${defaultTheme.spacing.small}px;
 `;
 
-
-// ---------------------- Component Logic ----------------------
-const ProfileScreen: React.FC = () => {
+const AdminProfileScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { user, logout, isLoading, updateUserProfile, districts, provinces } = useAuth(); // Access updateProfile, districts, provinces
+  const { user, logout, isLoading, updateUserProfile } = useAuth();
+  const navigation = useNavigation<AdminTabNavigationProp<'AdminProfileTab'>>();
 
-  const [editDistrict, setEditDistrict] = useState(user?.preferredDistrictName || '');
-  const [editProvince, setEditProvince] = useState(user?.preferredProvinceName || '');
+
   const [editLanguage, setEditLanguage] = useState(user?.preferredLanguage || t('common.locale'));
   const [isSaving, setIsSaving] = useState(false);
 
-  // Update local state when user prop changes (e.g., after initial load or successful update)
   useEffect(() => {
     if (user) {
-      setEditDistrict(user.preferredDistrictName || '');
-      setEditProvince(user.preferredProvinceName || '');
       setEditLanguage(user.preferredLanguage || t('common.locale'));
     }
   }, [user, t]);
 
-
   const handleSaveProfile = useCallback(async () => {
     setIsSaving(true);
-    const updates: Partial<User> = { // User interface is now correctly imported
-      preferredDistrictName: editDistrict,
-      preferredProvinceName: editProvince,
+    const updates: Partial<User> = { 
       preferredLanguage: editLanguage,
     };
     
@@ -213,8 +205,7 @@ const ProfileScreen: React.FC = () => {
       // Profile updated, AuthContext handles language change and user state update
     }
     setIsSaving(false);
-  }, [editDistrict, editProvince, editLanguage, updateUserProfile]);
-
+  }, [editLanguage, updateUserProfile]);
 
   const handleLogout = () => {
     logout();
@@ -269,7 +260,6 @@ const ProfileScreen: React.FC = () => {
                 onValueChange={(itemValue: unknown, itemIndex: number) => setEditLanguage(itemValue as string)}
                 enabled={!isSaving}
               >
-                {/* Languages defined in LanguageSelector.tsx, dynamically fetchable from backend also */}
                 {['en', 'rw', 'fr'].map(langCode => (
                   <Picker.Item key={String(langCode)} label={String(t(`common.languageName_${langCode}`) || langCode.toUpperCase())} value={String(langCode)} />
                 ))}
@@ -285,66 +275,7 @@ const ProfileScreen: React.FC = () => {
           </SubmitButton>
         </DetailCard>
 
-
-        {/* --- Preferred Location Settings (for Farmer/Buyer) --- */}
-        {user?.role !== 'admin' && (
-          <SectionTitle>{String(t('profile.preferredLocationSettings') || 'Preferred Location')}</SectionTitle>
-        )}
-        {user?.role !== 'admin' && (
-          <DetailCard style={{ paddingVertical: 0 }}>
-            {/* Preferred Province */}
-            <DetailItem>
-              <InfoLabel>{String(t('profile.preferredProvinceLabel') || 'Preferred Province:')}</InfoLabel>
-              <PickerContainer>
-                <StyledPicker
-                  selectedValue={editProvince}
-                  onValueChange={(itemValue: unknown, itemIndex: number) => setEditProvince(itemValue as string)}
-                  enabled={!isSaving && !isLoading}
-                >
-                  {isLoading ? (
-                    <Picker.Item key="loading-provinces" label={String(t('common.loading'))} value="" />
-                  ) : provinces.length > 0 ? (
-                    provinces.map((province) => (
-                      <Picker.Item key={String(province.value)} label={String(province.label)} value={String(province.value)} />
-                    ))
-                  ) : (
-                    <Picker.Item key="no-provinces" label={String(t('profile.noProvincesFound') || "No provinces available")} value="" />
-                  )}
-                </StyledPicker>
-              </PickerContainer>
-            </DetailItem>
-
-            {/* Preferred District */}
-            <DetailItem style={{ borderBottomWidth: 0 }}>
-              <InfoLabel>{String(t('profile.preferredDistrictLabel') || 'Preferred District:')}</InfoLabel>
-              <PickerContainer>
-                <StyledPicker
-                  selectedValue={editDistrict}
-                  onValueChange={(itemValue: unknown, itemIndex: number) => setEditDistrict(itemValue as string)}
-                  enabled={!isSaving && !isLoading}
-                >
-                  {isLoading ? (
-                    <Picker.Item key="loading-districts" label={String(t('common.loading'))} value="" />
-                  ) : districts.length > 0 ? (
-                    districts.map((district) => (
-                      <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} />
-                    ))
-                  ) : (
-                    <Picker.Item key="no-districts" label={String(t('profile.noDistrictsFound') || "No districts available")} value="" />
-                  )}
-                </StyledPicker>
-              </PickerContainer>
-            </DetailItem>
-            <SubmitButton onPress={handleSaveProfile} disabled={isSaving}>
-              {isSaving ? (
-                <ActivityIndicator color={defaultTheme.colors.lightText} />
-              ) : (
-                <SubmitButtonText>{String(t('profile.saveChangesButton') || 'Save Changes')}</SubmitButtonText>
-              )}
-            </SubmitButton>
-          </DetailCard>
-        )}
-
+        {/* No Preferred Location settings for Admin, as it's less relevant */}
 
         {/* --- Account Info Section --- */}
         <SectionTitle>{String(t('profile.accountInfo'))}</SectionTitle>
@@ -365,4 +296,4 @@ const ProfileScreen: React.FC = () => {
   );
 };
 
-export default ProfileScreen;
+export default AdminProfileScreen;

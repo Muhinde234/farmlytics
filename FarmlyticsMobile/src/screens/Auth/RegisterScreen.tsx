@@ -132,7 +132,7 @@ const RegisterScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const navigation = useNavigation<RootStackNavigationProp<'Register'>>();
-  const { register } = useAuth();
+  const { register } = useAuth(); // Use useAuth to get register function
 
   useFocusEffect(
     useCallback(() => {
@@ -148,7 +148,7 @@ const RegisterScreen: React.FC = () => {
   const handleRegister = async () => {
     setLoading(true);
     if (password !== confirmPassword) {
-      Alert.alert(String(t('common.error')), String(t('auth.passwordsMismatch'))); // Explicit String()
+      Alert.alert(String(t('common.error')), String(t('auth.passwordsMismatch')));
       setLoading(false);
       return;
     }
@@ -169,7 +169,7 @@ const RegisterScreen: React.FC = () => {
         </LogoContainer>
 
         <Input
-          placeholder={String(t('auth.name'))} // Explicit String()
+          placeholder={String(t('auth.name'))}
           autoCapitalize="words"
           value={name}
           onChangeText={setName}
@@ -177,7 +177,7 @@ const RegisterScreen: React.FC = () => {
           editable={!loading}
         />
         <Input
-          placeholder={String(t('common.email'))} // Explicit String()
+          placeholder={String(t('common.email'))}
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -186,7 +186,7 @@ const RegisterScreen: React.FC = () => {
           editable={!loading}
         />
         <Input
-          placeholder={String(t('common.password'))} // Explicit String()
+          placeholder={String(t('common.password'))}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
@@ -194,7 +194,7 @@ const RegisterScreen: React.FC = () => {
           editable={!loading}
         />
         <Input
-          placeholder={String(t('auth.confirmPassword'))} // Explicit String()
+          placeholder={String(t('auth.confirmPassword'))}
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
@@ -208,8 +208,8 @@ const RegisterScreen: React.FC = () => {
             onValueChange={(itemValue: unknown, itemIndex: number) => setRole(itemValue as 'farmer' | 'buyer')}
             enabled={!loading}
           >
-            <Picker.Item label={String(t('auth.roleFarmer'))} value="farmer" /> {/* Explicit String() */}
-            <Picker.Item label={String(t('auth.roleBuyer'))} value="buyer" /> {/* Explicit String() */}
+            <Picker.Item label={String(t('auth.roleFarmer'))} value="farmer" />
+            <Picker.Item label={String(t('auth.roleBuyer'))} value="buyer" />
           </StyledPicker>
         </PickerContainer>
 
@@ -217,18 +217,18 @@ const RegisterScreen: React.FC = () => {
           {loading ? (
             <ActivityIndicator color={defaultTheme.colors.lightText} />
           ) : (
-            <ButtonText>{t('common.register')}</ButtonText>
+            <ButtonText>{String(t('common.register'))}</ButtonText>
           )}
         </Button>
 
         {loading && (
           <LoadingMessage>
-            <Text>{t('auth.sendingVerificationEmail')}</Text>
+            <Text>{String(t('auth.sendingVerificationEmail'))}</Text>
           </LoadingMessage>
         )}
 
         <LinkText onPress={() => navigation.replace('Login')}>
-          {t('auth.alreadyHaveAccount')}
+          {String(t('auth.alreadyHaveAccount'))}
         </LinkText>
       </ScrollContent>
     </Container>

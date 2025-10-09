@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Platform, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { defaultTheme } from '../config/theme';
+import { defaultTheme } from '../config/theme'; // Correct: Import defaultTheme
 import LanguageSelector from './LanguageSelector';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -86,12 +86,10 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
 }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets(); // Get safe area insets
+  const insets = useSafeAreaInsets();
 
   return (
-    // FINAL FIX: Render StatusBarSpacer separately *before* the HeaderContainer
-    // This pushes the entire header down reliably.
-    <View style={{ backgroundColor: defaultTheme.colors.primary }}> {/* Ensures background matches status bar */}
+    <View style={{ backgroundColor: defaultTheme.colors.primary }}>
       <StatusBarSpacer height={insets.top} />
       <HeaderContainer>
         <LeftSection>
@@ -105,7 +103,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
             <View style={{ width: 40 }} />
           )}
         </LeftSection>
-        <TitleText>{title || t('common.back')}</TitleText>
+        <TitleText>{String(title || t('common.back'))}</TitleText> {/* Explicit String() */}
         <RightSection>
           {showLanguageSwitcher && <LanguageSelector variant="header" color={defaultTheme.colors.lightText} />}
           {rightAction && (

@@ -2,9 +2,9 @@
 
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CompositeNavigationProp, NavigatorScreenParams } from '@react-navigation/native';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'; 
 
-// Define types for the screens within the MainTabNavigator
+// Define types for the screens within the MainTabParamList (Farmer/Buyer)
 export type MainTabParamList = {
   HomeTab: undefined;
   CropPlannerTab: undefined;
@@ -13,17 +13,31 @@ export type MainTabParamList = {
   ProfileTab: undefined;
 };
 
+// NEW: Define types for the screens within the AdminTabNavigator (also Bottom Tabs)
+export type AdminTabParamList = {
+  AdminHomeTab: undefined; 
+  UserManagementTab: undefined; 
+  AnalyticsReportingTab: undefined; 
+  ReferenceDataManagementTab: undefined; 
+  AdminProfileTab: undefined; 
+};
+
 // Define types for the RootStack Navigator
 export type RootStackParamList = {
   Splash: undefined;
   Welcome: undefined;
   Login: undefined;
-  Register: undefined;
-  MainApp: NavigatorScreenParams<MainTabParamList>; // This will be our tab navigator
-  // Specific screens that might be pushed onto the stack *from within* tabs, if any
-  // e.g., CropPlanDetail: { planId: string };
+  Register: undefined; 
+  ForgotPassword: undefined; 
+  UpdatePassword: undefined; 
+
+  MainApp: NavigatorScreenParams<MainTabParamList>; 
+  AdminApp: NavigatorScreenParams<AdminTabParamList>; 
+
   AddCropPlan: undefined;
-  CropPlanDetail: { cropPlanId: string }; // Parameter for detail screen
+  CropPlanDetail: { cropPlanId: string };
+  // Make cropPlanId and cropName optional for RecordHarvest
+  RecordHarvest: { cropPlanId?: string; cropName?: string }; 
 };
 
 // Generic navigation prop for any screen in the RootStack
@@ -37,5 +51,9 @@ export type MainTabNavigationProp<RouteName extends keyof MainTabParamList> =
     RootStackNavigationProp<keyof RootStackParamList>
   >;
 
-// You can create specific navigation prop types for convenience
-// export type HomeScreenNavigationProp = MainTabNavigationProp<'HomeTab'>;
+// NEW: Navigation prop for screens within the AdminTabNavigator
+export type AdminTabNavigationProp<RouteName extends keyof AdminTabParamList> =
+  CompositeNavigationProp<
+    BottomTabNavigationProp<AdminTabParamList, RouteName>, 
+    RootStackNavigationProp<keyof RootStackParamList>
+  >;
