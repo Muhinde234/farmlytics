@@ -9,7 +9,8 @@
     "footer": {
       "copyright": "© {year} Farmlytics. All rights reserved.",
       "slogan": "Digitalize your farm, cultivate success."
-    }
+    },
+    "language":"kiny"
   },
   "home": {
     "hero": {
