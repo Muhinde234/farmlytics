@@ -1,8 +1,8 @@
 // src/screens/Auth/SplashScreen.tsx
 
 import React, { useEffect, useRef } from 'react';
-import styled, { DefaultTheme } from 'styled-components/native'; // Import DefaultTheme
-import { Image, ActivityIndicator, Text, Animated, Platform, View } from 'react-native'; // Import View
+import styled from 'styled-components/native';
+import { Image, ActivityIndicator, Text, Animated, Platform, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient'; // Directly import LinearGradient
@@ -11,14 +11,9 @@ import { defaultTheme } from '../../config/theme';
 import { RootStackNavigationProp } from '../../navigation/types';
 
 // ---------------------- Styled Components ----------------------
-// FINAL FIX: Define a styled View that contains LinearGradient
-const StyledGradientContainer = styled(View)`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  /* No background-color here, LinearGradient will cover */
-`;
-
+// FINAL FIX: We will NOT use styled(LinearGradient). We'll use a plain LinearGradient
+// and apply React Native styles directly for its required props.
+// Any other common styles can be wrapped in a styled(View) if needed.
 const AppLogo = styled(Image).attrs({
   resizeMode: 'contain',
 })`
@@ -60,17 +55,18 @@ const SplashScreen: React.FC = () => {
   }, [navigation, i18n]);
 
   return (
-    // FINAL FIX: Use plain LinearGradient directly within a styled View
+    // FINAL FIX: Use LinearGradient directly in JSX and pass props
     <LinearGradient
       colors={[defaultTheme.colors.gradientStart, defaultTheme.colors.darkGradientEnd]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} // Apply flex styles directly
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
     >
       <Animated.View style={{ opacity: fadeAnim, alignItems: 'center' }}>
         <AppLogo source={require('../../../assets/logo.png')} />
         <Tagline>
-          {t('common.welcome')} to Farmlytics!
+          <Text>{String(t('common.welcome'))}</Text> {/* Explicit String() */}
+          <Text> to Farmlytics!</Text> {/* Explicit String() */}
         </Tagline>
       </Animated.View>
       <ActivityIndicator size="large" color={defaultTheme.colors.lightText} />

@@ -1,6 +1,6 @@
 // src/screens/Main/AddCropPlanScreen.tsx
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { Text, View, ScrollView, ActivityIndicator, Alert, Platform, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -12,9 +12,7 @@ import { MainTabNavigationProp } from '../../navigation/types';
 
 import CustomHeader from '../../components/CustomHeader';
 import { defaultTheme } from '../../config/theme';
-import { RWANDA_DISTRICTS } from '../../config/districts';
-import { MVP_CROPS } from '../../config/crops';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext'; // Import useAuth for authenticatedFetch and dynamic data
 
 // ---------------------- Styled Components ----------------------
 const Container = styled(View)`
@@ -52,7 +50,7 @@ const FormTitle = styled(Text)`
   text-align: center;
 `;
 
-const Label = styled(Text)` /* ADDED: Label component */
+const Label = styled(Text)`
   font-size: ${props => props.theme.fontSizes.medium}px;
   color: ${props => props.theme.colors.text};
   margin-bottom: ${props => props.theme.spacing.small}px;
@@ -134,27 +132,38 @@ const ErrorText = styled(Text)`
 // ---------------------- Component Logic ----------------------
 const AddCropPlanScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { authenticatedFetch } = useAuth();
+  const { authenticatedFetch, crops, districts, areReferenceDataLoading } = useAuth(); // Use dynamic data
   const navigation = useNavigation<MainTabNavigationProp<'HarvestTrackerTab'>>();
 
-  const [cropName, setCropName] = useState(MVP_CROPS[0]?.value || '');
-  const [districtName, setDistrictName] = useState(RWANDA_DISTRICTS[0]?.value || '');
+  const [cropName, setCropName] = useState('');
+  const [districtName, setDistrictName] = useState('');
   const [actualAreaPlantedHa, setActualAreaPlantedHa] = useState('');
   const [plantingDate, setPlantingDate] = useState<Date | null>(null);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Set initial default values after dynamic data is loaded
+  useEffect(() => {
+    if (crops.length > 0 && !cropName) {
+      setCropName(crops[0].value);
+    }
+    if (districts.length > 0 && !districtName) {
+      setDistrictName(districts[0].value);
+    }
+  }, [crops, districts, cropName, districtName]);
+
+
   // Reset form when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      setCropName(MVP_CROPS[0]?.value || '');
-      setDistrictName(RWANDA_DISTRICTS[0]?.value || '');
+      setCropName(crops.length > 0 ? crops[0].value : '');
+      setDistrictName(districts.length > 0 ? districts[0].value : '');
       setActualAreaPlantedHa('');
       setPlantingDate(null);
       setError(null);
       setLoading(false);
-    }, [])
+    }, [crops, districts])
   );
 
   const showDatePicker = () => setDatePickerVisible(true);
@@ -170,7 +179,7 @@ const AddCropPlanScreen: React.FC = () => {
     const parsedArea = parseFloat(actualAreaPlantedHa);
 
     if (!cropName || !districtName || isNaN(parsedArea) || parsedArea <= 0 || !plantingDate) {
-      setError(t('cropPlan.formValidationError'));
+      setError(String(t('cropPlan.formValidationError'))); // Explicit String()
       return;
     }
 
@@ -190,18 +199,18 @@ const AddCropPlanScreen: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          Alert.alert(t('common.success'), t('cropPlan.addSuccess'));
+          Alert.alert(String(t('common.success')), String(t('cropPlan.addSuccess'))); // Explicit String()
           navigation.goBack(); // Go back to the list
         } else {
-          setError(data.message || t('cropPlan.addError'));
+          setError(String(data.message || t('cropPlan.addError'))); // Explicit String()
         }
       } else {
         const errorData = await response.json();
-        setError(errorData.message || t('cropPlan.addError'));
+        setError(String(errorData.message || t('cropPlan.addError'))); // Explicit String()
       }
-    } catch (err) {
-      console.error('Add crop plan error:', err);
-      setError(t('common.networkError'));
+    } catch (err: unknown) { // Explicitly type error as unknown
+      console.error('Add crop plan error (catch block):', err);
+      setError(String(t('common.networkError'))); // Explicit String()
     } finally {
       setLoading(false);
     }
@@ -209,40 +218,54 @@ const AddCropPlanScreen: React.FC = () => {
 
   return (
     <Container>
-      <CustomHeader title={t('cropPlan.addTitle')} showBack={true} />
+      <CustomHeader title={String(t('cropPlan.addTitle'))} showBack={true} showLogo={true} showLanguageSwitcher={true}/>
       <ContentArea>
         <FormSection>
-          <FormTitle>{t('cropPlan.addPlanFormTitle')}</FormTitle>
+          <FormTitle>{String(t('cropPlan.addPlanFormTitle'))}</FormTitle>
           
-          <Label>{t('cropPlan.cropNameLabel')}</Label>
+          <Label>{String(t('cropPlan.cropNameLabel'))}</Label>
           <PickerContainer>
             <StyledPicker
               selectedValue={cropName}
               onValueChange={(itemValue: unknown, itemIndex: number) => setCropName(itemValue as string)} // Corrected Picker typing
-              enabled={!loading}
+              enabled={!loading && !areReferenceDataLoading}
             >
-              {MVP_CROPS.map((crop) => (
-                <Picker.Item key={crop.value} label={crop.label} value={crop.value} />
-              ))}
+              {/* FINAL FIX: Ensure Picker.Item children are correctly formed. */}
+              {areReferenceDataLoading ? (
+                <Picker.Item key="loading-crops" label={String(t('common.loading'))} value="" />
+              ) : crops.length > 0 ? (
+                crops.map((crop) => (
+                  <Picker.Item key={String(crop.value)} label={String(crop.label)} value={String(crop.value)} />
+                ))
+              ) : (
+                <Picker.Item key="no-crops" label={String(t('cropPlan.noCropsFound') || "No crops available")} value="" />
+              )}
             </StyledPicker>
           </PickerContainer>
 
-          <Label>{t('cropPlan.districtNameLabel')}</Label>
+          <Label>{String(t('cropPlan.districtNameLabel'))}</Label>
           <PickerContainer>
             <StyledPicker
               selectedValue={districtName}
               onValueChange={(itemValue: unknown, itemIndex: number) => setDistrictName(itemValue as string)} // Corrected Picker typing
-              enabled={!loading}
+              enabled={!loading && !areReferenceDataLoading}
             >
-              {RWANDA_DISTRICTS.map((district) => (
-                <Picker.Item key={district.value} label={district.label} value={district.value} />
-              ))}
+              {/* FINAL FIX: Same as above, ensure Picker.Item children are correctly formed. */}
+              {areReferenceDataLoading ? (
+                <Picker.Item key="loading-districts" label={String(t('common.loading'))} value="" />
+              ) : districts.length > 0 ? (
+                districts.map((district) => (
+                  <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} />
+                ))
+              ) : (
+                <Picker.Item key="no-districts-add" label={String(t('cropPlan.noDistrictsFound') || "No districts available")} value="" />
+              )}
             </StyledPicker>
           </PickerContainer>
 
-          <Label>{t('cropPlan.areaPlantedLabel')}</Label>
+          <Label>{String(t('cropPlan.areaPlantedLabel'))}</Label>
           <Input
-            placeholder={t('cropPlan.areaPlantedPlaceholder')}
+            placeholder={String(t('cropPlan.areaPlantedPlaceholder'))}
             keyboardType="numeric"
             value={actualAreaPlantedHa}
             onChangeText={setActualAreaPlantedHa}
@@ -250,10 +273,10 @@ const AddCropPlanScreen: React.FC = () => {
             editable={!loading}
           />
 
-          <Label>{t('cropPlan.plantingDateLabel')}</Label>
+          <Label>{String(t('cropPlan.plantingDateLabel'))}</Label>
           <DatePickerButton onPress={showDatePicker} disabled={loading}>
             <DatePickerButtonText isPlaceholder={!plantingDate}>
-              {plantingDate ? plantingDate.toLocaleDateString() : (t('cropPlan.selectDatePlaceholder'))}
+              {plantingDate ? plantingDate.toLocaleDateString() : (String(t('cropPlan.selectDatePlaceholder')))}
             </DatePickerButtonText>
             <Ionicons name="calendar-outline" size={defaultTheme.fontSizes.large} color={defaultTheme.colors.text} />
           </DatePickerButton>
@@ -264,14 +287,14 @@ const AddCropPlanScreen: React.FC = () => {
             onConfirm={handleConfirmDate}
             onCancel={hideDatePicker}
             date={plantingDate || new Date()}
-            locale={t('common.locale')}
+            locale={String(t('common.locale'))} // Explicit String()
           />
 
-          <SubmitButton onPress={handleSubmit} disabled={loading}>
+          <SubmitButton onPress={handleSubmit} disabled={loading || areReferenceDataLoading}>
             {loading ? (
               <ActivityIndicator color={defaultTheme.colors.lightText} />
             ) : (
-              <SubmitButtonText>{t('cropPlan.submitPlanButton')}</SubmitButtonText>
+              <SubmitButtonText>{String(t('cropPlan.submitPlanButton'))}</SubmitButtonText>
             )}
           </SubmitButton>
           {error && <ErrorText>{error}</ErrorText>}

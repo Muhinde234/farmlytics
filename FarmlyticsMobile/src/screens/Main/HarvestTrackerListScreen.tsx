@@ -112,7 +112,6 @@ const EmptyStateText = styled(Text)`
   margin-top: ${props => props.theme.spacing.medium}px;
 `;
 
-// ADDED: FeedbackContainer and ErrorText for consistent error display
 const FeedbackContainer = styled(View)`
   flex: 1;
   justify-content: center;
@@ -171,15 +170,15 @@ const HarvestTrackerListScreen: React.FC = () => {
         if (data.success) {
           setCropPlans(data.data);
         } else {
-          setError(data.message || t('tracker.fetchError'));
+          setError(String(data.message || t('tracker.fetchError'))); // Explicit String()
         }
       } else {
         const errorData = await response.json();
-        setError(errorData.message || t('tracker.fetchError'));
+        setError(String(errorData.message || t('tracker.fetchError'))); // Explicit String()
       }
-    } catch (err) {
-      console.error('Error fetching crop plans:', err);
-      setError(t('common.networkError'));
+    } catch (err: unknown) { // Explicitly type error as unknown
+      console.error('Error fetching crop plans (catch block):', err);
+      setError(String(t('common.networkError'))); // Explicit String()
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -200,7 +199,7 @@ const HarvestTrackerListScreen: React.FC = () => {
 
   return (
     <Container>
-      <CustomHeader title={t('tab.tracker')} />
+      <CustomHeader title={String(t('tab.tracker'))} showBack={false} showLogo={true} showLanguageSwitcher={true}/>
       <ContentArea
         refreshControl={
           <RefreshControl
@@ -213,10 +212,10 @@ const HarvestTrackerListScreen: React.FC = () => {
       >
         <AddButton onPress={() => navigation.navigate('AddCropPlan')}>
           <Ionicons name="add-circle-outline" size={defaultTheme.fontSizes.xl} color={defaultTheme.colors.lightText} />
-          <AddButtonText>{t('tracker.addPlanButton')}</AddButtonText>
+          <AddButtonText>{String(t('tracker.addPlanButton'))}</AddButtonText>
         </AddButton>
 
-        <SectionTitle>{t('tracker.myCropPlansTitle')}</SectionTitle>
+        <SectionTitle>{String(t('tracker.myCropPlansTitle'))}</SectionTitle>
 
         {loading ? (
           <ActivityIndicator size="large" color={defaultTheme.colors.primary} />
@@ -226,25 +225,25 @@ const HarvestTrackerListScreen: React.FC = () => {
           </FeedbackContainer>
         ) : cropPlans.length > 0 ? (
           cropPlans.map((plan) => (
-            <PlanCard key={plan._id} onPress={() => navigation.navigate('CropPlanDetail', { cropPlanId: plan._id })}>
+            <PlanCard key={String(plan._id)} onPress={() => navigation.navigate('CropPlanDetail', { cropPlanId: plan._id })}>
               <PlanCardHeader>
-                <PlanCardTitle>{plan.cropName} ({plan.actualAreaPlantedHa} {t('market.haUnit')})</PlanCardTitle>
+                <PlanCardTitle>{String(plan.cropName)} (<Text>{String(plan.actualAreaPlantedHa)}</Text> {String(t('market.haUnit'))})</PlanCardTitle>
                 <PlanCardStatus statusColor={getStatusColor(plan.status)}>
-                  {t(`tracker.status${plan.status}` || plan.status)}
+                  {String(t(`tracker.status${plan.status}` || plan.status))}
                 </PlanCardStatus>
               </PlanCardHeader>
-              <PlanCardDetail>{t('cropPlan.plantingDate')}: {plan.plantingDate}</PlanCardDetail>
-              <PlanCardDetail>{t('cropPlan.estimatedHarvestDate')}: {plan.estimatedHarvestDate}</PlanCardDetail>
-              <PlanCardDetail>{t('cropPlan.estProduction')}: {plan.estimatedTotalProductionKg?.toFixed(0)} {t('market.kgUnit')}</PlanCardDetail>
-              <PlanCardDetail>{t('cropPlan.estRevenue')}: {plan.estimatedRevenueRwf?.toLocaleString()} Rwf</PlanCardDetail>
+              <PlanCardDetail>{String(t('cropPlan.plantingDate'))}: {String(plan.plantingDate)}</PlanCardDetail>
+              <PlanCardDetail>{String(t('cropPlan.estimatedHarvestDate'))}: {String(plan.estimatedHarvestDate)}</PlanCardDetail>
+              <PlanCardDetail>{String(t('cropPlan.estProduction'))}: {String(plan.estimatedTotalProductionKg?.toFixed(0))} {String(t('market.kgUnit'))}</PlanCardDetail>
+              <PlanCardDetail>{String(t('cropPlan.estRevenue'))}: {String(plan.estimatedRevenueRwf?.toLocaleString())} Rwf</PlanCardDetail>
             </PlanCard>
           ))
         ) : (
           <EmptyStateContainer>
-            <EmptyStateText>{t('tracker.noPlansFound')}</EmptyStateText>
+            <EmptyStateText>{String(t('tracker.noPlansFound'))}</EmptyStateText>
             <AddButton onPress={() => navigation.navigate('AddCropPlan')}>
                <Ionicons name="add-circle-outline" size={defaultTheme.fontSizes.xl} color={defaultTheme.colors.lightText} />
-              <AddButtonText>{t('tracker.addFirstPlanButton')}</AddButtonText>
+              <AddButtonText>{String(t('tracker.addFirstPlanButton'))}</AddButtonText>
             </AddButton>
           </EmptyStateContainer>
         )}

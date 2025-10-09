@@ -1,6 +1,6 @@
 // src/screens/Main/CropPlanDetailScreen.tsx
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { Text, View, ScrollView, ActivityIndicator, Alert, Platform, TouchableOpacity, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -13,8 +13,6 @@ import { useAuth } from '../../context/AuthContext';
 import { RootStackParamList, MainTabNavigationProp } from '../../navigation/types';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Picker } from '@react-native-picker/picker';
-import { MVP_CROPS } from '../../config/crops';
-import { RWANDA_DISTRICTS } from '../../config/districts';
 
 // Define the route prop type for this screen
 type CropPlanDetailScreenRouteProp = RouteProp<RootStackParamList, 'CropPlanDetail'>;
@@ -108,9 +106,11 @@ const EstimateTitle = styled(Text)`
 
 const ActionButtonsContainer = styled(View)`
   flex-direction: row;
+  flex-wrap: wrap; /* Allow wrapping for multiple buttons */
   justify-content: space-around;
   margin-top: ${defaultTheme.spacing.large}px;
   margin-bottom: ${defaultTheme.spacing.xl}px;
+  gap: ${defaultTheme.spacing.small}px; /* Space between buttons */
 `;
 
 const ActionButton = styled(TouchableOpacity)<{ bgColor: string }>`
@@ -119,11 +119,14 @@ const ActionButton = styled(TouchableOpacity)<{ bgColor: string }>`
   padding: ${props => props.theme.spacing.medium}px ${props => props.theme.spacing.large}px;
   flex-direction: row;
   align-items: center;
+  justify-content: center; /* Center content */
   elevation: 4;
   shadow-color: '#000';
   shadow-offset: 0px 2px;
   shadow-opacity: 0.2;
   shadow-radius: 3px;
+  flex: 1; /* Allow buttons to grow */
+  min-width: 45%; /* Ensure two columns */
 `;
 
 const ActionButtonText = styled(Text)`
@@ -133,7 +136,6 @@ const ActionButtonText = styled(Text)`
   margin-left: ${defaultTheme.spacing.small}px;
 `;
 
-// ADDED: Input, PickerContainer, StyledPicker, DatePickerButton, DatePickerButtonText, Label, SubmitButton, SubmitButtonText
 const Input = styled.TextInput`
   width: 100%;
   padding: ${props => props.theme.spacing.medium + 2}px;
@@ -180,7 +182,7 @@ const DatePickerButtonText = styled(Text)<{ isPlaceholder?: boolean }>`
   color: ${props => props.isPlaceholder ? props.theme.colors.placeholder : props.theme.colors.text};
 `;
 
-const SubmitButton = styled(TouchableOpacity)` /* Added SubmitButton */
+const SubmitButton = styled(TouchableOpacity)`
   background-color: ${props => props.theme.colors.primary};
   border-radius: ${props => props.theme.borderRadius.pill}px;
   padding: ${props => props.theme.spacing.medium + 4}px;
@@ -194,13 +196,13 @@ const SubmitButton = styled(TouchableOpacity)` /* Added SubmitButton */
   margin-top: ${defaultTheme.spacing.large}px;
 `;
 
-const SubmitButtonText = styled(Text)` /* Added SubmitButtonText */
+const SubmitButtonText = styled(Text)`
   font-size: ${props => props.theme.fontSizes.large}px;
   font-weight: bold;
   color: ${props => props.theme.colors.lightText};
 `;
 
-const Label = styled(Text)` /* ADDED: Label component */
+const Label = styled(Text)`
   font-size: ${props => props.theme.fontSizes.medium}px;
   color: ${props => props.theme.colors.text};
   margin-bottom: ${props => props.theme.spacing.small}px;
@@ -227,7 +229,7 @@ interface CropPlan {
   cropName: string;
   districtName: string;
   actualAreaPlantedHa: number;
-  plantingDate: string;
+  plantingDate: string; // This will be an ISO string from the API
   estimatedHarvestDate: string;
   estimatedYieldKgPerHa: number;
   estimatedTotalProductionKg: number;
@@ -252,11 +254,11 @@ interface TrackerEstimates {
 
 const CropPlanDetailScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { authenticatedFetch } = useAuth();
+  const { authenticatedFetch, crops, districts, areReferenceDataLoading } = useAuth(); // Use dynamic data
   const route = useRoute<CropPlanDetailScreenRouteProp>();
   const navigation = useNavigation<MainTabNavigationProp<'HarvestTrackerTab'>>();
 
-  const { cropPlanId } = route.params;
+  const { cropPlanId } = route.params; // Get the ID from route parameters
 
   const [cropPlan, setCropPlan] = useState<CropPlan | null>(null);
   const [estimates, setEstimates] = useState<TrackerEstimates | null>(null);
@@ -275,8 +277,7 @@ const CropPlanDetailScreen: React.FC = () => {
   const [editStatus, setEditStatus] = useState<string>('');
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
-
-  const getStatusColor = (status: string) => {
+  const getStatusColor = useCallback((status: string) => {
     switch (status) {
       case 'Planted': return defaultTheme.colors.primary;
       case 'Harvested': return defaultTheme.colors.tertiary;
@@ -284,64 +285,97 @@ const CropPlanDetailScreen: React.FC = () => {
       case 'Cancelled': return defaultTheme.colors.error;
       default: return defaultTheme.colors.placeholder;
     }
-  };
+  }, []);
 
   const fetchPlanDetails = useCallback(async () => {
-    if (!cropPlanId) return;
+    console.log('--- fetchPlanDetails initiated ---');
+    console.log('Fetching plan for ID:', cropPlanId);
+    if (!cropPlanId) {
+      console.error('No cropPlanId provided to fetchPlanDetails.');
+      setError(String(t('cropPlan.planNotFound')));
+      return;
+    }
 
     setError(null);
     setLoading(true);
     try {
-      const response = await authenticatedFetch(`/crop-plans/${cropPlanId}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          const fetchedPlan: CropPlan = data.data;
+      // Fetch Crop Plan Details
+      const planResponse = await authenticatedFetch(`/crop-plans/${cropPlanId}`);
+      console.log('Plan response status:', planResponse.status);
+
+      if (planResponse.ok) {
+        const planData = await planResponse.json();
+        console.log('Raw plan data received:', JSON.stringify(planData));
+
+        if (planData.success) {
+          const fetchedPlan: CropPlan = planData.data;
           setCropPlan(fetchedPlan);
+          console.log('Crop Plan fetched successfully:', fetchedPlan.cropName, 'Status:', fetchedPlan.status);
           
           // Populate edit form states
           setEditCropName(fetchedPlan.cropName);
           setEditDistrictName(fetchedPlan.districtName);
-          setEditArea(fetchedPlan.actualAreaPlantedHa.toString());
+          setEditArea(String(fetchedPlan.actualAreaPlantedHa));
           setEditPlantingDate(new Date(fetchedPlan.plantingDate));
           setEditStatus(fetchedPlan.status);
+          console.log('Edit form states populated.');
 
-          // Fetch tracker estimates
-          const estimatesResponse = await authenticatedFetch(
-            `/tracker/estimates?crop_name=${fetchedPlan.cropName}&actual_area_planted_ha=${fetchedPlan.actualAreaPlantedHa}&planting_date=${fetchedPlan.plantingDate}&district_name=${fetchedPlan.districtName}`
-          );
+          // --- FIX START: Format plantingDate to YYYY-MM-DD for the estimates API ---
+          const formattedPlantingDateForEstimates = new Date(fetchedPlan.plantingDate).toISOString().split('T')[0];
+          console.log('Formatted Planting Date for Estimates:', formattedPlantingDateForEstimates);
+          // --- FIX END ---
+
+          // Fetch Tracker Estimates (conditional on successful plan fetch)
+          console.log('Attempting to fetch tracker estimates...');
+          const estimatesEndpoint = `/tracker/estimates?crop_name=${encodeURIComponent(fetchedPlan.cropName)}&actual_area_planted_ha=${fetchedPlan.actualAreaPlantedHa}&planting_date=${formattedPlantingDateForEstimates}&district_name=${encodeURIComponent(fetchedPlan.districtName)}`;
+          console.log('Estimates endpoint:', estimatesEndpoint);
+          const estimatesResponse = await authenticatedFetch(estimatesEndpoint);
+          console.log('Estimates response status:', estimatesResponse.status);
+
           if (estimatesResponse.ok) {
             const estimatesData = await estimatesResponse.json();
+            console.log('Raw estimates data received:', JSON.stringify(estimatesData));
             if (estimatesData.success) {
               setEstimates(estimatesData.data);
+              console.log('Tracker estimates fetched successfully.');
             } else {
               setEstimates(null);
-              console.error('Failed to fetch estimates:', estimatesData.message);
+              console.warn('Failed to fetch estimates:', String(estimatesData.message));
+              setError(String(estimatesData.message || t('cropPlan.fetchEstimatesError'))); 
             }
           } else {
             setEstimates(null);
-            console.error('Failed to fetch estimates:', estimatesResponse.status);
+            console.error('Failed to fetch estimates, non-OK response:', estimatesResponse.status);
+            const errorText = await estimatesResponse.text();
+            console.error('Estimates error response text:', errorText);
+            setError(String(t('cropPlan.fetchEstimatesError') + ` (Status: ${estimatesResponse.status})`)); 
           }
 
         } else {
-          setError(data.message || t('cropPlan.fetchDetailError'));
+          console.error('API returned success: false for plan details:', planData.message);
+          setError(String(planData.message || t('cropPlan.fetchDetailError')));
         }
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || t('cropPlan.fetchDetailError'));
+        console.error('Failed to fetch plan details, non-OK response:', planResponse.status);
+        const errorData = await planResponse.json();
+        console.error('Plan error response data:', errorData);
+        setError(String(errorData.message || t('cropPlan.fetchDetailError')));
       }
-    } catch (err) {
-      console.error('Error fetching plan details:', err);
-      setError(t('common.networkError'));
+    } catch (err: unknown) {
+      console.error('Error fetching plan details (catch block):', err);
+      setError(String(t('common.networkError')));
     } finally {
       setLoading(false);
       setRefreshing(false);
+      console.log('--- fetchPlanDetails finished ---');
     }
-  }, [cropPlanId, authenticatedFetch, t]);
+  }, [cropPlanId, authenticatedFetch, t, getStatusColor]);
 
   useFocusEffect(
     useCallback(() => {
       fetchPlanDetails();
+      setIsEditMode(false);
+      setError(null);
     }, [fetchPlanDetails])
   );
 
@@ -351,77 +385,95 @@ const CropPlanDetailScreen: React.FC = () => {
   }, [fetchPlanDetails]);
 
   const handleUpdate = useCallback(async () => {
+    console.log('--- handleUpdate initiated ---');
     setError(null);
     setSaving(true);
     
     const parsedArea = parseFloat(editArea);
 
     if (!editCropName || !editDistrictName || isNaN(parsedArea) || parsedArea <= 0 || !editPlantingDate || !editStatus) {
-      Alert.alert(t('common.error'), t('cropPlan.formValidationError'));
+      Alert.alert(String(t('common.error')), String(t('cropPlan.formValidationError')));
       setSaving(false);
+      console.warn('Validation failed for update.');
       return;
     }
+
+    const updatePayload = {
+      cropName: editCropName,
+      districtName: editDistrictName,
+      actualAreaPlantedHa: parsedArea,
+      plantingDate: editPlantingDate.toISOString().split('T')[0], 
+      status: editStatus,
+    };
+    console.log('Sending update payload:', updatePayload);
 
     try {
       const response = await authenticatedFetch(`/crop-plans/${cropPlanId}`, {
         method: 'PUT',
-        body: JSON.stringify({
-          cropName: editCropName,
-          districtName: editDistrictName,
-          actualAreaPlantedHa: parsedArea,
-          plantingDate: editPlantingDate.toISOString().split('T')[0],
-          status: editStatus,
-        }),
+        body: JSON.stringify(updatePayload),
       });
+      console.log('Update response status:', response.status);
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Raw update response data:', JSON.stringify(data));
         if (data.success) {
-          Alert.alert(t('common.success'), t('cropPlan.updateSuccess'));
+          Alert.alert(String(t('common.success')), String(t('cropPlan.updateSuccess')));
           setIsEditMode(false);
-          fetchPlanDetails(); // Re-fetch to get updated estimates
+          fetchPlanDetails(); // Re-fetch to get updated details and estimates
+          console.log('Crop plan updated successfully.');
         } else {
-          setError(data.message || t('cropPlan.updateError'));
+          console.error('API returned success: false for update:', data.message);
+          setError(String(data.message || t('cropPlan.updateError')));
         }
       } else {
+        console.error('Failed to update crop plan, non-OK response:', response.status);
         const errorData = await response.json();
-        setError(errorData.message || t('cropPlan.updateError'));
+        console.error('Update error response data:', errorData);
+        setError(String(errorData.message || t('cropPlan.updateError')));
       }
-    } catch (err) {
-      console.error('Update crop plan error:', err);
-      setError(t('common.networkError'));
+    } catch (err: unknown) {
+      console.error('Update crop plan error (catch block):', err);
+      setError(String(t('common.networkError')));
     } finally {
       setSaving(false);
+      console.log('--- handleUpdate finished ---');
     }
   }, [cropPlanId, editCropName, editDistrictName, editArea, editPlantingDate, editStatus, authenticatedFetch, fetchPlanDetails, t]);
 
   const handleDelete = useCallback(() => {
     Alert.alert(
-      t('cropPlan.confirmDeleteTitle'),
-      t('cropPlan.confirmDeleteMessage'),
+      String(t('cropPlan.confirmDeleteTitle')),
+      String(t('cropPlan.confirmDeleteMessage')),
       [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('common.delete'), style: 'destructive', onPress: async () => {
+        { text: String(t('common.cancel')), style: 'cancel' },
+        { text: String(t('common.delete')), style: 'destructive', onPress: async () => {
           setDeleting(true);
+          console.log('Attempting to delete crop plan:', cropPlanId);
           try {
             const response = await authenticatedFetch(`/crop-plans/${cropPlanId}`, {
               method: 'DELETE',
             });
+            console.log('Delete response status:', response.status);
             if (response.ok) {
               const data = await response.json();
               if (data.success) {
-                Alert.alert(t('common.success'), t('cropPlan.deleteSuccess'));
+                Alert.alert(String(t('common.success')), String(t('cropPlan.deleteSuccess')));
                 navigation.goBack(); // Go back to the list
+                console.log('Crop plan deleted successfully.');
               } else {
-                setError(data.message || t('cropPlan.deleteError'));
+                console.error('API returned success: false for delete:', data.message);
+                setError(String(data.message || t('cropPlan.deleteError')));
               }
             } else {
+              console.error('Failed to delete crop plan, non-OK response:', response.status);
               const errorData = await response.json();
-              setError(errorData.message || t('cropPlan.deleteError'));
+              console.error('Delete error response data:', errorData);
+              setError(String(errorData.message || t('cropPlan.deleteError')));
             }
-          } catch (err) {
-            console.error('Delete crop plan error:', err);
-            setError(t('common.networkError'));
+          } catch (err: unknown) {
+            console.error('Delete crop plan error (catch block):', err);
+            setError(String(t('common.networkError')));
           } finally {
             setDeleting(false);
           }
@@ -430,22 +482,41 @@ const CropPlanDetailScreen: React.FC = () => {
     );
   }, [cropPlanId, authenticatedFetch, navigation, t]);
 
-  const showDatePicker = () => setDatePickerVisible(true);
-  const hideDatePicker = () => setDatePickerVisible(false);
+  // NEW: Handle navigation to RecordHarvestScreen from CropPlanDetail
+  const handleRecordHarvest = useCallback(() => {
+    if (cropPlan) {
+      // Pass both cropPlanId and cropName
+      navigation.navigate('RecordHarvest', { cropPlanId: cropPlan._id, cropName: cropPlan.cropName });
+    } else {
+      Alert.alert(String(t('common.error')), String(t('cropPlan.noPlanToRecord')));
+    }
+  }, [navigation, cropPlan, t]);
 
-  const handleConfirmDate = (date: Date) => {
+
+  const showDatePicker = useCallback(() => setDatePickerVisible(true), []);
+  const hideDatePicker = useCallback(() => setDatePickerVisible(false), []);
+
+  const handleConfirmDate = useCallback((date: Date) => {
     setEditPlantingDate(date);
     hideDatePicker();
-  };
+  }, [hideDatePicker]);
+
+  useEffect(() => {
+    console.log('Reference data status in CropPlanDetailScreen:');
+    console.log('  areReferenceDataLoading:', areReferenceDataLoading);
+    console.log('  Crops available:', crops.length);
+    console.log('  Districts available:', districts.length);
+  }, [areReferenceDataLoading, crops.length, districts.length]);
+
 
   if (loading) {
     return (
       <Container>
-        <CustomHeader title={t('cropPlan.detailTitle')} showBack={true} />
+        <CustomHeader title={String(t('cropPlan.detailTitle'))} showBack={true} showLogo={true} showLanguageSwitcher={true}/>
         <LoadingContainer>
           <ActivityIndicator size="large" color={defaultTheme.colors.primary} />
           <Text style={{ color: defaultTheme.colors.text, marginTop: defaultTheme.spacing.medium }}>
-            {t('common.loading')}
+            {String(t('common.loading'))}
           </Text>
         </LoadingContainer>
       </Container>
@@ -455,7 +526,7 @@ const CropPlanDetailScreen: React.FC = () => {
   if (error) {
     return (
       <Container>
-        <CustomHeader title={t('cropPlan.detailTitle')} showBack={true} />
+        <CustomHeader title={String(t('cropPlan.detailTitle'))} showBack={true} showLogo={true} showLanguageSwitcher={true}/>
         <LoadingContainer>
           <ErrorText>{error}</ErrorText>
         </LoadingContainer>
@@ -466,17 +537,21 @@ const CropPlanDetailScreen: React.FC = () => {
   if (!cropPlan) {
     return (
       <Container>
-        <CustomHeader title={t('cropPlan.detailTitle')} showBack={true} />
+        <CustomHeader title={String(t('cropPlan.detailTitle'))} showBack={true} showLogo={true} showLanguageSwitcher={true}/>
         <LoadingContainer>
-          <ErrorText>{t('cropPlan.planNotFound')}</ErrorText>
+          <ErrorText>{String(t('cropPlan.planNotFound'))}</ErrorText>
         </LoadingContainer>
       </Container>
     );
   }
 
+  // Determine if "Record Harvest" button should be shown
+  const isPlantedAndNotHarvested = cropPlan.status === 'Planted';
+
+
   return (
     <Container>
-      <CustomHeader title={t('cropPlan.detailTitle')} showBack={true} />
+      <CustomHeader title={String(t('cropPlan.detailTitle'))} showBack={true} showLogo={true} showLanguageSwitcher={true}/>
       <ContentArea
          refreshControl={
           <RefreshControl
@@ -489,43 +564,55 @@ const CropPlanDetailScreen: React.FC = () => {
       >
         <DetailCard>
           <DetailHeader>
-            <DetailTitle>{cropPlan.cropName}</DetailTitle>
+            <DetailTitle>{String(cropPlan.cropName)}</DetailTitle>
             <DetailStatus statusColor={getStatusColor(cropPlan.status)}>
-              {t(`tracker.status${cropPlan.status}` || cropPlan.status)}
+              {String(t(`tracker.status${cropPlan.status}` || cropPlan.status))}
             </DetailStatus>
           </DetailHeader>
 
           {isEditMode ? (
             <View>
-               <Label>{t('cropPlan.cropNameLabel')}</Label>
+               <Label>{String(t('cropPlan.cropNameLabel'))}</Label>
               <PickerContainer>
                 <StyledPicker
                   selectedValue={editCropName}
                   onValueChange={(itemValue: unknown, itemIndex: number) => setEditCropName(itemValue as string)}
-                  enabled={!saving}
+                  enabled={!saving && !areReferenceDataLoading}
                 >
-                  {MVP_CROPS.map((crop) => (
-                    <Picker.Item key={crop.value} label={crop.label} value={crop.value} />
-                  ))}
+                  {areReferenceDataLoading ? (
+                    <Picker.Item key="loading-crops-edit" label={String(t('common.loading'))} value="" />
+                  ) : crops.length > 0 ? (
+                    crops.map((crop) => (
+                      <Picker.Item key={String(crop.value)} label={String(crop.label)} value={String(crop.value)} />
+                    ))
+                  ) : (
+                    <Picker.Item key="no-crops-edit" label={String(t('cropPlan.noCropsFound') || "No crops available")} value="" />
+                  )}
                 </StyledPicker>
               </PickerContainer>
 
-              <Label>{t('cropPlan.districtNameLabel')}</Label>
+              <Label>{String(t('cropPlan.districtNameLabel'))}</Label>
               <PickerContainer>
                 <StyledPicker
                   selectedValue={editDistrictName}
                   onValueChange={(itemValue: unknown, itemIndex: number) => setEditDistrictName(itemValue as string)}
-                  enabled={!saving}
+                  enabled={!saving && !areReferenceDataLoading}
                 >
-                  {RWANDA_DISTRICTS.map((district) => (
-                    <Picker.Item key={district.value} label={district.label} value={district.value} />
-                  ))}
+                   {areReferenceDataLoading ? (
+                    <Picker.Item key="loading-districts-edit" label={String(t('common.loading'))} value="" />
+                  ) : districts.length > 0 ? (
+                    districts.map((district) => (
+                      <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} />
+                    ))
+                  ) : (
+                    <Picker.Item key="no-districts-edit" label={String(t('cropPlan.noDistrictsFound') || "No districts available")} value="" />
+                  )}
                 </StyledPicker>
               </PickerContainer>
 
-              <Label>{t('cropPlan.areaPlantedLabel')}</Label>
+              <Label>{String(t('cropPlan.areaPlantedLabel'))}</Label>
               <Input
-                placeholder={t('cropPlan.areaPlantedPlaceholder')}
+                placeholder={String(t('cropPlan.areaPlantedPlaceholder'))}
                 keyboardType="numeric"
                 value={editArea}
                 onChangeText={setEditArea}
@@ -533,10 +620,10 @@ const CropPlanDetailScreen: React.FC = () => {
                 editable={!saving}
               />
 
-              <Label>{t('cropPlan.plantingDateLabel')}</Label>
+              <Label>{String(t('cropPlan.plantingDateLabel'))}</Label>
               <DatePickerButton onPress={showDatePicker} disabled={saving}>
                 <DatePickerButtonText isPlaceholder={!editPlantingDate}>
-                  {editPlantingDate ? editPlantingDate.toLocaleDateString() : (t('cropPlan.selectDatePlaceholder'))}
+                  {editPlantingDate ? editPlantingDate.toLocaleDateString() : (String(t('cropPlan.selectDatePlaceholder')))}
                 </DatePickerButtonText>
                 <Ionicons name="calendar-outline" size={defaultTheme.fontSizes.large} color={defaultTheme.colors.text} />
               </DatePickerButton>
@@ -547,10 +634,10 @@ const CropPlanDetailScreen: React.FC = () => {
                 onConfirm={handleConfirmDate}
                 onCancel={hideDatePicker}
                 date={editPlantingDate || new Date()}
-                locale={t('common.locale')}
+                locale={String(t('common.locale'))}
               />
 
-              <Label>{t('cropPlan.statusLabel')}</Label>
+              <Label>{String(t('cropPlan.statusLabel'))}</Label>
               <PickerContainer>
                 <StyledPicker
                   selectedValue={editStatus}
@@ -558,7 +645,7 @@ const CropPlanDetailScreen: React.FC = () => {
                   enabled={!saving}
                 >
                   {['Planted', 'Harvested', 'Planned', 'Cancelled'].map(s => (
-                    <Picker.Item key={s} label={t(`tracker.status${s}`) || s} value={s} />
+                    <Picker.Item key={String(s)} label={String(t(`tracker.status${s}`) || s)} value={String(s)} />
                   ))}
                 </StyledPicker>
               </PickerContainer>
@@ -567,38 +654,38 @@ const CropPlanDetailScreen: React.FC = () => {
           ) : (
             <>
               <DetailItem>
-                <DetailLabel>{t('cropPlan.districtNameLabel')}</DetailLabel>
-                <DetailValue>{cropPlan.districtName}</DetailValue>
+                <DetailLabel>{String(t('cropPlan.districtNameLabel'))}</DetailLabel>
+                <DetailValue>{String(cropPlan.districtName)}</DetailValue>
               </DetailItem>
               <DetailItem>
-                <DetailLabel>{t('cropPlan.areaPlantedLabel')}</DetailLabel>
-                <DetailValue>{cropPlan.actualAreaPlantedHa?.toFixed(2)} {t('market.haUnit')}</DetailValue>
+                <DetailLabel>{String(t('cropPlan.areaPlantedLabel'))}</DetailLabel>
+                <DetailValue>{String(cropPlan.actualAreaPlantedHa?.toFixed(2))} {String(t('market.haUnit'))}</DetailValue>
               </DetailItem>
               <DetailItem>
-                <DetailLabel>{t('cropPlan.plantingDateLabel')}</DetailLabel>
-                <DetailValue>{cropPlan.plantingDate}</DetailValue>
+                <DetailLabel>{String(t('cropPlan.plantingDateLabel'))}</DetailLabel>
+                <DetailValue>{String(new Date(cropPlan.plantingDate).toLocaleDateString())}</DetailValue>
               </DetailItem>
               <DetailItem>
-                <DetailLabel>{t('cropPlan.estimatedHarvestDate')}</DetailLabel>
-                <DetailValue>{cropPlan.estimatedHarvestDate}</DetailValue>
+                <DetailLabel>{String(t('cropPlan.estimatedHarvestDate'))}</DetailLabel>
+                <DetailValue>{String(new Date(cropPlan.estimatedHarvestDate).toLocaleDateString())}</DetailValue>
               </DetailItem>
               <DetailItem>
-                <DetailLabel>{t('cropPlan.estimatedYield')}</DetailLabel>
-                <DetailValue>{cropPlan.estimatedYieldKgPerHa?.toFixed(2)} {t('market.kgPerHaUnit')}</DetailValue>
+                <DetailLabel>{String(t('cropPlan.estimatedYield'))}</DetailLabel>
+                <DetailValue>{String(cropPlan.estimatedYieldKgPerHa?.toFixed(2))} {String(t('market.kgPerHaUnit'))}</DetailValue>
               </DetailItem>
               <DetailItem style={{ borderBottomWidth: 0 }}>
-                <DetailLabel>{t('cropPlan.estProduction')}</DetailLabel>
-                <DetailValue>{cropPlan.estimatedTotalProductionKg?.toFixed(0)} {t('market.kgUnit')}</DetailValue>
+                <DetailLabel>{String(t('cropPlan.estProduction'))}</DetailLabel>
+                <DetailValue>{String(cropPlan.estimatedTotalProductionKg?.toFixed(0))} {String(t('market.kgUnit'))}</DetailValue>
               </DetailItem>
             </>
           )}
 
           {isEditMode && (
-             <SubmitButton onPress={handleUpdate} disabled={saving}>
+             <SubmitButton onPress={handleUpdate} disabled={saving || areReferenceDataLoading}>
              {saving ? (
                <ActivityIndicator color={defaultTheme.colors.lightText} />
              ) : (
-               <SubmitButtonText>{t('common.submit')}</SubmitButtonText>
+               <SubmitButtonText>{String(t('common.submit'))}</SubmitButtonText>
              )}
            </SubmitButton>
           )}
@@ -607,14 +694,14 @@ const CropPlanDetailScreen: React.FC = () => {
 
         {estimates && !isEditMode && (
           <EstimateSection>
-            <EstimateTitle>{t('cropPlan.liveEstimatesTitle')}</EstimateTitle>
+            <EstimateTitle>{String(t('cropPlan.liveEstimatesTitle'))}</EstimateTitle>
             <DetailItem>
-                <DetailLabel>{t('cropPlan.estimatedPrice')}</DetailLabel>
-                <DetailValue>{estimates.Estimated_Price_Per_Kg_Rwf?.toLocaleString()} Rwf/{t('market.kgUnit')}</DetailValue>
+                <DetailLabel>{String(t('cropPlan.estimatedPrice'))}</DetailLabel>
+                <DetailValue>{String(estimates.Estimated_Price_Per_Kg_Rwf?.toLocaleString())} Rwf/{String(t('market.kgUnit'))}</DetailValue>
               </DetailItem>
               <DetailItem style={{ borderBottomWidth: 0 }}>
-                <DetailLabel>{t('cropPlan.estimatedRevenue')}</DetailLabel>
-                <DetailValue>{estimates.Estimated_Revenue_Rwf?.toLocaleString()} Rwf</DetailValue>
+                <DetailLabel>{String(t('cropPlan.estimatedRevenue'))}</DetailLabel>
+                <DetailValue>{String(estimates.Estimated_Revenue_Rwf?.toLocaleString())} Rwf</DetailValue>
               </DetailItem>
           </EstimateSection>
         )}
@@ -623,22 +710,30 @@ const CropPlanDetailScreen: React.FC = () => {
           {!isEditMode && (
             <ActionButton bgColor={defaultTheme.colors.primary} onPress={() => setIsEditMode(true)}>
               <Ionicons name="create-outline" size={defaultTheme.fontSizes.large} color={defaultTheme.colors.lightText} />
-              <ActionButtonText>{t('common.edit')}</ActionButtonText>
+              <ActionButtonText>{String(t('common.edit'))}</ActionButtonText>
             </ActionButton>
           )}
           {isEditMode && (
             <ActionButton bgColor={defaultTheme.colors.error} onPress={() => setIsEditMode(false)}>
               <Ionicons name="close-circle-outline" size={defaultTheme.fontSizes.large} color={defaultTheme.colors.lightText} />
-              <ActionButtonText>{t('common.cancel')}</ActionButtonText>
+              <ActionButtonText>{String(t('common.cancel'))}</ActionButtonText>
             </ActionButton>
           )}
+          
+          {isPlantedAndNotHarvested && !isEditMode && ( // Show "Record Harvest" only for Planted plans
+            <ActionButton bgColor={defaultTheme.colors.tertiary} onPress={handleRecordHarvest}>
+              <MaterialCommunityIcons name="tractor" size={defaultTheme.fontSizes.large} color={defaultTheme.colors.lightText} />
+              <ActionButtonText>{String(t('home.recordHarvestTitle'))}</ActionButtonText>
+            </ActionButton>
+          )}
+
           <ActionButton bgColor={defaultTheme.colors.error} onPress={handleDelete} disabled={deleting}>
             {deleting ? (
               <ActivityIndicator color={defaultTheme.colors.lightText} />
             ) : (
               <>
                 <Ionicons name="trash-outline" size={defaultTheme.fontSizes.large} color={defaultTheme.colors.lightText} />
-                <ActionButtonText>{t('common.delete')}</ActionButtonText>
+                <ActionButtonText>{String(t('common.delete'))}</ActionButtonText>
               </>
             )}
           </ActionButton>

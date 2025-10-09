@@ -1,8 +1,8 @@
 // src/screens/Main/CropPlannerScreen.tsx
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
-import { Text, View, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { Text, View, ScrollView, ActivityIndicator, Alert, Platform, TouchableOpacity, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,8 +10,8 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import CustomHeader from '../../components/CustomHeader';
 import { defaultTheme } from '../../config/theme';
-import { RWANDA_DISTRICTS } from '../../config/districts';
-import { useAuth } from '../../context/AuthContext';
+
+import { useAuth } from '../../context/AuthContext'; // Import useAuth for authenticatedFetch and dynamic data
 
 // ---------------------- Styled Components ----------------------
 const Container = styled(View)`
@@ -23,7 +23,7 @@ const ContentArea = styled(ScrollView).attrs({
   contentContainerStyle: {
     padding: defaultTheme.spacing.medium,
     paddingBottom: defaultTheme.spacing.xxl,
-    flexGrow: 1,
+    flexGrow: 1, // Allows content to grow and enable scrolling
   },
 })`
   flex: 1;
@@ -35,6 +35,10 @@ const FormSection = styled(View)`
   padding: ${props => props.theme.spacing.large}px;
   margin-bottom: ${props => props.theme.spacing.large}px;
   elevation: 4;
+  shadow-color: '#000';
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.2;
+  shadow-radius: 4px;
 `;
 
 const FormTitle = styled(Text)`
@@ -80,13 +84,17 @@ const StyledPicker = styled(Picker)`
   height: 50px;
 `;
 
-const SubmitButton = styled.TouchableOpacity`
+const SubmitButton = styled(TouchableOpacity)`
   background-color: ${props => props.theme.colors.tertiary};
   border-radius: ${props => props.theme.borderRadius.pill}px;
   padding: ${props => props.theme.spacing.medium + 4}px;
   align-items: center;
   justify-content: center;
   elevation: 5;
+  shadow-color: '#000';
+  shadow-offset: 0px 3px;
+  shadow-opacity: 0.25;
+  shadow-radius: 4px;
 `;
 
 const SubmitButtonText = styled(Text)`
@@ -99,8 +107,12 @@ const ResultsSection = styled(View)`
   background-color: ${props => props.theme.colors.cardBackground};
   border-radius: ${props => props.theme.borderRadius.large}px;
   padding: ${props => props.theme.spacing.large}px;
-  margin-top: ${defaultTheme.spacing.large}px;
+  margin-top: ${defaultTheme.spacing.large}px; /* Space from form */
   elevation: 4;
+  shadow-color: '#000';
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.2;
+  shadow-radius: 4px;
 `;
 
 const ResultCard = styled(View)`
@@ -138,10 +150,23 @@ const ResultValue = styled(Text)`
   margin-left: ${defaultTheme.spacing.small}px;
 `;
 
+const FeedbackContainer = styled(View)`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding: ${defaultTheme.spacing.large}px;
+`;
+
 const FeedbackText = styled(Text)<{ isError?: boolean }>`
   font-size: ${props => props.theme.fontSizes.medium}px;
-  color: ${props =>
-    props.isError ? props.theme.colors.error : props.theme.colors.placeholder};
+  color: ${props => props.isError ? props.theme.colors.error : props.theme.colors.placeholder};
+  text-align: center;
+  margin-top: ${props => props.theme.spacing.medium}px;
+`;
+
+const EmptyStateText = styled(Text)`
+  font-size: ${props => props.theme.fontSizes.medium}px;
+  color: ${props => props.theme.colors.placeholder};
   text-align: center;
   margin-top: ${props => props.theme.spacing.large}px;
 `;
@@ -156,39 +181,41 @@ interface CropRecommendation {
 
 const CropPlannerScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { authenticatedFetch } = useAuth();
-
-  const [selectedDistrict, setSelectedDistrict] = useState(
-    RWANDA_DISTRICTS[0]?.value || ''
-  );
-  const [farmSize, setFarmSize] = useState('');
+  const { authenticatedFetch, districts, areReferenceDataLoading } = useAuth(); // Use dynamic districts
+  
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [farmSize, setFarmSize] = useState(''); // As string from TextInput
   const [recommendations, setRecommendations] = useState<CropRecommendation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [noResults, setNoResults] = useState(false); // NEW state
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // For pull-to-refresh
 
-  // Reset form and results when screen comes into focus
+  // Set initial district after districts are loaded
+  useEffect(() => {
+    if (districts.length > 0 && !selectedDistrict) {
+      setSelectedDistrict(districts[0].value);
+    }
+  }, [districts, selectedDistrict]);
+
+  // Reset form when screen comes into focus
   const resetForm = useCallback(() => {
-    setSelectedDistrict(RWANDA_DISTRICTS[0]?.value || '');
+    setSelectedDistrict(districts.length > 0 ? districts[0].value : '');
     setFarmSize('');
     setRecommendations([]);
     setError(null);
-    setNoResults(false);
     setLoading(false);
-  }, []);
+  }, [districts]);
 
   useFocusEffect(resetForm);
 
   const handleSubmit = useCallback(async () => {
     setError(null);
-    setNoResults(false);
-    setRecommendations([]);
-
+    setRecommendations([]); // Clear previous results
+    
     const parsedFarmSize = parseFloat(farmSize);
 
     if (!selectedDistrict || isNaN(parsedFarmSize) || parsedFarmSize <= 0) {
-      setError(t('cropPlanner.formValidationError'));
+      setError(String(t('cropPlanner.formValidationError'))); // Explicit String()
       return;
     }
 
@@ -203,32 +230,32 @@ const CropPlannerScreen: React.FC = () => {
         if (data.success && data.data.length > 0) {
           setRecommendations(data.data);
         } else {
-          setNoResults(true);
-          
+          setError(String(t('cropPlanner.noRecommendations'))); // Explicit String()
         }
       } else {
         const errorData = await response.json();
-        setError(errorData.message || t('cropPlanner.fetchError'));
+        setError(String(errorData.message || t('cropPlanner.fetchError'))); // Explicit String()
       }
-    } catch (err) {
-      console.error('Crop recommendation fetch error:', err);
-      setError(t('common.networkError'));
+    } catch (err: unknown) { // Explicitly type error as unknown
+      console.error('Crop recommendation fetch error (catch block):', err);
+      setError(String(t('common.networkError'))); // Explicit String()
     } finally {
       setLoading(false);
     }
-  }, [selectedDistrict, farmSize, authenticatedFetch, t]);
+  }, [selectedDistrict, farmSize, authenticatedFetch, t, districts]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    resetForm();
-    setRefreshing(false);
+    resetForm(); // Reset form on refresh
+    setRefreshing(false); // Stop refreshing immediately after resetting form
   }, [resetForm]);
+
 
   return (
     <Container>
-      <CustomHeader title={t('tab.cropPlanner')} />
+      <CustomHeader title={String(t('tab.cropPlanner'))} showBack={false} showLogo={true} showLanguageSwitcher={true}/>
       <ContentArea
-        refreshControl={
+         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
@@ -238,30 +265,30 @@ const CropPlannerScreen: React.FC = () => {
         }
       >
         <FormSection>
-          <FormTitle>{t('cropPlanner.formTitle')}</FormTitle>
-
-          <Label>{t('cropPlanner.districtLabel')}</Label>
+          <FormTitle>{String(t('cropPlanner.formTitle'))}</FormTitle>
+          
+          <Label>{String(t('cropPlanner.districtLabel'))}</Label>
           <PickerContainer>
             <StyledPicker
               selectedValue={selectedDistrict}
-              onValueChange={(itemValue: unknown) =>
-                setSelectedDistrict(itemValue as string)
-              }
-              enabled={!loading}
+              onValueChange={(itemValue: unknown, itemIndex: number) => setSelectedDistrict(itemValue as string)} // Corrected Picker typing
+              enabled={!loading && !areReferenceDataLoading}
             >
-              {RWANDA_DISTRICTS.map(district => (
-                <Picker.Item
-                  key={district.value}
-                  label={district.label}
-                  value={district.value}
-                />
-              ))}
+              {areReferenceDataLoading ? (
+                <Picker.Item key="loading" label={String(t('common.loading'))} value="" />
+              ) : districts.length > 0 ? (
+                districts.map((district) => (
+                  <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} /> // Explicit String()
+                ))
+              ) : (
+                <Picker.Item key="no-districts" label={String(t('cropPlanner.noDistrictsFound') || "No districts available")} value="" />
+              )}
             </StyledPicker>
           </PickerContainer>
 
-          <Label>{t('cropPlanner.farmSizeLabel')}</Label>
+          <Label>{String(t('cropPlanner.farmSizeLabel'))}</Label>
           <Input
-            placeholder={t('cropPlanner.farmSizePlaceholder')}
+            placeholder={String(t('cropPlanner.farmSizePlaceholder'))}
             keyboardType="numeric"
             value={farmSize}
             onChangeText={setFarmSize}
@@ -269,62 +296,39 @@ const CropPlannerScreen: React.FC = () => {
             editable={!loading}
           />
 
-          <SubmitButton onPress={handleSubmit} disabled={loading}>
+          <SubmitButton onPress={handleSubmit} disabled={loading || areReferenceDataLoading}>
             {loading ? (
               <ActivityIndicator color={defaultTheme.colors.lightText} />
             ) : (
-              <SubmitButtonText>{t('cropPlanner.submitButton')}</SubmitButtonText>
+              <SubmitButtonText>{String(t('cropPlanner.submitButton'))}</SubmitButtonText>
             )}
           </SubmitButton>
-
+          
           {error && <FeedbackText isError>{error}</FeedbackText>}
-          {noResults && (
-            <FeedbackText>{t('cropPlanner.noRecommendations')}</FeedbackText>
-          )}
+
         </FormSection>
 
         {recommendations.length > 0 && (
           <ResultsSection>
-            <FormTitle>{t('cropPlanner.resultsTitle')}</FormTitle>
+            <FormTitle>{String(t('cropPlanner.resultsTitle'))}</FormTitle>
             {recommendations.map((rec, index) => (
-              <View key={rec.CropName}>
-                {index !== 0 && (
-                  <View
-                    style={{
-                      height: 1,
-                      backgroundColor: defaultTheme.colors.border,
-                      marginVertical: defaultTheme.spacing.small,
-                    }}
-                  />
+              <View key={String(rec.CropName)}> {/* Explicit String() for key */}
+                {(index !== 0) && (
+                  <View style={{ height: 1, backgroundColor: defaultTheme.colors.border, marginVertical: defaultTheme.spacing.small }} />
                 )}
-                <ResultCard
-                  style={
-                    index === recommendations.length - 1
-                      ? { borderBottomWidth: 0, paddingBottom: 0 }
-                      : {}
-                  }
-                >
-                  <ResultIcon
-                    name="leaf"
-                    size={defaultTheme.fontSizes.xl}
-                    color={defaultTheme.colors.primary}
-                  />
+                <ResultCard style={index === recommendations.length - 1 ? { borderBottomWidth: 0, paddingBottom: 0 } : {}}>
+                  <ResultIcon name="leaf" size={defaultTheme.fontSizes.xl} color={defaultTheme.colors.primary} />
                   <ResultContent>
-                    <ResultTitle>{rec.CropName}</ResultTitle>
+                    <ResultTitle>{String(rec.CropName)}</ResultTitle> {/* Explicit String() */}
                     <ResultSubtitle>
-                      {t('cropPlanner.recommendedArea')}:{' '}
-                      {rec.Recommended_Area_ha?.toFixed(2) || 'N/A'}{' '}
-                      {t('market.haUnit')}
+                      {String(t('cropPlanner.recommendedArea'))}: {String(rec.Recommended_Area_ha?.toFixed(2) || 'N/A')} {String(t('market.haUnit'))}
                     </ResultSubtitle>
                     <ResultSubtitle>
-                      {t('cropPlanner.estimatedYield')}:{' '}
-                      {rec.Estimated_Yield_Kg_per_Ha?.toFixed(2) || 'N/A'}{' '}
-                      {t('market.kgPerHaUnit')}
+                      {String(t('cropPlanner.estimatedYield'))}: {String(rec.Estimated_Yield_Kg_per_Ha?.toFixed(2) || 'N/A')} {String(t('market.kgPerHaUnit'))}
                     </ResultSubtitle>
                   </ResultContent>
                   <ResultValue>
-                    {rec.Estimated_Total_Production_Kg?.toFixed(0) || 'N/A'}{' '}
-                    {t('market.kgUnit')}
+                    {String(rec.Estimated_Total_Production_Kg?.toFixed(0) || 'N/A')} {String(t('market.kgUnit'))}
                   </ResultValue>
                 </ResultCard>
               </View>
