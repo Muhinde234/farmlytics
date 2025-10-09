@@ -116,7 +116,7 @@ export default function HomePage() {
       bgGradient: "from-green-500/10 to-emerald-500/10",
     },
   ]
-
+  const currentYear = new Date().getFullYear(); 
   return (
     <div className="min-h-screen bg-white text-gray-900 antialiased overflow-x-hidden">
       {/* Header */}
@@ -363,8 +363,24 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+      <footer className="bg-emerald-800 text-emerald-100 py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            {/* Replaced logo with just the brand name */}
+            <Link href="/" className="mb-4">
+              <span className="text-3xl font-extrabold text-white">Farmlytics</span>
+            </Link>
+            <p className="text-xl md:text-2xl font-semibold text-white max-w-xl mx-auto leading-relaxed">
+              {tCommon("footer.slogan")}
+            </p>
+            <p className="text-sm md:text-base text-emerald-300 pt-6">
+              {tCommon("footer.copyright", { year: currentYear })}
+            </p>
+          </div>
+        </div>
+      </footer>
 
-      {/* Footer */}
+      
     </div>
   )
 }
