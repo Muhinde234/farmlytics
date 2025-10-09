@@ -94,10 +94,7 @@ export interface RecordHarvestDTO {
 }
 
 
-export interface District {
-  code: number;
-  name: string;
-}
+
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -127,5 +124,20 @@ export interface LocalStorageUser {
   farmSize?: string;
   language?: "en" | "fr" | "rw";
    role?: UserRole;
+  createdAt?: string;
+  updatedAt?: string
+}
+export interface District {
+  id: number | string
+  code: string
+  name: string
+}
+
+export interface Crop {
+  id: number | string
+  name?: string
+  CropName: string
+  MVP?: number
+  [key: string]: any
 }
 

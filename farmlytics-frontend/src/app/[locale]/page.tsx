@@ -116,7 +116,7 @@ export default function HomePage() {
       bgGradient: "from-green-500/10 to-emerald-500/10",
     },
   ]
-  const currentYear = new Date().getFullYear(); 
+
   return (
     <div className="min-h-screen bg-white text-gray-900 antialiased overflow-x-hidden">
       {/* Header */}
@@ -162,19 +162,33 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* User Section */}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="h-10 w-10 cursor-pointer">
-                    <AvatarFallback>{getInitials(user.fullName || "U")}</AvatarFallback>
-                  </Avatar>
+                  <button className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="bg-emerald-600 text-white">
+                        {getInitials(user.fullName || "U")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-start">
+                      <span className="text-sm font-semibold text-gray-900">{user.fullName }</span>
+                      <span className="text-xs text-gray-500 capitalize">{user.role?.toLowerCase() || "Member"}</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-600" />
+                  </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuContent align="end" className="w-48">
                   {user.role === "FARMER" && (
-                    <DropdownMenuItem onClick={() => router.push("/dashboard")}>Go to Dashboard</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push("/admin")}>
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                     {tCommon("goto")}
+                    </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <X className="mr-2 h-4 w-4" />
+                    {tCommon("leave")}
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
@@ -204,6 +218,20 @@ export default function HomePage() {
         {isMenuOpen && (
           <div className="md:hidden bg-white/95 backdrop-blur-lg border-t border-emerald-100 shadow-xl pb-4">
             <nav className="flex flex-col p-4 space-y-3">
+              {user && (
+                <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg mb-2">
+                  <Avatar className="h-12 w-12">
+                    <AvatarFallback className="bg-emerald-600 text-white">
+                      {getInitials(user.fullName || "U")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-gray-900">{user.fullName || "User"}</span>
+                    <span className="text-xs text-gray-500 capitalize">{user.role?.toLowerCase() || "Member"}</span>
+                  </div>
+                </div>
+              )}
+
               {/* Language Switcher */}
               <div>
                 <Button
@@ -318,12 +346,11 @@ export default function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-              {features.map(({ icon, title, description, link,bgGradient }, idx) => {
-                const IconComponent = iconMap[icon] // Get component from map
+              {features.map(({ icon, title, description, link, gradient, bgGradient }, idx) => {
+                const IconComponent = iconMap[icon]
 
                 if (!IconComponent) {
                   console.warn(`Icon "${icon}" not found in iconMap. Using a fallback.`)
-                  // As a fallback, you could return null to skip, or use a generic icon (e.g., X from lucide-react)
                   return (
                     <Link
                       href={link}
@@ -334,7 +361,7 @@ export default function HomePage() {
                         className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
                       ></div>
                       <div className="relative z-10 w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center mb-5">
-                        <X className={`w-10 h-10 text-gray-400`} /> {/* Fallback 'X' icon */}
+                        <X className={`w-10 h-10 text-gray-400`} />
                       </div>
                       <h3 className="text-xl font-bold mb-2 relative z-10">{title}</h3>
                       <p className="text-gray-600 relative z-10">{description}</p>
@@ -363,10 +390,11 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+
+      {/* Footer */}
       <footer className="bg-emerald-800 text-emerald-100 py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex flex-col items-center justify-center space-y-4">
-            {/* Replaced logo with just the brand name */}
             <Link href="/" className="mb-4">
               <span className="text-3xl font-extrabold text-white">Farmlytics</span>
             </Link>
@@ -374,13 +402,11 @@ export default function HomePage() {
               {tCommon("footer.slogan")}
             </p>
             <p className="text-sm md:text-base text-emerald-300 pt-6">
-              {tCommon("footer.copyright", { year: currentYear })}
+              {tCommon("footer.copyright", { year: new Date().getFullYear() })}
             </p>
           </div>
         </div>
       </footer>
-
-      
     </div>
   )
 }
