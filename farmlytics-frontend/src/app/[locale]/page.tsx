@@ -1,54 +1,76 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import { Link } from "@/i18n/routing";
-import Logo from "@/components/common/logo";
-import { Button } from "@/components/ui/button";
-import { Globe, Menu, X, ChevronDown, ArrowRight } from "lucide-react";
+import type React from "react"
 
-import { useUser } from "@/context/userContext";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react"
+import { useTranslations, useLocale } from "next-intl"
+import { Link } from "@/i18n/routing"
+import Logo from "@/components/common/logo"
+import { Button } from "@/components/ui/button"
+import {
+  Globe,
+  Menu,
+  X,
+  ChevronDown,
+  ArrowRight,
+  LayoutDashboard,
+  LeafyGreen,
+  ShoppingBag,
+  BarChart2,
+} from "lucide-react"
+
+import { useUser } from "@/context/userContext"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation"
+
+type LucideIcon = React.ComponentType<{ className?: string }>
+
+// Define the icon map with explicit types
+const iconMap: { [key: string]: LucideIcon } = {
+  LayoutDashboard: LayoutDashboard,
+  LeafyGreen: LeafyGreen,
+  ShoppingBag: ShoppingBag,
+  BarChart2: BarChart2,
+}
 
 export default function HomePage() {
-  const t = useTranslations("home");
-  const tCommon = useTranslations("common");
-  const currentLocale = useLocale();
-  const router = useRouter();
-  const { user, logout } = useUser();
+  const t = useTranslations("home")
+  const tCommon = useTranslations("common")
+  const currentLocale = useLocale()
+  const router = useRouter()
+  const { user, logout } = useUser()
 
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false)
+  const [hasAnimated, setHasAnimated] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    setHasAnimated(true);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    const handleScroll = () => setIsScrolled(window.scrollY > 50)
+    setHasAnimated(true)
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const languages = [
     { code: "en", name: "English" },
     { code: "fr", name: "Français" },
     { code: "rw", name: "Kinyarwanda" },
-  ];
+  ]
 
   const handleChangeLocale = (newLocale: string) => {
-    const segments = window.location.pathname.split("/");
-    segments[1] = newLocale;
-    router.replace(segments.join("/"));
-    setIsLanguageOpen(false);
-    setIsMenuOpen(false);
-  };
+    const segments = window.location.pathname.split("/")
+    segments[1] = newLocale
+    router.replace(segments.join("/"))
+    setIsLanguageOpen(false)
+    setIsMenuOpen(false)
+  }
 
   const handleLogout = () => {
-    logout();
-    router.push("/");
-  };
+    logout()
+    router.push("/")
+  }
 
   const getInitials = (name: string) => {
     return name
@@ -56,9 +78,10 @@ export default function HomePage() {
       .map((n) => n[0])
       .join("")
       .slice(0, 2)
-      .toUpperCase();
-  };
+      .toUpperCase()
+  }
 
+  // Your features array remains UNCHANGED
   const features = [
     {
       icon: "LayoutDashboard",
@@ -92,14 +115,14 @@ export default function HomePage() {
       gradient: "from-green-600 to-emerald-600",
       bgGradient: "from-green-500/10 to-emerald-500/10",
     },
-  ];
-
+  ]
+  const currentYear = new Date().getFullYear(); 
   return (
     <div className="min-h-screen bg-white text-gray-900 antialiased overflow-x-hidden">
       {/* Header */}
       <header
         className={`w-full fixed top-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-white/90 backdrop-blur-lg shadow-md py-2" : "bg-transparent py-4"
+          isScrolled ? "bg-white/90 backdrop-blur-lg shadow-md" : "bg-transparent"
         }`}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
@@ -149,9 +172,7 @@ export default function HomePage() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-40">
                   {user.role === "FARMER" && (
-                    <DropdownMenuItem onClick={() => router.push("/dashboard")}>
-                      Go to Dashboard
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push("/dashboard")}>Go to Dashboard</DropdownMenuItem>
                   )}
                   <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
                 </DropdownMenuContent>
@@ -212,7 +233,10 @@ export default function HomePage() {
               {user ? (
                 <>
                   {user.role === "FARMER" && (
-                    <Button onClick={() => router.push("/dashboard")} className="bg-emerald-600 text-white rounded-full py-2 px-4 w-full">
+                    <Button
+                      onClick={() => router.push("/dashboard")}
+                      className="bg-emerald-600 text-white rounded-full py-2 px-4 w-full"
+                    >
                       Go to Dashboard
                     </Button>
                   )}
@@ -225,7 +249,10 @@ export default function HomePage() {
                   <Link href="/login" className="bg-emerald-600 text-white rounded-full py-2 px-4 w-full text-center">
                     Sign In
                   </Link>
-                  <Link href="/register" className="bg-emerald-700 text-white rounded-full py-2 px-4 w-full text-center">
+                  <Link
+                    href="/register"
+                    className="bg-emerald-700 text-white rounded-full py-2 px-4 w-full text-center"
+                  >
                     Sign Up
                   </Link>
                 </>
@@ -245,17 +272,26 @@ export default function HomePage() {
           </div>
 
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 max-w-5xl">
-            <h1 className={`text-5xl lg:text-7xl font-extrabold mb-6 leading-tight transition-all duration-1000 ${hasAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+            <h1
+              className={`text-5xl lg:text-7xl font-extrabold mb-6 leading-tight transition-all duration-1000 ${hasAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            >
               <span className="bg-gradient-to-r from-emerald-800 via-green-700 to-emerald-800 bg-clip-text text-transparent drop-shadow-sm">
                 {t("hero.headline")}
               </span>
             </h1>
-            <p className={`text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto mb-10 leading-relaxed transition-all duration-1000 delay-300 ${hasAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+            <p
+              className={`text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto mb-10 leading-relaxed transition-all duration-1000 delay-300 ${hasAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            >
               <span className="font-medium">{t("hero.subHeadline")}</span>
             </p>
-            <div className={`flex justify-center transition-all duration-1000 delay-500 ${hasAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
+            <div
+              className={`flex justify-center transition-all duration-1000 delay-500 ${hasAnimated ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            >
               <Link href="/register">
-                <Button size="lg" className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold rounded-full shadow-lg px-10 py-6 text-lg transform hover:scale-105 transition-all duration-300">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold rounded-full shadow-lg px-10 py-6 text-lg transform hover:scale-105 transition-all duration-300"
+                >
                   <span className="relative z-10 flex items-center">
                     {t("hero.ctaPrimary")}
                     <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
@@ -276,34 +312,75 @@ export default function HomePage() {
                 </span>
                 <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full"></div>
               </h2>
-              <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed font-medium">{t("features.subtitle")}</p>
+              <p className="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed font-medium">
+                {t("features.subtitle")}
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-              {features.map(({ icon, title, description, link, gradient, bgGradient }, idx) => {
-                const Icon = require("lucide-react")[icon];
+              {features.map(({ icon, title, description, link,bgGradient }, idx) => {
+                const IconComponent = iconMap[icon] // Get component from map
+
+                if (!IconComponent) {
+                  console.warn(`Icon "${icon}" not found in iconMap. Using a fallback.`)
+                  // As a fallback, you could return null to skip, or use a generic icon (e.g., X from lucide-react)
+                  return (
+                    <Link
+                      href={link}
+                      key={idx}
+                      className="group relative bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col items-center border border-gray-100 hover:border-emerald-200 cursor-pointer overflow-hidden"
+                    >
+                      <div
+                        className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+                      ></div>
+                      <div className="relative z-10 w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center mb-5">
+                        <X className={`w-10 h-10 text-gray-400`} /> {/* Fallback 'X' icon */}
+                      </div>
+                      <h3 className="text-xl font-bold mb-2 relative z-10">{title}</h3>
+                      <p className="text-gray-600 relative z-10">{description}</p>
+                    </Link>
+                  )
+                }
+
                 return (
                   <Link
                     href={link}
                     key={idx}
                     className="group relative bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col items-center border border-gray-100 hover:border-emerald-200 cursor-pointer overflow-hidden"
                   >
-                    <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                    <div
+                      className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+                    ></div>
                     <div className="relative z-10 w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center mb-5">
-                      <Icon className={`w-10 h-10 text-gradient bg-clip-text text-transparent`} />
+                      <IconComponent className={`w-10 h-10 text-emerald-600`} />
                     </div>
                     <h3 className="text-xl font-bold mb-2 relative z-10">{title}</h3>
                     <p className="text-gray-600 relative z-10">{description}</p>
                   </Link>
-                );
+                )
               })}
             </div>
           </div>
         </section>
       </main>
+      <footer className="bg-emerald-800 text-emerald-100 py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            {/* Replaced logo with just the brand name */}
+            <Link href="/" className="mb-4">
+              <span className="text-3xl font-extrabold text-white">Farmlytics</span>
+            </Link>
+            <p className="text-xl md:text-2xl font-semibold text-white max-w-xl mx-auto leading-relaxed">
+              {tCommon("footer.slogan")}
+            </p>
+            <p className="text-sm md:text-base text-emerald-300 pt-6">
+              {tCommon("footer.copyright", { year: currentYear })}
+            </p>
+          </div>
+        </div>
+      </footer>
 
-      {/* Footer */}
-    
+      
     </div>
-  );
+  )
 }

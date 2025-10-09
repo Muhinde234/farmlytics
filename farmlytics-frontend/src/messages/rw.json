@@ -5,7 +5,12 @@
     "signUp": "Iyandikishe",
     "smartFarmingPlatform": "Urubuga rw'Ubuhinzi Bw'ubwenge",
     "platform": "Urubuga",
-    "support": "Ubufasha"
+    "support": "Ubufasha",
+    "footer": {
+      "copyright": "© {year} Farmlytics. All rights reserved.",
+      "slogan": "Digitalize your farm, cultivate success."
+    },
+    "language":"kiny"
   },
   "home": {
     "hero": {

@@ -5,7 +5,12 @@
     "signUp": "S'inscrire",
     "smartFarmingPlatform": "Plateforme Agricole Intelligente",
     "platform": "Plateforme",
-    "support": "Assistance"
+    "support": "Assistance",
+    "footer": {
+      "copyright": "© {year} Farmlytics. All rights reserved.",
+      "slogan": "Digitalize your farm, cultivate success."
+    },
+    "language":"fr"
   },
   "home": {
     "hero": {
