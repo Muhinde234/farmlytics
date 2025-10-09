@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing";
 import { UserProvider } from "@/context/userContext";
 import { ReactQueryProvider } from "@/context/react-query-provider";
 import { Toaster } from "@/components/ui/sooner";
+import React from "react";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -21,29 +22,34 @@ export const metadata: Metadata = {
   description: "Team transportation solutions",
 };
 
-export default async function RootLayout({
+export default function LocaleLayout({
   children,
   params,
-}: Readonly<{
+}: {
   children: React.ReactNode;
   params: { locale: string };
-}>) {
+}) {
   const { locale } = params;
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
-  let messages;
-  try {
-    messages = (await import(`@/messages/${locale}.json`)).default;
-  } catch {
-    notFound();
-  }
+  const [messages, setMessages] = React.useState<Record<string, string> | null>(
+    null
+  );
+
+  React.useEffect(() => {
+    import(`@/messages/${locale}.json`)
+      .then((mod) => setMessages(mod.default))
+      .catch(() => notFound());
+  }, [locale]);
+
+  if (!messages) return null;
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={`${outfit.className}`}>
+      <body className={outfit.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ReactQueryProvider>
             <Toaster position="top-right" richColors />
