@@ -5,12 +5,14 @@ import styled from 'styled-components/native';
 import { Text, View, ScrollView, TouchableOpacity, ActivityIndicator, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import CustomHeader from '../../components/CustomHeader';
-// CORRECTED: Import User interface from AuthContext
-import { useAuth, User } from '../../context/AuthContext'; 
+import { useAuth, User, ReferenceDataItem } from '../../context/AuthContext'; // Import User and ReferenceDataItem
 import { defaultTheme } from '../../config/theme';
 import { Ionicons } from '@expo/vector-icons';
-import LanguageSelector from '../../components/LanguageSelector'; // Import LanguageSelector
-import { Picker } from '@react-native-picker/picker'; // For preferred district/province/language selection
+import { Picker } from '@react-native-picker/picker'; 
+import i18n from '../../config/i18n'; // Import i18n instance directly for language changes
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { MainTabNavigationProp } from '../../navigation/types'; // Import for navigation typing
+
 
 // ---------------------- Styled Components ----------------------
 const Container = styled(View)`
@@ -21,9 +23,9 @@ const Container = styled(View)`
 const ContentArea = styled(ScrollView).attrs({
   contentContainerStyle: {
     padding: defaultTheme.spacing.medium,
-    paddingBottom: defaultTheme.spacing.xxl, // Ensure ample scroll space
-    flexGrow: 1, // Allow content to grow
-    justifyContent: 'flex-start', // Align content to start
+    paddingBottom: defaultTheme.spacing.xxl, 
+    flexGrow: 1, 
+    justifyContent: 'flex-start', 
   },
 })`
   flex: 1;
@@ -32,7 +34,7 @@ const ContentArea = styled(ScrollView).attrs({
 const AppLogo = styled(Image)`
   width: 100px;
   height: 100px;
-  align-self: center; /* Center the logo */
+  align-self: center; 
   margin-top: ${defaultTheme.spacing.medium}px;
   margin-bottom: ${defaultTheme.spacing.large}px;
   resize-mode: contain;
@@ -162,7 +164,7 @@ const LogoutButton = styled(TouchableOpacity)`
   align-items: center;
   justify-content: center;
   margin-top: ${defaultTheme.spacing.xxl}px;
-  margin-bottom: ${defaultTheme.spacing.xl}px; /* Ensure space at bottom */
+  margin-bottom: ${defaultTheme.spacing.xl}px; 
   align-self: center;
   flex-direction: row;
   elevation: 4;
@@ -183,11 +185,13 @@ const LogoutButtonText = styled(Text)`
 // ---------------------- Component Logic ----------------------
 const ProfileScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { user, logout, isLoading, updateUserProfile, districts, provinces } = useAuth(); // Access updateProfile, districts, provinces
+  // Removed setAppLanguage from destructuring
+  const { user, logout, isLoading, updateUserProfile, districts, provinces } = useAuth(); 
+  const navigation = useNavigation<MainTabNavigationProp<'ProfileTab'>>(); // Use navigation for UpdatePassword
 
   const [editDistrict, setEditDistrict] = useState(user?.preferredDistrictName || '');
   const [editProvince, setEditProvince] = useState(user?.preferredProvinceName || '');
-  const [editLanguage, setEditLanguage] = useState(user?.preferredLanguage || t('common.locale'));
+  const [editLanguage, setEditLanguage] = useState(user?.preferredLanguage || i18n.language); 
   const [isSaving, setIsSaving] = useState(false);
 
   // Update local state when user prop changes (e.g., after initial load or successful update)
@@ -195,25 +199,65 @@ const ProfileScreen: React.FC = () => {
     if (user) {
       setEditDistrict(user.preferredDistrictName || '');
       setEditProvince(user.preferredProvinceName || '');
-      setEditLanguage(user.preferredLanguage || t('common.locale'));
+      setEditLanguage(user.preferredLanguage || i18n.language); 
     }
-  }, [user, t]);
+  }, [user, i18n.language]); 
 
 
-  const handleSaveProfile = useCallback(async () => {
+  // Handler for saving preferred language
+  const handleSaveLanguage = useCallback(async () => {
     setIsSaving(true);
-    const updates: Partial<User> = { // User interface is now correctly imported
-      preferredDistrictName: editDistrict,
-      preferredProvinceName: editProvince,
+    const updates: Partial<User> = { 
       preferredLanguage: editLanguage,
     };
     
     const success = await updateUserProfile(updates);
     if (success) {
-      // Profile updated, AuthContext handles language change and user state update
+      // If profile update is successful, also change the i18n language
+      i18n.changeLanguage(editLanguage);
+      Alert.alert(String(t('common.success')), String(t('profile.updateSuccess')));
+    } else {
+      Alert.alert(String(t('common.error')), String(t('profile.updateError')));
     }
     setIsSaving(false);
-  }, [editDistrict, editProvince, editLanguage, updateUserProfile]);
+  }, [editLanguage, updateUserProfile, t]);
+
+  // Handler for saving preferred location settings
+  const handleSaveLocation = useCallback(async () => {
+    setIsSaving(true);
+    const updates: Partial<User> = {
+      preferredDistrictName: editDistrict,
+      preferredProvinceName: editProvince,
+    };
+
+    // Validation: if a district is selected, a province must also be selected
+    // OR if a province is selected (and user is not admin), a district must be selected.
+    if (user?.role === 'farmer' || user?.role === 'buyer') { // Explicitly check for farmer/buyer roles
+      if (editProvince && !editDistrict) { // If province selected but district isn't
+        Alert.alert(String(t('common.error')), String(t('profile.districtRequiredError')));
+        setIsSaving(false);
+        return;
+      }
+      // If a district is selected, ensure its province matches the selected province
+      if (editDistrict && editProvince) {
+        const selectedDistrictItem = districts.find((d: ReferenceDataItem) => d.value === editDistrict);
+        if (selectedDistrictItem && selectedDistrictItem.province !== editProvince) {
+          Alert.alert(String(t('common.error')), String(t('profile.districtProvinceMismatchError')));
+          setIsSaving(false);
+          return;
+        }
+      }
+    }
+
+
+    const success = await updateUserProfile(updates);
+    if (success) {
+      Alert.alert(String(t('common.success')), String(t('profile.updateSuccess')));
+    } else {
+      Alert.alert(String(t('common.error')), String(t('profile.updateError')));
+    }
+    setIsSaving(false);
+  }, [editDistrict, editProvince, updateUserProfile, t, user?.role, districts]);
 
 
   const handleLogout = () => {
@@ -240,10 +284,12 @@ const ProfileScreen: React.FC = () => {
         title={String(t('tab.profile'))} 
         showBack={false}
         showLogo={true} 
-        showLanguageSwitcher={true}
+        showLanguageSwitcher={false} // LanguageSwitcher is handled by this screen now
       />
       <ContentArea>
-        <AppLogo source={require('../../../assets/logo.png')} />
+        {/* You might want a better way to get the logo source, e.g., from assets directly */}
+        {/* For now, commenting out to prevent potential missing image error if path is wrong */}
+        {/* <AppLogo source={require('../../../assets/logo.png')} /> */} 
 
         <ProfileCard>
           <ProfileIcon
@@ -260,23 +306,23 @@ const ProfileScreen: React.FC = () => {
 
         {/* --- Language Settings --- */}
         <SectionTitle>{String(t('profile.languageSettings'))}</SectionTitle>
-        <DetailCard style={{ paddingVertical: defaultTheme.spacing.medium }}>
+        <DetailCard> 
           <View style={{ marginBottom: defaultTheme.spacing.small }}>
             <InfoLabel>{String(t('profile.appLanguageLabel') || 'App Language:')}</InfoLabel>
             <PickerContainer>
               <StyledPicker
                 selectedValue={editLanguage}
-                onValueChange={(itemValue: unknown, itemIndex: number) => setEditLanguage(itemValue as string)}
+                onValueChange={(itemValue: unknown) => setEditLanguage(itemValue as string)} 
                 enabled={!isSaving}
+                accessibilityLabel={String(t('profile.selectLanguagePlaceholder'))}
               >
-                {/* Languages defined in LanguageSelector.tsx, dynamically fetchable from backend also */}
                 {['en', 'rw', 'fr'].map(langCode => (
                   <Picker.Item key={String(langCode)} label={String(t(`common.languageName_${langCode}`) || langCode.toUpperCase())} value={String(langCode)} />
                 ))}
               </StyledPicker>
             </PickerContainer>
           </View>
-          <SubmitButton onPress={handleSaveProfile} disabled={isSaving}>
+          <SubmitButton onPress={handleSaveLanguage} disabled={isSaving}>
             {isSaving ? (
               <ActivityIndicator color={defaultTheme.colors.lightText} />
             ) : (
@@ -286,63 +332,73 @@ const ProfileScreen: React.FC = () => {
         </DetailCard>
 
 
-        {/* --- Preferred Location Settings (for Farmer/Buyer) --- */}
-        {user?.role !== 'admin' && (
-          <SectionTitle>{String(t('profile.preferredLocationSettings') || 'Preferred Location')}</SectionTitle>
-        )}
-        {user?.role !== 'admin' && (
-          <DetailCard style={{ paddingVertical: 0 }}>
-            {/* Preferred Province */}
-            <DetailItem>
-              <InfoLabel>{String(t('profile.preferredProvinceLabel') || 'Preferred Province:')}</InfoLabel>
-              <PickerContainer>
-                <StyledPicker
-                  selectedValue={editProvince}
-                  onValueChange={(itemValue: unknown, itemIndex: number) => setEditProvince(itemValue as string)}
-                  enabled={!isSaving && !isLoading}
-                >
-                  {isLoading ? (
-                    <Picker.Item key="loading-provinces" label={String(t('common.loading'))} value="" />
-                  ) : provinces.length > 0 ? (
-                    provinces.map((province) => (
-                      <Picker.Item key={String(province.value)} label={String(province.label)} value={String(province.value)} />
-                    ))
-                  ) : (
-                    <Picker.Item key="no-provinces" label={String(t('profile.noProvincesFound') || "No provinces available")} value="" />
-                  )}
-                </StyledPicker>
-              </PickerContainer>
-            </DetailItem>
+        {/* --- Preferred Location Settings (for Farmer/Buyer only) --- */}
+        {/* Using a more explicit check for role rendering */}
+        {(user?.role === 'farmer' || user?.role === 'buyer') && ( 
+          <>
+            <SectionTitle>{String(t('profile.preferredLocationSettings') || 'Preferred Location')}</SectionTitle>
+            <DetailCard> 
+              {/* Preferred Province */}
+              <View style={{ marginBottom: defaultTheme.spacing.small }}>
+                <InfoLabel>{String(t('profile.preferredProvinceLabel') || 'Preferred Province:')}</InfoLabel>
+                <PickerContainer>
+                  <StyledPicker
+                    selectedValue={editProvince}
+                    onValueChange={(itemValue: unknown) => {
+                      setEditProvince(itemValue as string);
+                      setEditDistrict(''); // Reset district if province changes
+                    }}
+                    enabled={!isSaving && !isLoading}
+                    accessibilityLabel={String(t('profile.selectProvincePlaceholder'))}
+                  >
+                    <Picker.Item label={String(t('profile.selectProvincePlaceholder'))} value="" /> {/* Placeholder item */}
+                    {isLoading ? (
+                      <Picker.Item key="loading-provinces" label={String(t('common.loading'))} value="" />
+                    ) : provinces.length > 0 ? (
+                      provinces.map((province: ReferenceDataItem) => ( // Explicitly type province
+                        <Picker.Item key={String(province.value)} label={String(province.label)} value={String(province.value)} />
+                      ))
+                    ) : (
+                      <Picker.Item key="no-provinces" label={String(t('profile.noProvincesFound') || "No provinces available")} value="" />
+                    )}
+                  </StyledPicker>
+                </PickerContainer>
+              </View>
 
-            {/* Preferred District */}
-            <DetailItem style={{ borderBottomWidth: 0 }}>
-              <InfoLabel>{String(t('profile.preferredDistrictLabel') || 'Preferred District:')}</InfoLabel>
-              <PickerContainer>
-                <StyledPicker
-                  selectedValue={editDistrict}
-                  onValueChange={(itemValue: unknown, itemIndex: number) => setEditDistrict(itemValue as string)}
-                  enabled={!isSaving && !isLoading}
-                >
-                  {isLoading ? (
-                    <Picker.Item key="loading-districts" label={String(t('common.loading'))} value="" />
-                  ) : districts.length > 0 ? (
-                    districts.map((district) => (
-                      <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} />
-                    ))
-                  ) : (
-                    <Picker.Item key="no-districts" label={String(t('profile.noDistrictsFound') || "No districts available")} value="" />
-                  )}
-                </StyledPicker>
-              </PickerContainer>
-            </DetailItem>
-            <SubmitButton onPress={handleSaveProfile} disabled={isSaving}>
-              {isSaving ? (
-                <ActivityIndicator color={defaultTheme.colors.lightText} />
-              ) : (
-                <SubmitButtonText>{String(t('profile.saveChangesButton') || 'Save Changes')}</SubmitButtonText>
-              )}
-            </SubmitButton>
-          </DetailCard>
+              {/* Preferred District */}
+              <View style={{ marginBottom: defaultTheme.spacing.small }}>
+                <InfoLabel>{String(t('profile.preferredDistrictLabel') || 'Preferred District:')}</InfoLabel>
+                <PickerContainer>
+                  <StyledPicker
+                    selectedValue={editDistrict}
+                    onValueChange={(itemValue: unknown) => setEditDistrict(itemValue as string)} 
+                    enabled={!isSaving && !isLoading && !!editProvince} // Enable only if province is selected
+                    accessibilityLabel={String(t('profile.selectDistrictPlaceholder'))}
+                  >
+                    <Picker.Item label={String(t('profile.selectDistrictPlaceholder'))} value="" /> {/* Placeholder item */}
+                    {isLoading ? (
+                      <Picker.Item key="loading-districts" label={String(t('common.loading'))} value="" />
+                    ) : (districts.length > 0 && !!editProvince) ? ( 
+                      districts
+                        .filter((d: ReferenceDataItem) => d.province === editProvince) // FIX: changed d.provinceName to d.province
+                        .map((district: ReferenceDataItem) => ( // Explicitly type district
+                          <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} />
+                        ))
+                    ) : (
+                      <Picker.Item key="no-districts" label={String(t('profile.noDistrictsFound') || "No districts available")} value="" />
+                    )}
+                  </StyledPicker>
+                </PickerContainer>
+              </View>
+              <SubmitButton onPress={handleSaveLocation} disabled={isSaving || (!!editProvince && !editDistrict)}>
+                {isSaving ? (
+                  <ActivityIndicator color={defaultTheme.colors.lightText} />
+                ) : (
+                  <SubmitButtonText>{String(t('profile.saveChangesButton') || 'Save Changes')}</SubmitButtonText>
+                )}
+              </SubmitButton>
+            </DetailCard>
+          </>
         )}
 
 
@@ -353,10 +409,17 @@ const ProfileScreen: React.FC = () => {
             <InfoLabel>{String(t('profile.emailVerified'))}</InfoLabel>
             <InfoValue>{String(user?.isVerified ? t('common.yes') : t('common.no'))}</InfoValue>
           </DetailItem>
+           {/* Add a button to update password if you have a UpdatePasswordScreen */}
+           <SubmitButton 
+              onPress={() => navigation.navigate('UpdatePassword')} 
+              style={{marginTop: defaultTheme.spacing.medium, backgroundColor: defaultTheme.colors.secondary}}
+            >
+              <SubmitButtonText>{String(t('profile.updatePasswordButton'))}</SubmitButtonText>
+            </SubmitButton>
         </DetailCard>
 
         {/* --- Logout Button --- */}
-        <LogoutButton onPress={handleLogout}>
+        <LogoutButton onPress={handleLogout} disabled={isSaving}>
           <Ionicons name="log-out-outline" size={defaultTheme.fontSizes.medium} color={defaultTheme.colors.lightText} />
           <LogoutButtonText>{String(t('auth.logout'))}</LogoutButtonText>
         </LogoutButton>

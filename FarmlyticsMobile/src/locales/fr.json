@@ -21,7 +21,8 @@
     "languageName_en": "Anglais",
     "languageName_rw": "Kinyarwanda",
     "languageName_fr": "Français",
-    "formValidationError": "Veuillez remplir tous les champs avec des données valides."
+    "formValidationError": "Veuillez remplir tous les champs avec des données valides.",
+    "info": "Info"
   },
   "auth": {
     "loginTitle": "Connectez-vous à Farmlytics",
@@ -229,7 +230,10 @@
     "updatePasswordButton": "Mettre à jour le mot de passe",
     "selectProvincePlaceholder": "Sélectionner la Province",
     "selectDistrictPlaceholder": "Sélectionner le District",
-    "selectLanguagePlaceholder": "Sélectionner la Langue"
+    "selectLanguagePlaceholder": "Sélectionner la Langue",
+    "provinceRequiredError": "Veuillez sélectionner une province préférée si un district est sélectionné.",
+    "districtRequiredError": "Veuillez sélectionner un district préféré si une province est sélectionnée.",
+    "districtProvinceMismatchError": "Le district sélectionné n'appartient pas à la province sélectionnée. Veuillez corriger."
   },
   "admin": {
     "dashboardTitle": "Tableau de bord administrateur",

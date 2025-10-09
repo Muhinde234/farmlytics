@@ -21,7 +21,8 @@
     "languageName_en": "Icyongereza",
     "languageName_rw": "Kinyarwanda",
     "languageName_fr": "Igifaransa",
-    "formValidationError": "Nyamuneka uzuze imyanya yose isabwa n'amakuru y'ukuri."
+    "formValidationError": "Nyamuneka uzuze imyanya yose isabwa n'amakuru y'ukuri.",
+    "info": "Amakuru"
   },
   "auth": {
     "loginTitle": "Injira muri Farmlytics",
@@ -48,7 +49,7 @@
     "sendingVerificationEmail": "Imeri yo guhamya iratumizwa...",
     "noAuthToken": "Kwandikisha byanze. Nyamuneka ongera winjire.",
     "noAuthTokenTitle": "Guhagarika Gusinya",
-    "noAuthTokenMessage": "Igihe cyo kwinjira cyarangiye cyangwa ntikiriho. Nyamuneka ongera usinye kugirango ukomeze.",
+    "noAuthTokenMessage": "Igihe cyawe cyo kwinjira cyarangiye cyangwa ntikiriho. Nyamuneka ongera usinye kugirango ukomeze.",
     "sessionExpiredTitle": "Igihe cyo Kwinjira Cyarangiye",
     "sessionExpiredMessage": "Igihe cyo Kwinjira Cyarangiye. Nyamuneka ongera winjire.",
     "initialLoadError": "Kunanirwa kureba amakuru y'ukoresha. Nyamuneka ongera usinye.",
@@ -229,7 +230,10 @@
     "updatePasswordButton": "Hindura ijambo ry'ibanga",
     "selectProvincePlaceholder": "Hitamo Intara",
     "selectDistrictPlaceholder": "Hitamo Akarere",
-    "selectLanguagePlaceholder": "Hitamo Ururimi"
+    "selectLanguagePlaceholder": "Hitamo Ururimi",
+    "provinceRequiredError": "Nyamuneka hitamo intara ukunda niba akarere gahiswemo.",
+    "districtRequiredError": "Nyamuneka hitamo akarere ukunda niba intara ihiswemo.",
+    "districtProvinceMismatchError": "Akarere kahiswemo ntabwo kari mu ntara yahiswemo. Nyamuneka kosora."
   },
   "admin": {
     "dashboardTitle": "Taburo y'Ubutegetsi",

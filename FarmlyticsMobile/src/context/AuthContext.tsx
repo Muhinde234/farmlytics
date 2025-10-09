@@ -24,7 +24,7 @@ export interface User {
   preferredLanguage?: string;
 }
 
-interface ReferenceDataItem {
+export interface ReferenceDataItem {
   label: string;
   value: string;
   province?: string;
