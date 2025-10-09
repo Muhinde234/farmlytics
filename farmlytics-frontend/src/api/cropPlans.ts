@@ -1,57 +1,61 @@
-import { CropPlan, CreateCropPlanDTO, RecordHarvestDTO } from "@/lib/types";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://farmlytics1-1.onrender.com/api-docs";
+import type { CropPlan, CreateCropPlanDTO, RecordHarvestDTO } from "@/lib/types"
+import api from "./axios"
 
 export async function getCropPlans(): Promise<CropPlan[]> {
-  const res = await fetch(`${API_BASE_URL}/crop-plans`, {
-    method: "GET",
-    cache: "no-store",
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch crop plans");
-  const data = await res.json();
-  return data.data || [];
+  console.log("[v0] Fetching crop plans...")
+  try {
+    const response = await api.get("/crop-plans")
+    console.log("[v0] Crop plans response:", response.data)
+    return response.data.data || []
+  } catch (error) {
+    console.error("[v0] Error fetching crop plans:", error)
+    throw error
+  }
 }
 
 export async function getCropPlanById(id: string): Promise<CropPlan> {
-  const res = await fetch(`${API_BASE_URL}/crop-plans/${id}`, {
-    method: "GET",
-    cache: "no-store",
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch crop plan");
-  const data = await res.json();
-  return data.data;
+  console.log("[v0] Fetching crop plan by id:", id)
+  try {
+    const response = await api.get(`/crop-plans/${id}`)
+    console.log("[v0] Crop plan response:", response.data)
+    return response.data.data
+  } catch (error) {
+    console.error("[v0] Error fetching crop plan:", error)
+    throw error
+  }
 }
 
 export async function createCropPlan(plan: CreateCropPlanDTO): Promise<CropPlan> {
-  const res = await fetch(`${API_BASE_URL}/crop-plans`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(plan),
-  });
-
-  if (!res.ok) throw new Error("Failed to create crop plan");
-  const data = await res.json();
-  return data.data;
+  console.log("[v0] Creating crop plan:", plan)
+  try {
+    const response = await api.post("/crop-plans", plan)
+    console.log("[v0] Create crop plan response:", response.data)
+    return response.data.data
+  } catch (error) {
+    console.error("[v0] Error creating crop plan:", error)
+    throw error
+  }
 }
 
 export async function recordHarvest(id: string, harvestData: RecordHarvestDTO): Promise<CropPlan> {
-  const res = await fetch(`${API_BASE_URL}/crop-plans/${id}/record-harvest`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(harvestData),
-  });
-
-  if (!res.ok) throw new Error("Failed to record harvest");
-  const data = await res.json();
-  return data.data;
+  console.log("[v0] Recording harvest for crop plan:", id, harvestData)
+  try {
+    const response = await api.post(`/crop-plans/${id}/record-harvest`, harvestData)
+    console.log("[v0] Record harvest response:", response.data)
+    return response.data.data
+  } catch (error) {
+    console.error("[v0] Error recording harvest:", error)
+    throw error
+  }
 }
 
 export async function deleteCropPlan(id: string): Promise<void> {
-  const res = await fetch(`${API_BASE_URL}/crop-plans/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!res.ok) throw new Error("Failed to delete crop plan");
+  console.log("[v0] Deleting crop plan:", id)
+  try {
+    await api.delete(`/crop-plans/${id}`)
+    console.log("[v0] Crop plan deleted successfully")
+  } catch (error) {
+    console.error("[v0] Error deleting crop plan:", error)
+    throw error
+  }
 }

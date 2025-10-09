@@ -10,7 +10,8 @@
       "copyright": "© {year} Farmlytics. All rights reserved.",
       "slogan": "Digitalize your farm, cultivate success."
     },
-    "language":"fr"
+    "language":"fr",
+    "goto":"Tableau de bord"
   },
   "home": {
     "hero": {
@@ -218,8 +219,8 @@
   }
  },
  
-  "cropPlanner": {
-    "title": "Planificateur de Culture",
+  "HarvestTracker": {
+    "title": "Suivi de Récolte",
     "addButton": "Ajouter un Nouveau Plan",
     "closeButton": "Fermer le Formulaire",
     "form": {

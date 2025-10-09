@@ -10,7 +10,9 @@
       "copyright": "© {year} Farmlytics. All rights reserved.",
       "slogan": "Digitalize your farm, cultivate success."
     },
-    "language":"kiny"
+    "language":"kiny",
+    "goto":"reba ",
+    "leave":"sohoka"
   },
   "home": {
     "hero": {
@@ -219,8 +221,8 @@
 }
    },
    
-  "cropPlanner": {
-    "title": "Gahunda y'Ibihingwa",
+  "HarvestTracker": {
+    "title": "Ikurikirana ry’Isarura",
     "addButton": "Ongeramo Igishya",
     "closeButton": "Funga Ifishi",
     "form": {
