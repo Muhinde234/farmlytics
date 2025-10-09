@@ -13,7 +13,17 @@ exports.getCropPlans = asyncHandler(async (req, res, next) => {
         query.user = req.query.userId;
     }
 
-    const cropPlans = await CropPlan.find(query).populate('user', 'name email');
+    // Optional: Filter by status if provided in query (e.g., ?status=Planted)
+    if (req.query.status) {
+        query.status = req.query.status;
+    }
+    // Optional: Limit results if provided (e.g., ?limit=1)
+    const limit = req.query.limit ? parseInt(req.query.limit) : 0; // 0 means no limit
+
+    const cropPlans = await CropPlan.find(query)
+                                     .limit(limit) // Apply limit
+                                     .sort({ plantingDate: -1 }) // Sort by most recent planting date first
+                                     .populate('user', 'name email');
 
     res.status(200).json({
         success: true,
@@ -33,7 +43,7 @@ exports.getCropPlan = asyncHandler(async (req, res, next) => {
         throw new Error(`Crop plan not found with id of ${req.params.id}`);
     }
 
-   if (cropPlan.user._id.toString() !== req.user.id && req.user.role !== 'admin')  {
+    if (cropPlan.user.toString() !== req.user.id && req.user.role !== 'admin') {
         res.status(401);
         throw new Error(`User ${req.user.id} is not authorized to view this crop plan`);
     }
@@ -58,10 +68,13 @@ exports.createCropPlan = asyncHandler(async (req, res, next) => {
         throw new Error('Analytics services not initialized. Server error during crop plan creation.');
     }
 
+    // IMPORTANT: Ensure plantingDate is in YYYY-MM-DD format for the service
+    const formattedPlantingDate = new Date(plantingDate).toISOString().split('T')[0];
+
     const estimates = await harvestTrackerService.get_harvest_and_revenue_estimates(
         cropName,
         actualAreaPlantedHa,
-        plantingDate,
+        formattedPlantingDate, // Use formatted date
         districtName
     );
 
@@ -107,7 +120,7 @@ exports.updateCropPlan = asyncHandler(async (req, res, next) => {
 
     // Recalculate estimates if relevant fields are updated
     const fieldsToRecalculateEstimates = ['cropName', 'actualAreaPlantedHa', 'plantingDate', 'districtName'];
-    const shouldRecalculateEstimates = fieldsToRecalculateEstimates.some(field => req.body[field] !== undefined);
+    const shouldRecalculateEstimates = fieldsToRecalculateEstimates.some(field => req.body[field] !== undefined && req.body[field] !== cropPlan[field]);
 
     if (shouldRecalculateEstimates) {
         const harvestTrackerService = analyticsService.getHarvestTrackerService();
@@ -118,7 +131,8 @@ exports.updateCropPlan = asyncHandler(async (req, res, next) => {
 
         const updatedCropName = req.body.cropName || cropPlan.cropName;
         const updatedArea = req.body.actualAreaPlantedHa || cropPlan.actualAreaPlantedHa;
-        const updatedPlantingDate = req.body.plantingDate || (cropPlan.plantingDate ? cropPlan.plantingDate.toISOString().split('T')[0] : null);
+        // Ensure plantingDate is correctly formatted for the service
+        const updatedPlantingDate = req.body.plantingDate ? new Date(req.body.plantingDate).toISOString().split('T')[0] : (cropPlan.plantingDate ? cropPlan.plantingDate.toISOString().split('T')[0] : null);
         const updatedDistrict = req.body.districtName || cropPlan.districtName;
 
         const estimates = await harvestTrackerService.get_harvest_and_revenue_estimates(
@@ -143,6 +157,9 @@ exports.updateCropPlan = asyncHandler(async (req, res, next) => {
     cropPlan = await CropPlan.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
+        // Only allow status changes from 'Planned' or 'Planted' to 'Cancelled' or 'Harvested'
+        // This logic might need further refinement based on your business rules
+        // For simplicity, for now, if status is provided, it updates.
     });
 
     res.status(200).json({
@@ -151,54 +168,74 @@ exports.updateCropPlan = asyncHandler(async (req, res, next) => {
     });
 });
 
+
 // @desc      Record actual harvest data for a crop plan
-// @route     PUT /api/v1/crop-plans/:id/record-harvest
+// @route     POST /api/v1/crop-plans/:id/record-harvest
 // @access    Private (Farmer, Admin)
 exports.recordHarvest = asyncHandler(async (req, res, next) => {
-    let cropPlan = await CropPlan.findById(req.params.id);
+    const { id } = req.params;
+    const {
+        actualHarvestDate,
+        actualYieldKgPerHa,        
+        actualSellingPricePerKgRwf, 
+        harvestNotes
+    } = req.body;
+
+    // 1. Find the crop plan
+    let cropPlan = await CropPlan.findById(id);
 
     if (!cropPlan) {
         res.status(404);
-        throw new Error(`Crop plan not found with id of ${req.params.id}`);
+        throw new Error(`Crop plan not found with id of ${id}`);
     }
 
+    // 2. Authorization: Ensure the logged-in user owns this crop plan (or is an admin)
     if (cropPlan.user.toString() !== req.user.id && req.user.role !== 'admin') {
         res.status(401);
         throw new Error(`User ${req.user.id} is not authorized to record harvest for this crop plan`);
     }
 
-    const { actualHarvestDate, actualYieldKgPerHa, actualSellingPricePerKgRwf, harvestNotes } = req.body;
-
-    if (!actualHarvestDate || actualYieldKgPerHa === undefined || actualSellingPricePerKgRwf === undefined) {
+    // 3. State validation: Prevent recording harvest if status is not 'Planted'
+    // This is crucial to prevent double-harvesting or harvesting a cancelled/planned crop
+    if (cropPlan.status === 'Harvested') {
         res.status(400);
-        throw new Error('Please provide actualHarvestDate, actualYieldKgPerHa, and actualSellingPricePerKgRwf.');
+        throw new Error('Harvest data for this crop plan has already been recorded.');
     }
-    if (isNaN(parseFloat(actualYieldKgPerHa)) || parseFloat(actualYieldKgPerHa) < 0 ||
-        isNaN(parseFloat(actualSellingPricePerKgRwf)) || parseFloat(actualSellingPricePerKgRwf) < 0) {
+    if (cropPlan.status !== 'Planted') {
         res.status(400);
-        throw new Error('Actual yield and selling price must be non-negative numbers.');
+        throw new Error(`Harvest can only be recorded for crop plans with status 'Planted'. Current status is '${cropPlan.status}'.`);
     }
 
+    // 4. Input Validation & Parsing
     const parsedActualYieldKgPerHa = parseFloat(actualYieldKgPerHa);
     const parsedActualSellingPricePerKgRwf = parseFloat(actualSellingPricePerKgRwf);
 
-    // Calculate actual total production and revenue
+    if (!actualHarvestDate || isNaN(parsedActualYieldKgPerHa) || parsedActualYieldKgPerHa <= 0 ||
+        isNaN(parsedActualSellingPricePerKgRwf) || parsedActualSellingPricePerKgRwf < 0) { // Price can be 0 if no sale yet
+        res.status(400);
+        throw new Error('Please provide a valid actual harvest date, positive yield per hectare, and non-negative selling price.');
+    }
+
+    // 5. Recalculate actual total production and revenue on the backend
+    // Use the authoritative actualAreaPlantedHa from the database document
     const actualTotalProductionKg = cropPlan.actualAreaPlantedHa * parsedActualYieldKgPerHa;
     const actualRevenueRwf = actualTotalProductionKg * parsedActualSellingPricePerKgRwf;
 
-    // Update crop plan with actuals
+    // 6. Update crop plan fields
     cropPlan.actualHarvestDate = actualHarvestDate;
     cropPlan.actualYieldKgPerHa = parsedActualYieldKgPerHa;
-    cropPlan.actualTotalProductionKg = actualTotalProductionKg;
+    cropPlan.actualTotalProductionKg = actualTotalProductionKg; // Set calculated total
     cropPlan.actualSellingPricePerKgRwf = parsedActualSellingPricePerKgRwf;
-    cropPlan.actualRevenueRwf = actualRevenueRwf;
-    cropPlan.harvestNotes = harvestNotes || null;
-    cropPlan.status = 'Harvested'; // Update status to harvested
+    cropPlan.actualRevenueRwf = actualRevenueRwf; // Set calculated revenue
+    cropPlan.harvestNotes = harvestNotes || null; // Use null for empty string or undefined
+    cropPlan.status = 'Harvested'; // Update status to 'Harvested'
 
-    await cropPlan.save(); // Save the updated document
+    // 7. Save the updated document to the database
+    await cropPlan.save();
 
     res.status(200).json({
         success: true,
+        message: 'Harvest data recorded successfully!',
         data: cropPlan
     });
 });
