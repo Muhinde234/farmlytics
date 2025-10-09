@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import { Outfit } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { UserProvider } from "@/context/userContext";
@@ -22,30 +22,27 @@ export const metadata: Metadata = {
   description: "Team transportation solutions",
 };
 
-export default function LocaleLayout({
+// ✅ Server Component layout (no useEffect)
+export default async function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const { locale } = params;
+  const { locale } = await params;
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
-  const [messages, setMessages] = React.useState<Record<string, string> | null>(
-    null
-  );
-
-  React.useEffect(() => {
-    import(`@/messages/${locale}.json`)
-      .then((mod) => setMessages(mod.default))
-      .catch(() => notFound());
-  }, [locale]);
-
-  if (!messages) return null;
+  // ✅ Load messages on the server
+  let messages;
+  try {
+    messages = (await import(`@/messages/${locale}.json`)).default;
+  } catch {
+    notFound();
+  }
 
   return (
     <html lang={locale} suppressHydrationWarning>
