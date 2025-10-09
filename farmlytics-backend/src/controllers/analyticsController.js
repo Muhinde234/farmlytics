@@ -1,72 +1,61 @@
-// src/controllers/analyticsController.js
 const asyncHandler = require('express-async-handler');
 const { mvp_crops_list, province_mapping, district_mapping } = require('../utils/constants');
-const CropPlan = require('../models/CropPlan'); // NEW: Import CropPlan model
+const CropPlan = require('../models/CropPlan');
+const analyticsService = require('../utils/analyticsService'); // Import analytics service
 
-// Helper to get a random value for mock data
-const getRandom = (min, max) => Math.random() * (max - min) + min;
-
-// @desc      Get historical yield trends (STILL MOCK UNLESS NEW CSVs ARE PROVIDED)
+// @desc      Get historical yield trends (NOW USES REAL HISTORICAL SAS DATA)
 // @route     GET /api/v1/analytics/yield-trends
 // @access    Private (Farmer, Admin)
 exports.getYieldTrends = asyncHandler(async (req, res, next) => {
     const { district, crop, year_start, year_end } = req.query;
 
     if (!district || !crop) {
-        return res.status(400).json({
-            success: false,
-            error: 'Please provide district and crop for yield trends.'
-        });
+        res.status(400);
+        throw new Error('Please provide district and crop for yield trends.');
     }
 
     const validDistrict = Object.values(district_mapping).includes(district);
     const validCrop = mvp_crops_list.some(c => c.name === crop);
 
     if (!validDistrict || !validCrop) {
-        return res.status(404).json({
-            success: false,
-            error: 'Invalid district or crop provided.'
-        });
+        res.status(404);
+        throw new Error('Invalid district or crop provided.');
     }
 
-    const mockData = [];
-    const currentYear = new Date().getFullYear();
-    const startYear = year_start ? parseInt(year_start) : currentYear - 3;
-    const endYear = year_end ? parseInt(year_end) : currentYear;
+    const cropPlannerService = analyticsService.getCropPlannerService();
+    if (!cropPlannerService) {
+        res.status(500);
+        throw new Error('Analytics services not initialized. Server error during yield trends.');
+    }
 
-    for (let year = startYear; year <= endYear; year++) {
-        const baseYield = mvp_crops_list.find(c => c.name === crop)?.averageMaturityDays || 100;
-        const simulatedYield = parseFloat(
-            (baseYield * (10 + getRandom(-2, 2)) + getRandom(0, 500)).toFixed(2)
-        );
+    const trends = cropPlannerService.get_yield_trends_historical(
+        district,
+        crop,
+        year_start ? parseInt(year_start) : undefined,
+        year_end ? parseInt(year_end) : undefined
+    );
 
-        mockData.push({
-            year: year,
-            district: district,
-            crop: crop,
-            average_yield_kg_per_ha: simulatedYield,
-            total_production_kg: parseFloat((simulatedYield * getRandom(100, 500)).toFixed(2))
-        });
+    if (!trends || trends.length === 0) {
+        res.status(404);
+        throw new Error(`No historical yield trend data found for ${crop} in ${district}.`);
     }
 
     res.status(200).json({
         success: true,
-        message: 'This is mock historical yield trend data from static sources. Full implementation requires multiple years of SAS-like data.',
-        data: mockData
+        message: 'Historical yield trend data from SAS production data.',
+        data: trends
     });
 });
 
-// @desc      Get historical demand trends (STILL MOCK UNLESS NEW CSVs ARE PROVIDED)
+// @desc      Get historical demand trends (NOW USES REAL HISTORICAL EICV DATA)
 // @route     GET /api/v1/analytics/demand-trends
 // @access    Private (Farmer, Buyer, Admin)
 exports.getDemandTrends = asyncHandler(async (req, res, next) => {
     const { location, location_type, crop, year_start, year_end } = req.query;
 
     if (!location || !crop) {
-        return res.status(400).json({
-            success: false,
-            error: 'Please provide location and crop for demand trends.'
-        });
+        res.status(400);
+        throw new Error('Please provide location and crop for demand trends.');
     }
 
     const validLocation = (location_type === 'Province' && Object.values(province_mapping).includes(location)) ||
@@ -74,36 +63,33 @@ exports.getDemandTrends = asyncHandler(async (req, res, next) => {
     const validCrop = mvp_crops_list.some(c => c.name === crop);
 
     if (!validLocation || !validCrop) {
-        return res.status(404).json({
-            success: false,
-            error: 'Invalid location or crop provided.'
-        });
+        res.status(404);
+        throw new Error('Invalid location or crop provided.');
     }
 
-    const mockData = [];
-    const currentYear = new Date().getFullYear();
-    const startYear = year_start ? parseInt(year_start) : currentYear - 3;
-    const endYear = year_end ? parseInt(year_end) : currentYear;
+    const marketDemandService = analyticsService.getMarketDemandService();
+    if (!marketDemandService) {
+        res.status(500);
+        throw new Error('Analytics services not initialized. Server error during demand trends.');
+    }
 
-    for (let year = startYear; year <= endYear; year++) {
-        const baseDemandQty = getRandom(50000, 200000);
-        const simulatedDemandQty = parseFloat((baseDemandQty * getRandom(0.8, 1.2)).toFixed(2));
-        const simulatedDemandValue = parseFloat((simulatedDemandQty * getRandom(200, 600)).toFixed(2));
+    const trends = marketDemandService.get_demand_trends_historical(
+        location,
+        location_type,
+        crop,
+        year_start ? parseInt(year_start) : undefined,
+        year_end ? parseInt(year_end) : undefined
+    );
 
-        mockData.push({
-            year: year,
-            location: location,
-            location_type: location_type,
-            crop: crop,
-            total_weighted_consumption_qty_kg: simulatedDemandQty,
-            total_weighted_consumption_value_rwf: simulatedDemandValue
-        });
+    if (!trends || trends.length === 0) {
+        res.status(404);
+        throw new Error(`No historical demand trend data found for ${crop} in ${location}.`);
     }
 
     res.status(200).json({
         success: true,
-        message: 'This is mock historical demand trend data from static sources. Full implementation requires multiple years of EICV-like data.',
-        data: mockData
+        message: 'Historical demand trend data from EICV consumption data.',
+        data: trends
     });
 });
 
