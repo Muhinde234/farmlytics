@@ -2,8 +2,8 @@ const express = require('express');
 const { 
     getYieldTrends, 
     getDemandTrends,
-    getMyYieldPerformance, // NEW: Personal Yield Performance
-    getMyRevenueTrends     // NEW: Personal Revenue Trends
+    getMyYieldPerformance,
+    getMyRevenueTrends
 } = require('../controllers/analyticsController');
 const { protect, authorize } = require('../middlewares/auth');
 
@@ -23,7 +23,7 @@ router.use(protect);
  * @swagger
  * /analytics/yield-trends:
  *   get:
- *     summary: Get historical yield trends for a crop in a district (Mock Data)
+ *     summary: Get historical yield trends for a crop in a district (Real Data)
  *     tags: [Analytics & Reporting]
  *     security:
  *       - bearerAuth: []
@@ -47,24 +47,24 @@ router.use(protect);
  *         name: year_start
  *         schema:
  *           type: integer
- *         description: Start year for the trend data (e.g., 2022). Defaults to 3 years ago.
- *         example: 2022
+ *         description: Start year for the trend data (e.g., 2020). Defaults to 3 years ago.
+ *         example: 2020
  *       - in: query
  *         name: year_end
  *         schema:
  *           type: integer
- *         description: End year for the trend data (e.g., 2025). Defaults to current year.
- *         example: 2025
+ *         description: End year for the trend data (e.g., 2024). Defaults to current year.
+ *         example: 2024
  *     responses:
  *       200:
- *         description: Mock historical yield trend data.
+ *         description: Historical yield trend data from SAS production data.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
  *                 success: { type: boolean, example: true }
- *                 message: { type: string, example: "This is mock historical yield trend data. Full implementation requires multiple years of SAS-like data." }
+ *                 message: { type: string, example: "Historical yield trend data from SAS production data." }
  *                 data:
  *                   type: array
  *                   items:
@@ -82,15 +82,15 @@ router.use(protect);
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Invalid district or crop.
+ *         description: Invalid district or crop, or no data found.
  */
-router.get('/yield-trends', authorize('farmer', 'admin', 'buyer'), getYieldTrends); // Allow buyers to see trends
+router.get('/yield-trends', authorize('farmer', 'admin', 'buyer'), getYieldTrends);
 
 /**
  * @swagger
  * /analytics/demand-trends:
  *   get:
- *     summary: Get historical demand trends for a crop in a location (Mock Data)
+ *     summary: Get historical demand trends for a crop in a location (Real Data)
  *     tags: [Analytics & Reporting]
  *     security:
  *       - bearerAuth: []
@@ -122,30 +122,30 @@ router.get('/yield-trends', authorize('farmer', 'admin', 'buyer'), getYieldTrend
  *         name: year_start
  *         schema:
  *           type: integer
- *         description: Start year for the trend data (e.g., 2022). Defaults to 3 years ago.
- *         example: 2022
+ *         description: Start year for the trend data (e.g., 2017). Defaults to 3 years ago.
+ *         example: 2017
  *       - in: query
  *         name: year_end
  *         schema:
  *           type: integer
- *         description: End year for the trend data (e.g., 2025). Defaults to current year.
- *         example: 2025
+ *         description: End year for the trend data (e.g., 2020). Defaults to current year.
+ *         example: 2020
  *     responses:
  *       200:
- *         description: Mock historical demand trend data.
+ *         description: Historical demand trend data from EICV consumption data.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
  *                 success: { type: boolean, example: true }
- *                 message: { type: string, example: "This is mock historical demand trend data. Full implementation requires multiple years of EICV-like data." }
+ *                 message: { type: string, example: "Historical demand trend data from EICV consumption data." }
  *                 data:
  *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
- *                       year: { type: integer, example: 2023 }
+ *                       year: { type: integer, example: 2017 }
  *                       location: { type: string, example: "Gasabo" }
  *                       location_type: { type: string, example: "District" }
  *                       crop: { type: string, example: "Beans" }
@@ -158,7 +158,7 @@ router.get('/yield-trends', authorize('farmer', 'admin', 'buyer'), getYieldTrend
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Invalid location or crop.
+ *         description: Invalid location or crop, or no data found.
  */
 router.get('/demand-trends', authorize('farmer', 'admin', 'buyer'), getDemandTrends);
 
