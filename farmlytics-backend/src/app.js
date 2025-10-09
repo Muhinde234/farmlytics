@@ -74,8 +74,8 @@ const swaggerOptions = {
                     type: 'object',
                     properties: {
                         _id: { type: 'string', example: '60c72b2f9c1e4b001c8e4d3a' },
-                        name: { type: 'string', example: 'John Doe' },
-                        email: { type: 'string', example: 'john.doe@example.com' },
+                        name: { type: 'string', example: 'Aline KIM' },
+                        email: { type: 'string', example: 'kim.aline@gmail.com' },
                         role: { type: 'string', enum: ['admin', 'farmer', 'buyer'], example: 'farmer' },
                         isVerified: { type: 'boolean', example: true },
                         preferredDistrictName: { type: 'string', example: "Gasabo", nullable: true },
@@ -138,7 +138,7 @@ app.use('/api/v1/market', marketRoutes);
 app.use('/api/v1/tracker', trackerRoutes);
 app.use('/api/v1/crop-plans', cropPlanRoutes);
 app.use('/api/v1', referenceDataRoutes);
-app.use('/api/v1', analyticsRoutes);
+app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/ml', mlRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
