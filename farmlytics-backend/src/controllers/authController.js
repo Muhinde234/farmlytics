@@ -39,13 +39,10 @@ const sendTokenResponse = (user, statusCode, res) => {
 };
 
 
-// @desc      Register user
-// @route     POST /api/v1/auth/register
-// @access    Public
 exports.register = asyncHandler(async (req, res, next) => {
     const { name, email, password, role } = req.body;
 
-    // Create user
+    
     const user = await User.create({
         name,
         email,
@@ -54,7 +51,7 @@ exports.register = asyncHandler(async (req, res, next) => {
         isVerified: false
     });
 
-    // Generate verification token
+
     const verificationToken = user.generateEmailVerificationToken();
     await user.save({ validateBeforeSave: false });
 
@@ -157,6 +154,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @desc      Get current logged in user
 // @route     GET /api/v1/auth/me
 // @access    Private
+
 exports.getMe = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.user.id);
 
@@ -277,14 +275,14 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
         </head>
         <body>
             <div class="container">
-                <h1>✅ Email Successfully Verified!</h1>
+                <h1>Email Successfully Verified!</h1>
                 <p>Your Farmlytics account is now active and ready to use.</p>
                 <p>You can now close this window and log in to the Farmlytics application.</p>
                 <p>
-                    <a href="${currentProtocol}://${currentHost}/api/v1/auth/login">Continue to Login (Backend API endpoint)</a>
+                    <a href="${currentProtocol}://${currentHost}/api/v1/auth/login">Continue to Login</a>
                 </p>
                 <p>
-                    <a href="${currentProtocol}://${currentHost}/api-docs">Explore API Documentation</a>
+                    
                 </p>
                 <div class="flag-colors">
                     <div class="flag-color-green"></div>
@@ -297,9 +295,7 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
     `);
 });
 
-// @desc      Forgot Password
-// @route     POST /api/v1/auth/forgotpassword
-// @access    Public
+
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
@@ -308,7 +304,6 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
         throw new Error('No user found with that email address.');
     }
 
-    // Get reset token
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false });
 
@@ -412,7 +407,7 @@ exports.renderResetPasswordForm = asyncHandler(async (req, res, next) => {
         return;
     }
 
-    // Render HTML form to collect new password
+   
     res.status(200).send(`
         <!DOCTYPE html>
         <html lang="en">
@@ -531,11 +526,8 @@ exports.renderResetPasswordForm = asyncHandler(async (req, res, next) => {
 });
 
 
-// @desc      Reset Password (handles PUT request from the form)
-// @route     PUT /api/v1/auth/resetpassword/:token
-// @access    Public
 exports.resetPassword = asyncHandler(async (req, res, next) => {
-    // Get hashed token from URL
+   
     const resetPasswordToken = crypto
         .createHash('sha256')
         .update(req.params.token)
@@ -543,7 +535,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 
     const user = await User.findOne({
         resetPasswordToken: resetPasswordToken,
-        resetPasswordExpire: { $gt: Date.now() } // Token must not be expired
+        resetPasswordExpire: { $gt: Date.now() } 
     });
 
     if (!user) {
@@ -551,42 +543,39 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
         throw new Error('Invalid or expired reset token.');
     }
 
-    // Set new password
+    
     if (req.body.password !== req.body.confirmPassword) {
         res.status(400);
         throw new Error('Passwords do not match.');
     }
 
-    user.password = req.body.password; // Mongoose pre-save hook will hash this
+    user.password = req.body.password; 
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();
 
-    // Instead of sending JWT directly (which the form won't use easily),
-    // we'll send a success message. The frontend can then redirect to login.
+   
     res.status(200).json({ success: true, message: 'Password reset successfully. You can now login.' });
 });
 
-// @desc      Update User Password (when logged in)
-// @route     PUT /api/v1/auth/updatepassword
-// @access    Private
-exports.updatePassword = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id).select('+password'); // Select password to compare
 
-    // Check current password
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.user.id).select('+password');
+
+   
     if (!(await user.matchPassword(req.body.currentPassword))) {
         res.status(401);
         throw new Error('Current password is incorrect.');
     }
 
-    // Set new password
+
     if (req.body.newPassword !== req.body.confirmNewPassword) {
         res.status(400);
         throw new Error('New passwords do not match.');
     }
 
-    user.password = req.body.newPassword; // Mongoose pre-save hook will hash this
-    await user.save(); // This will trigger the pre-save hook to hash the new password
+    user.password = req.body.newPassword; 
+    await user.save(); 
 
     sendTokenResponse(user, 200, res);
 });

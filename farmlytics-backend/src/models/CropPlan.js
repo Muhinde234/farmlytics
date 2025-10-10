@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const CropPlanSchema = new mongoose.Schema({
-    user: { // Links this crop plan to a specific farmer
+    user: { 
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: true
@@ -10,13 +10,13 @@ const CropPlanSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please add a crop name'],
         trim: true,
-        enum: ['Maize', 'Beans', 'Irish potatoes', 'Cassava', 'Tomatoes'] // Restrict to MVP crops
+        enum: ['Maize', 'Beans', 'Irish potatoes', 'Cassava', 'Tomatoes'] // MVP crops
     },
     districtName: {
         type: String,
         required: [true, 'Please specify the district name'],
         trim: true
-        // In a real app, you might want to validate this against a list of valid districts
+        
     },
     actualAreaPlantedHa: {
         type: Number,
@@ -27,7 +27,7 @@ const CropPlanSchema = new mongoose.Schema({
         type: Date,
         required: [true, 'Please add the planting date']
     },
-    // ESTIMATED fields (calculated by the system)
+
     estimatedHarvestDate: {
         type: Date
     },
@@ -43,37 +43,37 @@ const CropPlanSchema = new mongoose.Schema({
     estimatedRevenueRwf: {
         type: Number
     },
-    // ACTUAL fields (recorded by the farmer post-harvest)
-    actualHarvestDate: { // NEW: Date of actual harvest
+    
+    actualHarvestDate: { 
         type: Date,
         default: null
     },
-    actualYieldKgPerHa: { // NEW: Actual yield recorded by farmer
+    actualYieldKgPerHa: { 
         type: Number,
         min: [0, 'Actual yield cannot be negative'],
         default: null
     },
-    actualTotalProductionKg: { // NEW: Actual total production recorded by farmer
+    actualTotalProductionKg: { 
         type: Number,
         min: [0, 'Actual production cannot be negative'],
         default: null
     },
-    actualSellingPricePerKgRwf: { // NEW: Actual selling price recorded by farmer
+    actualSellingPricePerKgRwf: { 
         type: Number,
         min: [0, 'Actual selling price cannot be negative'],
         default: null
     },
-    actualRevenueRwf: { // NEW: Actual revenue recorded by farmer
+    actualRevenueRwf: { 
         type: Number,
         min: [0, 'Actual revenue cannot be negative'],
         default: null
     },
-    harvestNotes: { // NEW: Any notes from the farmer about the harvest
+    harvestNotes: { 
         type: String,
         trim: true,
         default: null
     },
-    status: { // To track the lifecycle of the crop plan
+    status: { 
         type: String,
         enum: ['Planned', 'Planted', 'Harvested', 'Completed', 'Cancelled'],
         default: 'Planted'

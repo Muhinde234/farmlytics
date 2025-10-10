@@ -1,14 +1,14 @@
 // src/controllers/notificationController.js
 const asyncHandler = require('express-async-handler');
 const notificationService = require('../utils/notificationService');
-const User = require('../models/User'); // To fetch/update user's device tokens
+const User = require('../models/User'); 
 const logger = require('../config/winston');
 
 // @desc      Send a test push notification
 // @route     POST /api/v1/notifications/send-test
 // @access    Private (Admin only for testing purposes)
 exports.sendTestNotification = asyncHandler(async (req, res, next) => {
-    // deviceToken provided in body for flexible testing, or use admin's own tokens if available
+    
     const { deviceToken, title, body, data, sendToAdminSelf = false } = req.body; 
 
     let targetDeviceTokens = [];
@@ -20,14 +20,14 @@ exports.sendTestNotification = asyncHandler(async (req, res, next) => {
             logger.info(`Admin ${req.user.id} sending test notification to own stored device tokens.`);
         } else {
             logger.warn(`Admin ${req.user.id} requested to send to self, but no device tokens stored.`);
-            if (!deviceToken) { // If no stored token and no deviceToken provided in body
+            if (!deviceToken) { 
                 res.status(400);
                 throw new Error('Admin requested to send to self but no tokens found, and no deviceToken provided in request body.');
             }
         }
     } 
     
-    // If not sending to self, or no tokens for self, use deviceToken from body if provided
+  
     if (deviceToken && targetDeviceTokens.length === 0) {
         targetDeviceTokens = [deviceToken];
     }
@@ -52,7 +52,7 @@ exports.sendTestNotification = asyncHandler(async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: 'Test notification request processed.',
-            details: response.details // Use 'details' for Expo response
+            details: response.details 
         });
     } else {
         res.status(500).json({
@@ -67,6 +67,7 @@ exports.sendTestNotification = asyncHandler(async (req, res, next) => {
 // @desc      Register a device token for push notifications
 // @route     POST /api/v1/notifications/register-token
 // @access    Private (Authenticated User)
+
 exports.registerDeviceToken = asyncHandler(async (req, res, next) => {
     const { deviceToken } = req.body;
 
@@ -82,7 +83,7 @@ exports.registerDeviceToken = asyncHandler(async (req, res, next) => {
         throw new Error('Authenticated user not found.');
     }
 
-    // Add token if it doesn't already exist for this user
+   
     if (!user.deviceTokens.includes(deviceToken)) {
         user.deviceTokens.push(deviceToken);
         await user.save();
@@ -94,6 +95,6 @@ exports.registerDeviceToken = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: 'Device token registered successfully.',
-        data: user.deviceTokens // Return updated tokens
+        data: user.deviceTokens 
     });
 });

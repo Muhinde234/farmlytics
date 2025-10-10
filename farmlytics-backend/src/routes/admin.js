@@ -68,11 +68,11 @@ router.use(authorize('admin')); // Ensure only 'admin' role can access these rou
  *             properties:
  *               name:
  *                 type: string
- *                 example: Jane Admin
+ *                 example: aline Admin
  *               email:
  *                 type: string
  *                 format: email
- *                 example: jane.admin@example.com
+ *                 example: aline.admin@gmail.com
  *               password:
  *                 type: string
  *                 format: password
@@ -173,11 +173,11 @@ router.route('/users')
  *             properties:
  *               name:
  *                 type: string
- *                 example: Jane Doe-Smith
+ *                 example: Jane 
  *               email:
  *                 type: string
  *                 format: email
- *                 example: jane.smith@example.com
+ *                 example: jane@gmail.com
  *               password:
  *                 type: string
  *                 format: password

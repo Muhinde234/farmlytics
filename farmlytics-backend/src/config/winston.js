@@ -30,7 +30,7 @@ const jsonLogFormat = winston.format.combine(
   winston.format.json()
 );
 
-// Define transports
+
 const transports = [
   new winston.transports.Console({
     format: logFormat,

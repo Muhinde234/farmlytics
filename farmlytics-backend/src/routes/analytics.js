@@ -23,7 +23,7 @@ router.use(protect);
  * @swagger
  * /analytics/yield-trends:
  *   get:
- *     summary: Get historical yield trends for a crop in a district (Real Data)
+ *     summary: Get historical yield trends for a crop in a district 
  *     tags: [Analytics & Reporting]
  *     security:
  *       - bearerAuth: []
@@ -90,7 +90,7 @@ router.get('/yield-trends', authorize('farmer', 'admin', 'buyer'), getYieldTrend
  * @swagger
  * /analytics/demand-trends:
  *   get:
- *     summary: Get historical demand trends for a crop in a location (Real Data)
+ *     summary: Get historical demand trends for a crop in a location 
  *     tags: [Analytics & Reporting]
  *     security:
  *       - bearerAuth: []
@@ -166,7 +166,7 @@ router.get('/demand-trends', authorize('farmer', 'admin', 'buyer'), getDemandTre
  * @swagger
  * /analytics/my-yield-performance:
  *   get:
- *     summary: Get logged-in user's personal yield performance trends (Real Data from MongoDB)
+ *     summary: Get logged-in user's personal yield performance trends 
  *     tags: [Analytics & Reporting]
  *     security:
  *       - bearerAuth: []
@@ -232,7 +232,7 @@ router.get('/my-yield-performance', authorize('farmer', 'admin'), getMyYieldPerf
  * @swagger
  * /analytics/my-revenue-trends:
  *   get:
- *     summary: Get logged-in user's personal revenue trends (Real Data from MongoDB)
+ *     summary: Get logged-in user's personal revenue trends 
  *     tags: [Analytics & Reporting]
  *     security:
  *       - bearerAuth: []

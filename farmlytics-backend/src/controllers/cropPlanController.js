@@ -1,6 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const CropPlan = require('../models/CropPlan');
-const analyticsService = require('../utils/analyticsService'); // For estimates
+const analyticsService = require('../utils/analyticsService')
 
 // @desc      Get all crop plans for a user
 // @route     GET /api/v1/crop-plans
@@ -47,6 +47,7 @@ exports.getCropPlan = asyncHandler(async (req, res, next) => {
 // @desc      Create new crop plan
 // @route     POST /api/v1/crop-plans
 // @access    Private (Farmer, Admin)
+
 exports.createCropPlan = asyncHandler(async (req, res, next) => {
     req.body.user = req.user.id;
 
@@ -75,7 +76,7 @@ exports.createCropPlan = asyncHandler(async (req, res, next) => {
     req.body.estimatedTotalProductionKg = estimates.Estimated_Total_Production_Kg;
     req.body.estimatedPricePerKgRwf = estimates.Estimated_Price_Per_Kg_Rwf;
     req.body.estimatedRevenueRwf = estimates.Estimated_Revenue_Rwf;
-    // Set initial status if not provided, for new plans
+   
     if (!req.body.status) {
         req.body.status = 'Planted';
     }
@@ -92,6 +93,7 @@ exports.createCropPlan = asyncHandler(async (req, res, next) => {
 // @desc      Update crop plan
 // @route     PUT /api/v1/crop-plans/:id
 // @access    Private (Farmer, Admin)
+
 exports.updateCropPlan = asyncHandler(async (req, res, next) => {
     let cropPlan = await CropPlan.findById(req.params.id);
 
@@ -154,6 +156,7 @@ exports.updateCropPlan = asyncHandler(async (req, res, next) => {
 // @desc      Record actual harvest data for a crop plan
 // @route     PUT /api/v1/crop-plans/:id/record-harvest
 // @access    Private (Farmer, Admin)
+
 exports.recordHarvest = asyncHandler(async (req, res, next) => {
     let cropPlan = await CropPlan.findById(req.params.id);
 
@@ -182,20 +185,20 @@ exports.recordHarvest = asyncHandler(async (req, res, next) => {
     const parsedActualYieldKgPerHa = parseFloat(actualYieldKgPerHa);
     const parsedActualSellingPricePerKgRwf = parseFloat(actualSellingPricePerKgRwf);
 
-    // Calculate actual total production and revenue
+    
     const actualTotalProductionKg = cropPlan.actualAreaPlantedHa * parsedActualYieldKgPerHa;
     const actualRevenueRwf = actualTotalProductionKg * parsedActualSellingPricePerKgRwf;
 
-    // Update crop plan with actuals
+   
     cropPlan.actualHarvestDate = actualHarvestDate;
     cropPlan.actualYieldKgPerHa = parsedActualYieldKgPerHa;
     cropPlan.actualTotalProductionKg = actualTotalProductionKg;
     cropPlan.actualSellingPricePerKgRwf = parsedActualSellingPricePerKgRwf;
     cropPlan.actualRevenueRwf = actualRevenueRwf;
     cropPlan.harvestNotes = harvestNotes || null;
-    cropPlan.status = 'Harvested'; // Update status to harvested
+    cropPlan.status = 'Harvested'; 
 
-    await cropPlan.save(); // Save the updated document
+    await cropPlan.save(); 
 
     res.status(200).json({
         success: true,

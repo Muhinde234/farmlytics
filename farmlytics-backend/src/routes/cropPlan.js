@@ -5,7 +5,7 @@ const {
     createCropPlan,
     updateCropPlan,
     deleteCropPlan,
-    recordHarvest // New: Import recordHarvest
+    recordHarvest
 } = require('../controllers/cropPlanController');
 const { protect, authorize } = require('../middlewares/auth');
 

@@ -1,22 +1,20 @@
-// src/middlewares/error.js
-
-const logger = require('../config/winston'); // NEW: Import Winston logger
+const logger = require('../config/winston'); 
 
 const errorHandler = (err, req, res, next) => {
     let error = { ...err }; // Create a shallow copy of the error object
     error.message = err.message; // Ensure the message is copied over
 
-    // Log the error for debugging purposes (Winston will handle its destination)
-    logger.error(`Error encountered: ${err.message}`, {
-        stack: err.stack,
-        method: req.method,
-        path: req.originalUrl,
+    // Log to console using Winston (and to file if configured)
+    logger.error(`Error encountered: ${err.message}`, { 
+        stack: err.stack, 
+        method: req.method, 
+        path: req.originalUrl, 
         ip: req.ip,
-        body: req.body, // Be cautious with logging sensitive data like passwords
-        query: req.query
+        body: req.body, // Include request body for context (be careful with sensitive data)
+        query: req.query 
     });
 
-    // Mongoose bad ObjectId (e.g., when findById receives a non-valid ID format)
+    // Mongoose bad ObjectId
     if (err.name === 'CastError') {
         error.message = `Resource not found with id of ${err.value}`;
         error.statusCode = 404;
@@ -26,17 +24,12 @@ const errorHandler = (err, req, res, next) => {
         error.message = 'Duplicate field value entered';
         error.statusCode = 400;
     }
-    // Mongoose validation error (e.g., missing a required field, invalid email format)
-    else if (err.name === 'ValidationError') {
-        // Collect all validation error messages
-        const messages = Object.values(err.errors).map(val => val.message);
-        error.message = messages.join(', '); // Join messages if multiple validation errors
-        error.statusCode = 400;
-    }
-    // JWT specific errors from `protect` middleware
-    else if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
-        error.message = 'Not authorized, token failed or expired';
-        error.statusCode = 401;
+
+    // Mongoose validation error
+    if (err.name === 'ValidationError') {
+        const message = Object.values(err.errors).map(val => val.message);
+        error = new Error(message.join(', ')); // Join messages if multiple validation errors
+        res.status(400);
     }
     // Any other unhandled errors will default to 500 and their original message
 

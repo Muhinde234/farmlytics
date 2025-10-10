@@ -124,7 +124,7 @@ exports.getMyYieldPerformance = asyncHandler(async (req, res, next) => {
     const startYear = year_start ? parseInt(year_start) : new Date().getFullYear() - 3;
     const endYear = year_end ? parseInt(year_end) : new Date().getFullYear();
 
-    // Aggregate crop plans for the user
+  
     const yieldData = await CropPlan.aggregate([
         { $match: query },
         {

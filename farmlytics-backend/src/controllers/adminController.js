@@ -14,8 +14,7 @@ exports.getUsers = asyncHandler(async (req, res, next) => {
 
 
 exports.getUser = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.params.id).select('-password'); // Exclude password
-
+    const user = await User.findById(req.params.id).select('-password'); 
     if (!user) {
         res.status(404);
         throw new Error(`User not found with id of ${req.params.id}`);

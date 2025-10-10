@@ -2,7 +2,7 @@
 // src/routes/referenceData.js
 const express = require('express');
 const { getProvinces, getDistricts, getCropList } = require('../controllers/referenceDataController');
-const { protect, authorize } = require('../middlewares/auth'); // Still import if you want to protect later
+const { protect, authorize } = require('../middlewares/auth'); 
 
 const router = express.Router();
 
@@ -36,7 +36,7 @@ const router = express.Router();
  *                       code: { type: integer, example: 11 }
  *                       name: { type: string, example: "Nyarugenge" }
  */
-router.get('/districts', getDistricts); // Public route for now
+router.get('/districts', getDistricts); 
 
 /**
  * @swagger
@@ -61,7 +61,7 @@ router.get('/districts', getDistricts); // Public route for now
  *                       code: { type: integer, example: 1 }
  *                       name: { type: string, example: "Kigali City" }
  */
-router.get('/provinces', getProvinces); // Public route for now
+router.get('/provinces', getProvinces);
 
 /**
  * @swagger
@@ -86,6 +86,6 @@ router.get('/provinces', getProvinces); // Public route for now
  *                       name: { type: string, example: "Maize" }
  *                       averageMaturityDays: { type: integer, example: 120 }
  */
-router.get('/crops/list', getCropList); // Public route for now
+router.get('/crops/list', getCropList); 
 
 module.exports = router;
