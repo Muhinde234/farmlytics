@@ -11,7 +11,8 @@
       "slogan": "Digitalize your farm, cultivate success."
     },
     "language":"fr",
-    "goto":"Tableau de bord"
+    "goto":"Tableau de bord",
+    "leave":"déconnexion"
   },
   "home": {
     "hero": {

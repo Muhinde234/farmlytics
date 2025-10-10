@@ -179,12 +179,11 @@ export default function HomePage() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  {user.role === "FARMER" && (
-                    <DropdownMenuItem onClick={() => router.push("/admin")}>
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                     {tCommon("goto")}
-                    </DropdownMenuItem>
-                  )}
+                  {/* Changed: "Go to Dashboard" is now always visible when logged in */}
+                  <DropdownMenuItem onClick={() => router.push("/admin")}>
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                   {tCommon("goto")}
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout}>
                     <X className="mr-2 h-4 w-4" />
                     {tCommon("leave")}
@@ -260,16 +259,15 @@ export default function HomePage() {
               {/* User / Auth Buttons */}
               {user ? (
                 <>
-                  {user.role === "FARMER" && (
-                    <Button
-                      onClick={() => router.push("/dashboard")}
-                      className="bg-emerald-600 text-white rounded-full py-2 px-4 w-full"
-                    >
-                      Go to Dashboard
-                    </Button>
-                  )}
+                  {/* Changed: "Go to Dashboard" is now always visible when logged in */}
+                  <Button
+                    onClick={() => router.push("/admin")} // Changed link to /admin as in desktop
+                    className="bg-emerald-600 text-white rounded-full py-2 px-4 w-full"
+                  >
+                    {tCommon("goto")}
+                  </Button>
                   <Button onClick={handleLogout} className="bg-gray-200 rounded-full py-2 px-4 w-full">
-                    Logout
+                    {tCommon("leave")}
                   </Button>
                 </>
               ) : (
