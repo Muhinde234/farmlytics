@@ -204,7 +204,7 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 
 * Lists common diseases per crop (e.g., Cassava Mosaic, Potato Blight, Maize Rust).
 * Explains **symptoms**, **causes**, and **preventive measures**.
-* Focuses on awareness and prevention (not AI detection).
+* Focuses on awareness and prevention .
 
 ---
 
@@ -250,13 +250,15 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 <img width="1847" height="964" alt="image" src="https://github.com/user-attachments/assets/da62826f-fb57-4355-8c52-0eca654f954c" />
 
 ### **the mobile landing page**
-![WhatsApp Image 2025-10-10 at 11 13 28_3030a3a8](https://github.com/user-attachments/assets/ce6337ab-a46f-4949-9506-c64b7e28c929)
+![WhatsApp Image 2025-10-10 at 11 40 08_5abf3c49](https://github.com/user-attachments/assets/6c9f8640-13ca-47a0-80a4-9344bf3e2b78) || ![WhatsApp Image 2025-10-10 at 11 40 56_2198a318](https://github.com/user-attachments/assets/382f88e1-4d75-4d79-afa9-1917618f5bfe)
+
+
 
 
 
 ## 🤝 **Contributors**
 
 **Team Farmlytics**
-Developed with ❤️ by innovators passionate about **agriculture**, **data**, and **technology for Rwanda’s digital future**.
+_Developed with ❤️ by BitQueens passionate about **agriculture**, **data**, and **technology for Rwanda’s digital future**._
 
 ---
