@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const config = require('../config');
-const logger = require('../config/winston'); // Import Winston logger
+const logger = require('../config/winston'); 
 
 const sendEmail = async (options) => {
     
@@ -13,11 +13,11 @@ const sendEmail = async (options) => {
             pass: config.emailPass
         },
         tls: {
-            rejectUnauthorized: false // Keep for now, as it's the most permissive TLS setting
+            rejectUnauthorized: false
         },
-        // NEW: Enable Nodemailer debugging for verbose output
-        logger: true, // Directs Nodemailer's internal logs to our Winston logger
-        debug: true   // Enables verbose debug messages from Nodemailer
+        
+        logger: true,
+        debug: true   
     });
 
     const mailOptions = {
@@ -32,7 +32,7 @@ const sendEmail = async (options) => {
         logger.info(`Email sent from "${config.senderName}" via Nodemailer to ${options.email} with subject: "${options.subject}"`);
     } catch (error) {
         logger.error(`Failed to send email via Nodemailer to ${options.email}: ${error.message}`, { subject: options.subject, stack: error.stack });
-        throw error; // Re-throw the error for the caller to catch
+        throw error; 
     }
 };
 

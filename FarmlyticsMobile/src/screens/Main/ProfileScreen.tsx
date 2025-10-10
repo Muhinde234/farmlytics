@@ -185,7 +185,6 @@ const LogoutButtonText = styled(Text)`
 // ---------------------- Component Logic ----------------------
 const ProfileScreen: React.FC = () => {
   const { t } = useTranslation();
-  // Removed setAppLanguage from destructuring
   const { user, logout, isLoading, updateUserProfile, districts, provinces } = useAuth(); 
   const navigation = useNavigation<MainTabNavigationProp<'ProfileTab'>>(); // Use navigation for UpdatePassword
 
@@ -230,25 +229,17 @@ const ProfileScreen: React.FC = () => {
       preferredProvinceName: editProvince,
     };
 
-    // Validation: if a district is selected, a province must also be selected
-    // OR if a province is selected (and user is not admin), a district must be selected.
-    if (user?.role === 'farmer' || user?.role === 'buyer') { // Explicitly check for farmer/buyer roles
-      if (editProvince && !editDistrict) { // If province selected but district isn't
-        Alert.alert(String(t('common.error')), String(t('profile.districtRequiredError')));
+    // Validation: If a district is selected, it should ideally have a matching province,
+    // but the user now has flexibility to select them independently.
+    // The previous strict dependency is relaxed as requested.
+    // However, we can still validate if a selection is made, that it's not empty.
+    if (!editProvince && editDistrict) {
+        Alert.alert(String(t('common.error')), String(t('profile.provinceShouldBeSelected')));
         setIsSaving(false);
         return;
-      }
-      // If a district is selected, ensure its province matches the selected province
-      if (editDistrict && editProvince) {
-        const selectedDistrictItem = districts.find((d: ReferenceDataItem) => d.value === editDistrict);
-        if (selectedDistrictItem && selectedDistrictItem.province !== editProvince) {
-          Alert.alert(String(t('common.error')), String(t('profile.districtProvinceMismatchError')));
-          setIsSaving(false);
-          return;
-        }
-      }
     }
-
+    // If only province is selected without a district, it's allowed.
+    // If only district is selected without a province (and not farmer/buyer), this is also allowed now.
 
     const success = await updateUserProfile(updates);
     if (success) {
@@ -257,7 +248,7 @@ const ProfileScreen: React.FC = () => {
       Alert.alert(String(t('common.error')), String(t('profile.updateError')));
     }
     setIsSaving(false);
-  }, [editDistrict, editProvince, updateUserProfile, t, user?.role, districts]);
+  }, [editDistrict, editProvince, updateUserProfile, t]);
 
 
   const handleLogout = () => {
@@ -333,7 +324,6 @@ const ProfileScreen: React.FC = () => {
 
 
         {/* --- Preferred Location Settings (for Farmer/Buyer only) --- */}
-        {/* Using a more explicit check for role rendering */}
         {(user?.role === 'farmer' || user?.role === 'buyer') && ( 
           <>
             <SectionTitle>{String(t('profile.preferredLocationSettings') || 'Preferred Location')}</SectionTitle>
@@ -346,7 +336,8 @@ const ProfileScreen: React.FC = () => {
                     selectedValue={editProvince}
                     onValueChange={(itemValue: unknown) => {
                       setEditProvince(itemValue as string);
-                      setEditDistrict(''); // Reset district if province changes
+                      // Do NOT reset district here if we want independent selection
+                      // setEditDistrict(''); 
                     }}
                     enabled={!isSaving && !isLoading}
                     accessibilityLabel={String(t('profile.selectProvincePlaceholder'))}
@@ -355,7 +346,7 @@ const ProfileScreen: React.FC = () => {
                     {isLoading ? (
                       <Picker.Item key="loading-provinces" label={String(t('common.loading'))} value="" />
                     ) : provinces.length > 0 ? (
-                      provinces.map((province: ReferenceDataItem) => ( // Explicitly type province
+                      provinces.map((province: ReferenceDataItem) => ( 
                         <Picker.Item key={String(province.value)} label={String(province.label)} value={String(province.value)} />
                       ))
                     ) : (
@@ -372,16 +363,15 @@ const ProfileScreen: React.FC = () => {
                   <StyledPicker
                     selectedValue={editDistrict}
                     onValueChange={(itemValue: unknown) => setEditDistrict(itemValue as string)} 
-                    enabled={!isSaving && !isLoading && !!editProvince} // Enable only if province is selected
+                    enabled={!isSaving && !isLoading} // Enable regardless of province selection
                     accessibilityLabel={String(t('profile.selectDistrictPlaceholder'))}
                   >
                     <Picker.Item label={String(t('profile.selectDistrictPlaceholder'))} value="" /> {/* Placeholder item */}
                     {isLoading ? (
                       <Picker.Item key="loading-districts" label={String(t('common.loading'))} value="" />
-                    ) : (districts.length > 0 && !!editProvince) ? ( 
+                    ) : districts.length > 0 ? ( // Show all districts, no longer filtering by province
                       districts
-                        .filter((d: ReferenceDataItem) => d.province === editProvince) // FIX: changed d.provinceName to d.province
-                        .map((district: ReferenceDataItem) => ( // Explicitly type district
+                        .map((district: ReferenceDataItem) => ( 
                           <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} />
                         ))
                     ) : (
@@ -390,7 +380,7 @@ const ProfileScreen: React.FC = () => {
                   </StyledPicker>
                 </PickerContainer>
               </View>
-              <SubmitButton onPress={handleSaveLocation} disabled={isSaving || (!!editProvince && !editDistrict)}>
+              <SubmitButton onPress={handleSaveLocation} disabled={isSaving}>
                 {isSaving ? (
                   <ActivityIndicator color={defaultTheme.colors.lightText} />
                 ) : (

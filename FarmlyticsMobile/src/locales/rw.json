@@ -22,7 +22,10 @@
     "languageName_rw": "Kinyarwanda",
     "languageName_fr": "Igifaransa",
     "formValidationError": "Nyamuneka uzuze imyanya yose isabwa n'amakuru y'ukuri.",
-    "info": "Amakuru"
+    "info": "Amakuru",
+    "addNew": "Ongeramo",
+    "searchDistricts":"Shakisha uturere",
+    "searchCrops":"Shakisha ibihingwa"
   },
   "auth": {
     "loginTitle": "Injira muri Farmlytics",
@@ -285,5 +288,24 @@
     "saveUserButton": "Bika Umukoresha",
     "userUpdateSuccess": "Umukoresha yahinduwe neza!",
     "userUpdateError": "Kunanirwa guhindura umukoresha."
+  },
+  "recordHarvest": {
+    "title": "Kwandika umusaruro",
+    "selectPlan": "Hitamo gahunda y'ihinga yatewe",
+    "noPlantedPlans": "Nta gahunda y'ihinga yatewe ibonetse.",
+    "errorFetchingPlans": "Ntibyakunze kubona gahunda zatewe. Gerageza kongera.",
+    "validationError": "Nyamuneka hitamo gahunda kandi winjize umusaruro n'igiciro byemewe.",
+    "success": "Umusaruro wanditswe neza.",
+    "error": "Ntibyashobotse kwandika umusaruro. Gerageza kongera.",
+    "recordingFor": "Kwandika umusaruro wa",
+    "actualHarvestDate": "Itariki nyakuri y'isarura",
+    "selectDatePlaceholder": "Hitamo itariki",
+    "actualYieldKgPerHa": "Umusaruro nyakuri (kg/ha)",
+    "totalProduction": "Umusaruro wose",
+    "actualSellingPricePerKgRwf": "Igiciro cyagurishijwe (RWF/kg)",
+    "totalRevenue": "Amafaranga yose yinjijwe",
+    "notes": "Inyandiko",
+    "notesPlaceholder": "Hari ibyo wabonye byihariye?",
+    "recordButton": "Bika umusaruro"
   }
 }

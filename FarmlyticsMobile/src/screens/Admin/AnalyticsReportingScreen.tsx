@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { Text, View, ActivityIndicator, ScrollView, TouchableOpacity, Alert, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth, ReferenceDataItem } from '../../context/AuthContext'; // Import ReferenceDataItem
 import CustomHeader from '../../components/CustomHeader';
 import { defaultTheme } from '../../config/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -158,11 +158,11 @@ interface DemandTrendData {
 
 const AnalyticsReportingScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { authenticatedFetch, isLoading: authLoading, crops, districts } = useAuth();
+  // Destructure `areReferenceDataLoading` from useAuth
+  const { authenticatedFetch, isLoading: authLoading, crops, districts, areReferenceDataLoading } = useAuth();
   const navigation = useNavigation<AdminTabNavigationProp<'AnalyticsReportingTab'>>();
 
-  const [yieldTrends, setYieldTrends] = useState<YieldTrendData[]>([]
-);
+  const [yieldTrends, setYieldTrends] = useState<YieldTrendData[]>([]);
   const [demandTrends, setDemandTrends] = useState<DemandTrendData[]>([]);
   const [loadingAnalytics, setLoadingAnalytics] = useState(false);
   const [errorAnalytics, setErrorAnalytics] = useState<string | null>(null);
@@ -175,8 +175,8 @@ const AnalyticsReportingScreen: React.FC = () => {
 
   // Set initial filters once reference data is loaded
   useEffect(() => {
-    // Only set initial values if data is loaded and filters are not already set
-    if (!authLoading) {
+    // Only set initial values if reference data is loaded and filters are not already set
+    if (!areReferenceDataLoading) { // Use areReferenceDataLoading here
       if (crops.length > 0 && !selectedCrop) {
         setSelectedCrop(crops[0].value);
       }
@@ -184,13 +184,12 @@ const AnalyticsReportingScreen: React.FC = () => {
         setSelectedDistrict(districts[0].value);
       }
     }
-  }, [authLoading, crops, districts, selectedCrop, selectedDistrict]); // Depend on filter states to avoid resetting if user changes them
+  }, [areReferenceDataLoading, crops, districts, selectedCrop, selectedDistrict]); // Depend on areReferenceDataLoading
 
   const fetchAnalyticsData = useCallback(async () => {
     // Check if filters are selected
     if (!selectedCrop || !selectedDistrict) {
         setErrorAnalytics(String(t('admin.selectAnalyticsFilters') || 'Please select both a crop and a district to view analytics.'));
-        // Clear previous data when filters are incomplete
         setYieldTrends([]);
         setDemandTrends([]);
         return;
@@ -199,7 +198,7 @@ const AnalyticsReportingScreen: React.FC = () => {
     setLoadingAnalytics(true);
     setErrorAnalytics(null); // Clear previous errors
     try {
-      // Fetch Yield Trends (Mock Data)
+      // Fetch Yield Trends
       const yieldTrendsResponse = await authenticatedFetch(
           `/analytics/yield-trends?district_name=${encodeURIComponent(selectedDistrict)}&crop_name=${encodeURIComponent(selectedCrop)}`
       );
@@ -207,15 +206,13 @@ const AnalyticsReportingScreen: React.FC = () => {
       if (yieldTrendsResponse.ok && yieldTrendsData.success) {
         setYieldTrends(yieldTrendsData.data);
       } else {
-        // If yield fetch fails, still try demand but set error for yield specifically
         console.error('Failed to fetch yield trends:', yieldTrendsData.error || yieldTrendsData.message);
         setYieldTrends([]);
       }
 
 
-      // Fetch Demand Trends (Mock Data)
+      // Fetch Demand Trends
       const demandTrendsResponse = await authenticatedFetch(
-          // Assuming demand trends can also be filtered by district_name for location_name
           `/analytics/demand-trends?location_name=${encodeURIComponent(selectedDistrict)}&location_type=District&crop_name=${encodeURIComponent(selectedCrop)}`
       );
       const demandTrendsData = await demandTrendsResponse.json();
@@ -228,29 +225,33 @@ const AnalyticsReportingScreen: React.FC = () => {
 
     } catch (err: unknown) {
       console.error('Error fetching analytics (catch block):', err);
-      // Provide a general error if any fetch fails or there's a network issue
       setErrorAnalytics(String(t('admin.loadAnalyticsError') || 'Failed to load analytics data.'));
-      setYieldTrends([]); // Clear data on error
-      setDemandTrends([]); // Clear data on error
+      setYieldTrends([]);
+      setDemandTrends([]);
     } finally {
       setLoadingAnalytics(false);
       setRefreshing(false);
     }
-  }, [authenticatedFetch, t, selectedCrop, selectedDistrict]); // Dependencies now reflect consolidated states
+  }, [authenticatedFetch, t, selectedCrop, selectedDistrict]);
 
   useFocusEffect(
     useCallback(() => {
       // Fetch data when screen comes into focus,
-      // but only if initial data is loaded or filters are selected
-      if (!authLoading && (selectedCrop && selectedDistrict)) {
+      // but only if reference data is loaded AND filters are selected
+      if (!areReferenceDataLoading && selectedCrop && selectedDistrict) { // Use areReferenceDataLoading here
         fetchAnalyticsData();
-      } else if (!authLoading && (!selectedCrop || !selectedDistrict)) {
+      } else if (!areReferenceDataLoading && (!selectedCrop || !selectedDistrict)) { // Use areReferenceDataLoading here
         // If reference data is loaded but filters aren't yet initialized/selected
         setErrorAnalytics(String(t('admin.selectAnalyticsFilters') || 'Please select filters to view analytics.'));
         setYieldTrends([]);
         setDemandTrends([]);
       }
-    }, [fetchAnalyticsData, authLoading, selectedCrop, selectedDistrict, t]) // Added t to dependencies
+      // Clear error if filters become available after previously being unavailable
+      // This is a small improvement for UX, removing the error once selection is possible.
+      if (!areReferenceDataLoading && selectedCrop && selectedDistrict && errorAnalytics === String(t('admin.selectAnalyticsFilters'))) {
+        setErrorAnalytics(null);
+      }
+    }, [fetchAnalyticsData, areReferenceDataLoading, selectedCrop, selectedDistrict, t, errorAnalytics])
   );
 
   const onRefresh = useCallback(() => {
@@ -258,7 +259,9 @@ const AnalyticsReportingScreen: React.FC = () => {
     fetchAnalyticsData();
   }, [fetchAnalyticsData]);
 
-  if (authLoading) {
+  // Overall loading for the entire app, including initial auth and reference data
+  // Show a full-screen loading spinner if either auth is loading OR reference data is loading
+  if (authLoading || areReferenceDataLoading) { // Combine both loading states
     return (
       <Container>
         <CustomHeader title={String(t('admin.analyticsTab'))} showLogo={true} showLanguageSwitcher={true} />
@@ -290,11 +293,11 @@ const AnalyticsReportingScreen: React.FC = () => {
             <FilterPickerWrapper>
                 <StyledPicker
                     selectedValue={selectedCrop}
-                    onValueChange={(itemValue: unknown, itemIndex: number) => setSelectedCrop(itemValue as string)} // Corrected Picker typing
-                    enabled={!loadingAnalytics && !authLoading}
+                    onValueChange={(itemValue: unknown) => setSelectedCrop(itemValue as string)}
+                    enabled={!loadingAnalytics && !areReferenceDataLoading} // Use areReferenceDataLoading
                 >
-                    <Picker.Item label={String(t('cropPlanner.selectCropPlaceholder') || 'Select Crop')} value="" /> {/* Added placeholder */}
-                    {authLoading ? (
+                    <Picker.Item label={String(t('cropPlanner.selectCropPlaceholder') || 'Select Crop')} value="" />
+                    {areReferenceDataLoading ? ( // Use areReferenceDataLoading for Picker loading state
                         <Picker.Item key="loading-crops" label={String(t('common.loading'))} value="" />
                     ) : crops.length > 0 ? (
                         crops.map(crop => <Picker.Item key={String(crop.value)} label={String(crop.label)} value={String(crop.value)} />)
@@ -306,11 +309,11 @@ const AnalyticsReportingScreen: React.FC = () => {
             <FilterPickerWrapper>
                 <StyledPicker
                     selectedValue={selectedDistrict}
-                    onValueChange={(itemValue: unknown, itemIndex: number) => setSelectedDistrict(itemValue as string)} // Corrected Picker typing
-                    enabled={!loadingAnalytics && !authLoading}
+                    onValueChange={(itemValue: unknown) => setSelectedDistrict(itemValue as string)}
+                    enabled={!loadingAnalytics && !areReferenceDataLoading} // Use areReferenceDataLoading
                 >
-                    <Picker.Item label={String(t('cropPlanner.selectDistrictPlaceholder') || 'Select District')} value="" /> {/* Added placeholder */}
-                    {authLoading ? (
+                    <Picker.Item label={String(t('cropPlanner.selectDistrictPlaceholder') || 'Select District')} value="" />
+                    {areReferenceDataLoading ? ( // Use areReferenceDataLoading for Picker loading state
                         <Picker.Item key="loading-districts" label={String(t('common.loading'))} value="" />
                     ) : districts.length > 0 ? (
                         districts.map(district => <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} />)
@@ -320,7 +323,8 @@ const AnalyticsReportingScreen: React.FC = () => {
                 </StyledPicker>
             </FilterPickerWrapper>
         </FilterContainer>
-        <FetchButton onPress={fetchAnalyticsData} disabled={loadingAnalytics || authLoading}>
+        {/* Disable fetch button if analytics are loading, reference data is loading, or filters are not selected */}
+        <FetchButton onPress={fetchAnalyticsData} disabled={loadingAnalytics || areReferenceDataLoading || !selectedCrop || !selectedDistrict}>
             {loadingAnalytics ? (
                 <ActivityIndicator color={defaultTheme.colors.lightText} />
             ) : (
@@ -330,7 +334,7 @@ const AnalyticsReportingScreen: React.FC = () => {
 
 
         {loadingAnalytics ? (
-          <ActivityIndicator size="large" color={defaultTheme.colors.primary} />
+          <ActivityIndicator size="large" color={defaultTheme.colors.primary} style={{ marginTop: defaultTheme.spacing.large }}/>
         ) : errorAnalytics ? (
           <ErrorText>{errorAnalytics}</ErrorText>
         ) : (
@@ -339,34 +343,34 @@ const AnalyticsReportingScreen: React.FC = () => {
             {yieldTrends.length > 0 ? (
               <AnalyticsCard>
                 <PlotPlaceholder>
-                  <PlotText>{String(t('home.plotPlaceholder'))}</PlotText> {/* Assuming generic placeholder for charts */}
+                  <PlotText>{String(t('home.plotPlaceholder') || 'Yield Trend Plot')}</PlotText>
                 </PlotPlaceholder>
                 {yieldTrends.map((trend, index) => (
-                  <AnalyticsItem key={String(trend.Year) + String(trend.CropName)} style={index === yieldTrends.length - 1 ? { borderBottomWidth: 0 } : {}}>
+                  <AnalyticsItem key={`${trend.Year}-${trend.CropName}`} style={index === yieldTrends.length - 1 ? { borderBottomWidth: 0 } : {}}>
                     <AnalyticsLabel>{String(trend.Year)} ({String(trend.CropName)})</AnalyticsLabel>
                     <AnalyticsValue>{String(trend.AvgYieldKgPerHa?.toFixed(2))} {String(t('market.kgPerHaUnit'))}</AnalyticsValue>
                   </AnalyticsItem>
                 ))}
               </AnalyticsCard>
             ) : (
-              <EmptyStateText>{String(t('admin.noYieldTrendsFound') || 'No yield trends found.')}</EmptyStateText>
+              <EmptyStateText>{String(t('admin.noYieldTrendsFound') || 'No yield trends found for the selected filters.')}</EmptyStateText>
             )}
 
             <SectionTitle>{String(t('admin.demandTrendsTitle') || 'Demand Trends')}</SectionTitle>
             {demandTrends.length > 0 ? (
               <AnalyticsCard>
                 <PlotPlaceholder style={{ backgroundColor: defaultTheme.colors.secondary + '20' }}>
-                  <PlotText>{String(t('home.plotPlaceholder'))}</PlotText> {/* Assuming generic placeholder for charts */}
+                  <PlotText>{String(t('home.plotPlaceholder') || 'Demand Trend Plot')}</PlotText>
                 </PlotPlaceholder>
                 {demandTrends.map((trend, index) => (
-                  <AnalyticsItem key={String(trend.Year) + String(trend.CropName)} style={index === demandTrends.length - 1 ? { borderBottomWidth: 0 } : {}}>
+                  <AnalyticsItem key={`${trend.Year}-${trend.CropName}`} style={index === demandTrends.length - 1 ? { borderBottomWidth: 0 } : {}}>
                     <AnalyticsLabel>{String(trend.Year)} ({String(trend.CropName)})</AnalyticsLabel>
                     <AnalyticsValue>{String(trend.TotalDemandKg?.toLocaleString())} {String(t('market.kgUnit'))}</AnalyticsValue>
                   </AnalyticsItem>
                 ))}
               </AnalyticsCard>
             ) : (
-              <EmptyStateText>{String(t('admin.noDemandTrendsFound') || 'No demand trends found.')}</EmptyStateText>
+              <EmptyStateText>{String(t('admin.noDemandTrendsFound') || 'No demand trends found for the selected filters.')}</EmptyStateText>
             )}
           </View>
         )}
