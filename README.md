@@ -10,11 +10,13 @@
 ![Uploading logo.png…]()
 
 
+
 ## 🚀 **Live Demo & Resources**
 
 * 🌐 **Web App:** [https://farmlytics-eta.vercel.app/en](#)
 * 📱 **Mobile App (APK):** [https://expo.dev/artifacts/eas/sTY7wPtgNJtZMQqcwBDgfb.apk](#)
 * ⚙️ **Backend API (Swagger):** [https://farmlytics1-1.onrender.com/api-docs/](https://farmlytics1-1.onrender.com/api-docs/)
+* ⚙️ **Demo-Video (demonstration):** (https://drive.google.com/file/d/1sQY-LgFJ-28602CGcPxEnfBONXA-9_om/view?usp=drivesdk)
 
 ---
 
