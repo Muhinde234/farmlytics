@@ -1,4 +1,4 @@
-// App.tsx
+
 
 import 'react-native-gesture-handler';
 import React from 'react';
@@ -37,7 +37,7 @@ import ProfileScreen from './src/screens/Main/ProfileScreen';
 // Import Screens accessible from Main App Stack
 import AddCropPlanScreen from './src/screens/Main/AddCropPlanScreen';
 import CropPlanDetailScreen from './src/screens/Main/CropPlanDetailScreen';
-import RecordHarvestScreen from './src/screens/Main/RecordHarvestScreen'; // NEW: File will be provided
+import RecordHarvestScreen from './src/screens/Main/RecordHarvestScreen'; 
 
 // Admin Dashboard Screens
 import AdminHomeScreen from './src/screens/Admin/AdminHomeScreen';
@@ -52,7 +52,7 @@ const MainBottomTab = createBottomTabNavigator<MainTabParamList>();
 const AdminBottomTab = createBottomTabNavigator<AdminTabParamList>(); 
 
 
-// --- Main App Bottom Tab Navigator (for Farmer/Buyer) ---
+
 const MainUserTabNavigator = () => {
   const { t } = useTranslation();
   return (
