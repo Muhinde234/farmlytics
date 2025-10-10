@@ -269,7 +269,34 @@
     "helpSupport": "Aide et assistance",
     "contactSupport": "Contacter le support",
     "reportProblem": "Signaler un problème"
-  }
+  },
+  
+  "market": {
+    "pageTitle": "Connexions du marché",
+    "pageDescription": "Découvrez la demande du marché, les coopératives, les acheteurs et les exportateurs pour développer votre activité agricole.",
+    "tabs": {
+      "demand": "Demande du marché",
+      "cooperatives": "Coopératives",
+      "buyers": "Acheteurs et transformateurs",
+      "exporters": "Exportateurs"
+    },
+    "labels": {
+      "demand": "Demande",
+      "region": "Région",
+      "expectedPrice": "Prix attendu",
+      "location": "Emplacement",
+      "contact": "Contact",
+      "product": "Produit",
+      "country": "Pays"
+    },
+    "chart": {
+      "demand": "Demande",
+      "price": "Prix attendu"
+    },
+    "retry": "Réessayer"
+  
+}
+
 
 
 

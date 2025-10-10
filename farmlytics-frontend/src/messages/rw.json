@@ -271,7 +271,33 @@
     "helpSupport": "Ubufasha n’inkunga",
     "contactSupport": "Vugana n’inkunga",
     "reportProblem": "Tanga ikibazo"
+  },
+  
+  "market": {
+    "pageTitle": "Imikoranire y’Isoko",
+    "pageDescription": "Sura ibyifuzo by’isoko, amashyirahamwe, abaguzi n’abohereza hanze kugira ngo utere imbere mu buhinzi bwawe.",
+    "tabs": {
+      "demand": "Ibyifuzo by’Isoko",
+      "cooperatives": "Amashyirahamwe",
+      "buyers": "Abaguzi n’Abatunganya",
+      "exporters": "Abohereza hanze"
+    },
+    "labels": {
+      "demand": "Ibyifuzo",
+      "region": "Akarere",
+      "expectedPrice": "Igiciro giteganijwe",
+      "location": "Aho biherereye",
+      "contact": "Itumanaho",
+      "product": "Umusaruro",
+      "country": "Igihugu"
+    },
+    "chart": {
+      "demand": "Ibyifuzo",
+      "price": "Igiciro giteganijwe"
+    },
+    "retry": "Gerageza Ubu"
   }
+
 
 
 
