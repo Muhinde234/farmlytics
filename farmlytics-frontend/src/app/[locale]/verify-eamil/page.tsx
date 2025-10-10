@@ -14,24 +14,18 @@ export default function VerifyEmailPage() {
   >("idle")
   const [message, setMessage] = useState<string>("")
 
-  // In a real application, you'd extract a token from the URL (e.g., query params)
-  // and send it to your backend for verification.
+  
   useEffect(() => {
     const verifyToken = async () => {
       setVerificationStatus("verifying")
       setMessage(t("verifyingMessage"))
 
-      // Simulate API call for verification
+     
       try {
-        // const token = new URLSearchParams(window.location.search).get("token")
-        // if (!token) {
-        //   throw new Error("No verification token found.")
-        // }
-
-        // Simulate a delay and then a success or error
+      
         await new Promise((resolve) => setTimeout(resolve, 2000))
 
-        const success = Math.random() > 0.3; // Simulate 70% chance of success
+        const success = Math.random() > 0.3; 
 
         if (success) {
           setVerificationStatus("success")
@@ -52,11 +46,11 @@ export default function VerifyEmailPage() {
     setVerificationStatus("verifying")
     setMessage(t("resendingMessage"))
 
-    // Simulate API call to resend verification email
+   
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000))
-      // Assuming resend is always successful in simulation
-      setVerificationStatus("idle"); // Go back to idle to show message, user will need to refresh to re-verify or click the new link
+
+      setVerificationStatus("idle"); 
       setMessage(t("resendSuccessMessage"));
     } catch (err) {
       setVerificationStatus("error");

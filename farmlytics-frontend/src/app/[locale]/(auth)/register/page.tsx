@@ -68,7 +68,7 @@ export default function RegisterPage() {
   const watchPassword = watch("password", "")
   const watchConfirmPassword = watch("confirmPassword", "")
 
-  // Calculate password strength and requirements
+
   useEffect(() => {
     const requirements = [
       { text: "At least 8 characters", met: watchPassword.length >= 8 },
@@ -83,7 +83,7 @@ export default function RegisterPage() {
     setPasswordRequirements(requirements)
   }, [watchPassword])
 
-  // Real-time validation for confirm password
+ 
   useEffect(() => {
     if (watchConfirmPassword && watchPassword) {
       trigger("confirmPassword")
@@ -104,7 +104,7 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true)
-    // Simulate API call
+  
     await new Promise((resolve) => setTimeout(resolve, 2000))
     console.log("Registration data:", data)
     setIsLoading(false)
