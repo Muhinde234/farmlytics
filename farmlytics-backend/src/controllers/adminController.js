@@ -3,7 +3,6 @@ const User = require('../models/User');
 
 
 exports.getUsers = asyncHandler(async (req, res, next) => {
-    
     const users = await User.find().select('-password'); 
 
     res.status(200).json({
@@ -28,6 +27,7 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 });
 
 
+
 exports.createUser = asyncHandler(async (req, res, next) => {
     const { name, email, password, role, isVerified, preferredDistrictName, preferredProvinceName, preferredLanguage } = req.body;
 
@@ -49,6 +49,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 });
 
 
+
 exports.updateUser = asyncHandler(async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
@@ -57,7 +58,6 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
         throw new Error(`User not found with id of ${req.params.id}`);
     }
 
-   
     const fieldsToUpdate = {
         name: req.body.name,
         email: req.body.email,
@@ -68,15 +68,15 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
         preferredLanguage: req.body.preferredLanguage
     };
 
-    
+  
     Object.keys(fieldsToUpdate).forEach(key => fieldsToUpdate[key] === undefined && delete fieldsToUpdate[key]);
 
-   
+    
     if (req.body.password) {
         user.password = req.body.password; 
     }
 
-  
+ 
     Object.assign(user, fieldsToUpdate);
     await user.save(); 
 
@@ -99,7 +99,7 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
         throw new Error(`User not found with id of ${req.params.id}`);
     }
 
-    await user.deleteOne(); 
+    await user.deleteOne();
 
     res.status(200).json({
         success: true,

@@ -1,10 +1,10 @@
 const express = require('express');
-const { 
-    getUsers, 
-    getUser, 
-    createUser, 
-    updateUser, 
-    deleteUser 
+const {
+    getUsers,
+    getUser,
+    createUser,
+    updateUser,
+    deleteUser
 } = require('../controllers/adminController');
 const { protect, authorize } = require('../middlewares/auth');
 
@@ -20,6 +20,8 @@ const router = express.Router();
 // All admin routes require authentication and admin authorization
 router.use(protect);
 router.use(authorize('admin')); // Ensure only 'admin' role can access these routes
+
+// --- CORRECTED ROUTES ---
 
 /**
  * @swagger
@@ -113,7 +115,8 @@ router.use(authorize('admin')); // Ensure only 'admin' role can access these rou
  *       403:
  *         description: Forbidden
  */
-router.route('/')
+// This route now correctly handles '/api/v1/admin/users'
+router.route('/users')
     .get(getUsers)
     .post(createUser);
 
@@ -246,7 +249,8 @@ router.route('/')
  *       404:
  *         description: User not found
  */
-router.route('/:id')
+// This route now correctly handles '/api/v1/admin/users/:id'
+router.route('/users/:id')
     .get(getUser)
     .put(updateUser)
     .delete(deleteUser);

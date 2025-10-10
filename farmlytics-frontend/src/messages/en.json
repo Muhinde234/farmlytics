@@ -1,0 +1,306 @@
+{
+  "common": {
+    "learnMore": "Learn More",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "smartFarmingPlatform": "Smart Farming Platform",
+    "platform": " Platform",
+    "support": "Support",
+     "footer": {
+      "copyright": "© {year} Farmlytics. All rights reserved.",
+      "slogan": "Digitalize your farm, cultivate success."
+    },
+    "language":"en",
+    "goto":" Go to Dashboard",
+     "leave":"logout"
+  },
+  "home": {
+    "hero": {
+      "headline": "Empowering Farmers with Data-Driven Insights",
+      "subHeadline": "Plan smarter, harvest better, and connect directly with buyers. Farmlytics brings modern analytics to your farm.",
+      "ctaPrimary": "Get Started ",
+      "revolution": "Smart Farming Revolution",
+      "taglinePlaceholder": "Unlock your farm's full potential with data-driven insights and smart planning.",
+      "trustedFarmers": "Trusted by 10,000+ Farmers",
+      "successAnalytics": "98% Success Analytics",
+      "cropGrowthProgress": "Crop Growth Progress"
+    },
+    "main": {
+      "word": "Be Part of Us",
+      "subword": "Join Farmlytics today and start cultivating success with smart, data-driven insights"
+    },
+    "features": {
+      "title": "How System Works",
+      "subtitle": "Comprehensive tools designed specifically for modern farmers to maximize productivity and profitability.",
+      "cropPlanner": {
+        "title": "Personalized Crop Planner",
+        "description": "Get AI-powered recommendations based on your soil, climate, and market demand to optimize your planting decisions."
+      },
+      "marketConnection": {
+        "title": "Market Connection Module",
+        "description": "Connect directly with buyers and access real-time market prices to get the best value for your harvest."
+      },
+      "harvestTracker": {
+        "title": "Harvest & Revenue Tracker",
+        "description": "Track your yields, expenses, and revenue in one place. Understand your farm's financial health at a glance."
+      },
+      "visualInsights": {
+        "title": "Visual Insights Dashboard",
+        "description": "Beautiful charts and graphs that make complex farm data easy to understand and act upon."
+      },
+      "exportInsights": {
+        "title": "Export & Share Reports",
+        "description": "Generate professional reports to share with partners, lenders, or for your own records."
+      },
+      "cropMonitoring": {
+        "title": "Crop Monitoring",
+        "description": "Transforming agriculture with data. Gain real-time insights into your crops' health."
+      },
+      "analyticsDashboard": {
+        "title": "Analytics Dashboard",
+        "description": "Cross-functional interface that maximizes your farm's earnings and optimizes operations."
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "description": "Connecting you directly with buyers to get the best prices for your produce."
+      }
+    },
+    "ctaSection": {
+      "headline": "Ready to Transform Your Farming?",
+      "subHeadline": "Join thousands of farmers already using Farmlytics to make smarter decisions and increase their yields.",
+      "button": "Start Your Free Trial"
+    },
+    "footer": {
+      "copyright": "© {year} Farmlytics. All rights reserved.",
+      "platformLink1": "Flercoois (Placeholder)",
+      "platformLink2": "Alscit (Placeholder)",
+      "supportLink1": "Fodrniizntop xqruers (Placeholder)",
+      "supportLink2": "Ruapbupis (Placeholder)"
+    }
+  },
+  "login": {
+    "title": "Welcome Back ",
+    "subtitle": "Sign in to continue your journey with fellow farmers and buyers.",
+    "welcomeTitle": "Welcome to Farmlytics",
+    "welcomeSubtitle": "Connecting Farmers, Growing Futures",
+    "pageTitle": "Welcome to Farmlytics",
+    "pageSubtitle": "Connect to your account",
+    "email": {
+      "label": "Email Address",
+      "placeholder": "Email",
+      "invalid": "Invalid email address",
+      "required": "Email is required"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password",
+      "invalid": "Invalid password",
+      "min": "Password must be at least 8 characters",
+      "required": "Password is required"
+    },
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot Password?",
+    "loginButton": "Login",
+    "loggingIn": "Logging In...",
+    "noAccount": "Don't have your account?",
+    "registerLink": "Register",
+    "success": "Login successful!",
+    "error": "Login failed. Please try again.",
+    "backToHome": "Back to Home"
+  },
+  "register": {
+    "title": "Create Your Account",
+    "subtitle": "Join us today and start exploring",
+    "welcomeTitle": "Join Farmlytics",
+    "welcomeSubtitle": "Start your journey with us today",
+    "pageTitle": "Create Your Account",
+    "pageSubtitle": "Fill in your details to get started",
+    "firstName": {
+      "label": "First Name",
+      "placeholder": "First Name",
+      "invalid": "First name must be at least 2 characters"
+    },
+    "lastName": {
+      "label": "Last Name",
+      "placeholder": "Last Name",
+      "invalid": "Last name must be at least 2 characters"
+    },
+    "district": {
+      "label": "District",
+      "placeholder": "District",
+      "invalid": "District is required"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Email",
+      "invalid": "Invalid email address",
+      "required": "Email is required"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password",
+      "invalid": "Invalid password",
+      "min": "Password must be at least 8 characters",
+      "complexity": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+      "required": "Password is required"
+    },
+    "confirmPassword": {
+      "label": "Confirm Password",
+      "placeholder": "Confirm Password",
+      "invalid": "Passwords do not match",
+      "match": "Passwords do not match"
+    },
+    "termsLabel": "I agree to the Terms and Privacy Policy",
+    "termsLink": "Terms",
+    "andText": "and",
+    "privacyLink": "Privacy Policy",
+    "termsRequired": "You must agree to the terms and privacy policy",
+    "registerButton": "Register",
+    "registering": "Creating Account...",
+    "success": "Registration successful!",
+    "error": "Something went wrong, please try again.",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Login",
+    "backToHome": "Back to Home"
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "subtitle": "Reset your password",
+    "welcomeTitle": "Reset Password",
+    "welcomeSubtitle": "We'll help you get back to your account",
+    "pageTitle": "Forgot Your Password?",
+    "pageSubtitle": "Enter your email address and we'll send you a reset link",
+    "email": {
+      "label": "Email Address",
+      "placeholder": "Email",
+      "invalid": "Invalid email address",
+      "required": "Email is required"
+    },
+    "submitButton": "Send Reset Link",
+    "sending": "Sending...",
+    "success": "Password reset link sent! Check your email.",
+    "error": "Failed to send reset link. Please try again.",
+    "backToLogin": "Back to Login",
+    "backToHome": "Back to Home",
+    "rememberPassword": "Remember your password?",
+    "successTitle": "Link Sent!",
+    "successMessage": "A password reset link has been sent to your email address. Please check your inbox.",
+    "resendButton": "Resend Link"
+  },
+  "verifyEmail": {
+    "backToHome": "Back to Home",
+    "verifyingTitle": "Verifying Email...",
+    "verifyingMessage": "Please wait while we confirm your email address.",
+    "successTitle": "Email Verified!",
+    "successMessage": "Your email address has been successfully verified. You can now log in.",
+    "errorTitle": "Verification Failed",
+    "errorMessageDefault": "There was an issue verifying your email. The link might be invalid or expired.",
+    "resendingMessage": "Resending verification email...",
+    "resendSuccessMessage": "A new verification email has been sent to your inbox. Please check it.",
+    "resendErrorMessage": "Failed to resend verification email. Please try again later.",
+    "goToLogin": "Go to Login",
+    "resendVerification": "Resend Verification Email",
+    "or": "Or",
+    "backToLogin": "Back to Login",
+    "initialTitle": "Verify Your Email",
+    "initialMessage": "A verification link has been sent to your email. Please check your inbox and click the link to activate your account."
+  },
+  "dashboard":{
+     "sidebar": {
+    "dashboard": "Dashboard",
+    "crop-planner": "Crop Planner",
+    "market": "Market Connection",
+    "diseases": "Diseases",
+    "notification": "Notifications",
+    "harvest": "Harvest Tracker",
+    "settings": "Settings",
+    "logout":"logout"
+  
+}},
+
+  "HarvestTracker": {
+    "title": "  Harvest Tracker",
+    "addButton": "Add New Plan",
+    "closeButton": "Close Form",
+    "form": {
+      "cropName": "Crop Name",
+      "districtName": "District Name",
+      "area": "Area (Ha)",
+      "plantingDate": "Planting Date",
+      "submit": "Create Plan"
+    },
+    "listTitle": "My Crop Plans",
+    "noData": "No crop plans found.",
+    "status": "Status",
+    "estRevenue": "Estimated Revenue",
+    "successCreate": "Crop plan created successfully!",
+    "errorFetch": "Failed to load crop plans.",
+    "errorCreate": "Failed to create crop plan. Please try again."
+  },
+  
+  "settings": {
+    "profileInfo": "Profile Information",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "district": "District",
+    "sector": "Sector",
+    "farmSize": "Farm Size (hectares)",
+    "saveChanges": "Save Changes",
+
+    "languageSettings": "Language & Localization",
+    "chooseLanguage": "Choose Language",
+
+    "notifications": "Notifications",
+    "marketUpdates": "Market Price Updates",
+    "diseaseAlerts": "Crop Disease Alerts",
+    "harvestReminders": "Harvest Reminders",
+    "weatherAlerts": "Weather Alerts",
+
+    "dataManagement": "Data Management",
+    "downloadData": "Download My Data",
+    "clearLogs": "Clear Crop Logs",
+    "deleteAccount": "Delete My Account",
+
+    "accountSecurity": "Account Security",
+    "changePassword": "Change Password",
+    "logout": "Logout",
+
+    "helpSupport": "Help & Support",
+    "contactSupport": "Contact Support",
+    "reportProblem": "Report a Problem"
+  },
+  "market": {
+    "pageTitle": "Market Connections",
+    "pageDescription": "Explore market demand, cooperatives, buyers, and exporters to grow your agribusiness.",
+    "tabs": {
+      "demand": "Market Demand",
+      "cooperatives": "Cooperatives",
+      "buyers": "Buyers & Processors",
+      "exporters": "Exporters"
+    },
+    "labels": {
+      "demand": "Demand",
+      "region": "Region",
+      "expectedPrice": "Expected Price",
+      "location": "Location",
+      "contact": "Contact",
+      "product": "Product",
+      "country": "Country"
+    },
+    "chart": {
+      "demand": "Demand",
+      "price": "Expected Price"
+    },
+    "retry": "Retry"
+  
+}
+
+
+
+
+
+
+
+ 
+
+}

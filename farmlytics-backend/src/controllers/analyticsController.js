@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const { mvp_crops_list, province_mapping, district_mapping } = require('../utils/constants');
 const CropPlan = require('../models/CropPlan');
-const analyticsService = require('../utils/analyticsService'); // Import analytics service
+const analyticsService = require('../utils/analyticsService'); 
 
 
 exports.getYieldTrends = asyncHandler(async (req, res, next) => {
@@ -18,6 +18,14 @@ exports.getYieldTrends = asyncHandler(async (req, res, next) => {
     if (!validDistrict || !validCrop) {
         res.status(404);
         throw new Error('Invalid district or crop provided.');
+    }
+
+    const cropPlannerService = analyticsService.getCropPlannerService();
+    if (!cropPlannerService) {
+        res.status(500);
+        throw new Error('Analytics services not initialized. Server error during yield trends.');
+    }
+
     }
 
     const cropPlannerService = analyticsService.getCropPlannerService();
@@ -45,6 +53,10 @@ exports.getYieldTrends = asyncHandler(async (req, res, next) => {
     });
 });
 
+// @desc      Get historical demand trends (NOW USES REAL HISTORICAL EICV DATA)
+// @route     GET /api/v1/analytics/demand-trends
+// @access    Private (Farmer, Buyer, Admin)
+
 exports.getDemandTrends = asyncHandler(async (req, res, next) => {
     const { location, location_type, crop, year_start, year_end } = req.query;
 
@@ -60,6 +72,14 @@ exports.getDemandTrends = asyncHandler(async (req, res, next) => {
     if (!validLocation || !validCrop) {
         res.status(404);
         throw new Error('Invalid location or crop provided.');
+    }
+
+    const marketDemandService = analyticsService.getMarketDemandService();
+    if (!marketDemandService) {
+        res.status(500);
+        throw new Error('Analytics services not initialized. Server error during demand trends.');
+    }
+
     }
 
     const marketDemandService = analyticsService.getMarketDemandService();
@@ -91,7 +111,7 @@ exports.getDemandTrends = asyncHandler(async (req, res, next) => {
 
 exports.getMyYieldPerformance = asyncHandler(async (req, res, next) => {
     const { crop, year_start, year_end } = req.query;
-    let query = { user: req.user.id, status: 'Harvested' }; 
+    let query = { user: req.user.id, status: 'Harvested' };
     
     if (req.user.role === 'admin' && req.query.userId) {
         query.user = req.query.userId;
@@ -136,9 +156,9 @@ exports.getMyYieldPerformance = asyncHandler(async (req, res, next) => {
 
 exports.getMyRevenueTrends = asyncHandler(async (req, res, next) => {
     const { crop, year_start, year_end } = req.query;
-    let query = { user: req.user.id, status: 'Harvested' }; 
+    let query = { user: req.user.id, status: 'Harvested' };
 
-    if (req.user.role === 'admin' && req.query.userId) { 
+    if (req.user.role === 'admin' && req.query.userId) {
         query.user = req.query.userId;
     }
 

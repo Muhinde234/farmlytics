@@ -3,9 +3,9 @@ const User = require('../models/User');
 const config = require('../config');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
-const logger = require('../config/winston'); 
+const logger = require('../config/winston'); // Import Winston logger
 
-
+// Helper function to send JWT response
 const sendTokenResponse = (user, statusCode, res) => {
     const token = user.getSignedJwtToken();
     const expiresInDays = parseInt(config.jwtExpire, 10);
@@ -31,7 +31,7 @@ const sendTokenResponse = (user, statusCode, res) => {
                 email: user.email,
                 role: user.role,
                 isVerified: user.isVerified,
-                preferredDistrictName: user.preferredDistrictName, 
+                preferredDistrictName: user.preferredDistrictName,
                 preferredProvinceName: user.preferredProvinceName,
                 preferredLanguage: user.preferredLanguage
             }
@@ -55,11 +55,12 @@ exports.register = asyncHandler(async (req, res, next) => {
     const verificationToken = user.generateEmailVerificationToken();
     await user.save({ validateBeforeSave: false });
 
-    
+    // Dynamically determine protocol and host for verification link
     const currentProtocol = req.protocol === 'https' ? 'https' : 'http';
     const currentHost = req.get('host');
     const verificationLink = `${currentProtocol}://${currentHost}/api/v1/auth/verifyemail/${verificationToken}`;
 
+    // Construct email message with Rwandan flag colors (conceptually)
     const message = `
         <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
             <p style="color: #007A3D;">Hello ${user.name},</p>
@@ -136,6 +137,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 
     if (!user.isVerified) {
         res.status(401);
+        // Corrected: Ensure 'new Error' is used correctly if not already an Error object
         throw new Error('Please verify your email to log in. Check your inbox for a verification link.');
     }
 
@@ -174,11 +176,11 @@ exports.updateMe = asyncHandler(async (req, res, next) => {
     };
 
     const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
-        new: true,
-        runValidators: true
+        new: true, // Return the updated document
+        runValidators: true // Run schema validators
     });
 
-    if (!user) {
+    if (!user) { // This case should ideally not happen if req.user.id is valid
         res.status(404);
         throw new Error('User not found.');
     }
@@ -203,7 +205,7 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
         emailVerificationExpire: { $gt: Date.now() }
     });
 
-    
+    // Dynamically determine protocol and host for all links in rendered HTML
     const currentProtocol = req.protocol === 'https' ? 'https' : 'http';
     const currentHost = req.get('host');
 
@@ -245,6 +247,7 @@ exports.verifyEmail = asyncHandler(async (req, res, next) => {
     await user.save();
     logger.info(`User ${user.email} successfully verified their email.`);
 
+    // CRITICAL FIX: Render success page directly, no redirect to frontend
     res.status(200).send(`
         <!DOCTYPE html>
         <html lang="en">
@@ -304,6 +307,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     const resetToken = user.getResetPasswordToken();
     await user.save({ validateBeforeSave: false });
 
+    // Dynamically determine protocol and host for reset URL
     const currentProtocol = req.protocol === 'https' ? 'https' : 'http';
     const currentHost = req.get('host');
     const resetUrl = `${currentProtocol}://${currentHost}/api/v1/auth/resetpassword-form/${resetToken}`;
@@ -368,8 +372,7 @@ exports.renderResetPasswordForm = asyncHandler(async (req, res, next) => {
         resetPasswordExpire: { $gt: Date.now() }
     });
 
-  
-
+    // Dynamically determine protocol and host for all links in rendered HTML
     const currentProtocol = req.protocol === 'https' ? 'https' : 'http';
     const currentHost = req.get('host');
 

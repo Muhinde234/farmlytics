@@ -5,6 +5,7 @@ const config = require('./index');
 const fs = require('fs');
 const logDirectory = path.join(__dirname, '../../logs'); 
 
+
 if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory);
 }
@@ -14,9 +15,8 @@ const logFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.errors({ stack: true }), 
   winston.format.splat(), 
-  winston.format.colorize(), 
+  winston.format.colorize(),
   winston.format.printf(info => {
-   
     const message = typeof info.message === 'object' ? JSON.stringify(info.message, null, 2) : info.message;
     const meta = info.meta ? JSON.stringify(info.meta, null, 2) : '';
     return `${info.timestamp} ${info.level}: ${message} ${meta}`;
@@ -43,7 +43,7 @@ const transports = [
     zippedArchive: true,
     maxSize: '20m', 
     maxFiles: '14d', 
-    level: 'info', 
+    level: 'info',
     format: jsonLogFormat, 
   }),
   new DailyRotateFile({
