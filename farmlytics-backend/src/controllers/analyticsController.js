@@ -1,11 +1,9 @@
 const asyncHandler = require('express-async-handler');
 const { mvp_crops_list, province_mapping, district_mapping } = require('../utils/constants');
 const CropPlan = require('../models/CropPlan');
-const analyticsService = require('../utils/analyticsService'); // Import analytics service
+const analyticsService = require('../utils/analyticsService'); 
 
-// @desc      Get historical yield trends (NOW USES REAL HISTORICAL SAS DATA)
-// @route     GET /api/v1/analytics/yield-trends
-// @access    Private (Farmer, Admin)
+
 exports.getYieldTrends = asyncHandler(async (req, res, next) => {
     const { district, crop, year_start, year_end } = req.query;
 
@@ -20,6 +18,14 @@ exports.getYieldTrends = asyncHandler(async (req, res, next) => {
     if (!validDistrict || !validCrop) {
         res.status(404);
         throw new Error('Invalid district or crop provided.');
+    }
+
+    const cropPlannerService = analyticsService.getCropPlannerService();
+    if (!cropPlannerService) {
+        res.status(500);
+        throw new Error('Analytics services not initialized. Server error during yield trends.');
+    }
+
     }
 
     const cropPlannerService = analyticsService.getCropPlannerService();
@@ -50,6 +56,7 @@ exports.getYieldTrends = asyncHandler(async (req, res, next) => {
 // @desc      Get historical demand trends (NOW USES REAL HISTORICAL EICV DATA)
 // @route     GET /api/v1/analytics/demand-trends
 // @access    Private (Farmer, Buyer, Admin)
+
 exports.getDemandTrends = asyncHandler(async (req, res, next) => {
     const { location, location_type, crop, year_start, year_end } = req.query;
 
@@ -65,6 +72,14 @@ exports.getDemandTrends = asyncHandler(async (req, res, next) => {
     if (!validLocation || !validCrop) {
         res.status(404);
         throw new Error('Invalid location or crop provided.');
+    }
+
+    const marketDemandService = analyticsService.getMarketDemandService();
+    if (!marketDemandService) {
+        res.status(500);
+        throw new Error('Analytics services not initialized. Server error during demand trends.');
+    }
+
     }
 
     const marketDemandService = analyticsService.getMarketDemandService();
@@ -93,14 +108,12 @@ exports.getDemandTrends = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc      Get user's personal yield performance trends (REAL DATA FROM MONGODB)
-// @route     GET /api/v1/analytics/my-yield-performance
-// @access    Private (Farmer, Admin)
+
 exports.getMyYieldPerformance = asyncHandler(async (req, res, next) => {
     const { crop, year_start, year_end } = req.query;
-    let query = { user: req.user.id, status: 'Harvested' }; // Only for harvested plans
+    let query = { user: req.user.id, status: 'Harvested' };
     
-    if (req.user.role === 'admin' && req.query.userId) { // Admin can view other farmers' data
+    if (req.user.role === 'admin' && req.query.userId) {
         query.user = req.query.userId;
     }
 
@@ -115,7 +128,7 @@ exports.getMyYieldPerformance = asyncHandler(async (req, res, next) => {
     const yieldData = await CropPlan.aggregate([
         { $match: query },
         {
-            $addFields: { // Extract year from actualHarvestDate or plantingDate
+            $addFields: { 
                 year: { $year: { $cond: [ "$actualHarvestDate", "$actualHarvestDate", "$plantingDate" ] } }
             }
         },
@@ -140,14 +153,12 @@ exports.getMyYieldPerformance = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc      Get user's personal revenue trends (REAL DATA FROM MONGODB)
-// @route     GET /api/v1/analytics/my-revenue-trends
-// @access    Private (Farmer, Admin)
+
 exports.getMyRevenueTrends = asyncHandler(async (req, res, next) => {
     const { crop, year_start, year_end } = req.query;
-    let query = { user: req.user.id, status: 'Harvested' }; // Only for harvested plans
+    let query = { user: req.user.id, status: 'Harvested' };
 
-    if (req.user.role === 'admin' && req.query.userId) { // Admin can view other farmers' data
+    if (req.user.role === 'admin' && req.query.userId) {
         query.user = req.query.userId;
     }
 

@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
 const config = require('./config');
-const errorHandler = require('./middlewares/error'); 
-const cors = require('cors'); 
+const errorHandler = require('./middlewares/error');
+const cors = require('cors');
 const morgan = require('morgan');
 const logger = require('./config/winston');
 const helmet = require('helmet');
@@ -16,7 +16,7 @@ app.use(helmet());
 
 // Rate Limiting (applied before most routes)
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 30 * 60 * 1000, // 15 minutes
     max: 100, // Limit each IP to 100 requests per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes',
     standardHeaders: true,
@@ -27,16 +27,16 @@ app.use(limiter);
 // Morgan for HTTP request logging, piped to Winston
 app.use(morgan('combined', { stream: logger.stream })); 
 
+// Allow all origins for CORS (IMPORTANT: RESTRICT IN PRODUCTION!)
 app.use(cors({ 
-    origin: '*', // Allow all for development
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow common methods
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'] // Allow common headers
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 })); 
-
 
 app.use(express.json());
 
-// Swagger setup (moved after core middleware for consistent headers)
+// Swagger setup
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -54,8 +54,10 @@ const swaggerOptions = {
         },
         servers: [
             {
-                // CRITICAL FIX: Use https for Swagger UI base URL for deployments
-                url: `${config.nodeEnv === 'production' ? 'https' : 'http'}://${process.env.RENDER_EXTERNAL_HOSTNAME || `localhost:${config.port}`}/api/v1`,
+                // CRITICAL FIX: Dynamically determine protocol and host for Swagger base URL
+                // Use HTTPS if RENDER_EXTERNAL_HOSTNAME is present (meaning deployed on Render)
+                // Otherwise, default to HTTP localhost for local development
+                url: `${process.env.RENDER_EXTERNAL_HOSTNAME ? 'https' : 'http'}://${process.env.RENDER_EXTERNAL_HOSTNAME || `localhost:${config.port}`}/api/v1`,
                 description: 'Deployment / Development server'
             }
         ],
@@ -72,8 +74,8 @@ const swaggerOptions = {
                     type: 'object',
                     properties: {
                         _id: { type: 'string', example: '60c72b2f9c1e4b001c8e4d3a' },
-                        name: { type: 'string', example: 'John Doe' },
-                        email: { type: 'string', example: 'john.doe@example.com' },
+                        name: { type: 'string', example: 'Aline KIM' },
+                        email: { type: 'string', example: 'kim.aline@gmail.com' },
                         role: { type: 'string', enum: ['admin', 'farmer', 'buyer'], example: 'farmer' },
                         isVerified: { type: 'boolean', example: true },
                         preferredDistrictName: { type: 'string', example: "Gasabo", nullable: true },
@@ -136,7 +138,7 @@ app.use('/api/v1/market', marketRoutes);
 app.use('/api/v1/tracker', trackerRoutes);
 app.use('/api/v1/crop-plans', cropPlanRoutes);
 app.use('/api/v1', referenceDataRoutes);
-app.use('/api/v1', analyticsRoutes);
+app.use('/api/v1/analytics', analyticsRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/ml', mlRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
