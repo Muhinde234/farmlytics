@@ -1,4 +1,4 @@
-// src/screens/Admin/AnalyticsReportingScreen.tsx
+
 
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
@@ -236,18 +236,16 @@ const AnalyticsReportingScreen: React.FC = () => {
 
   useFocusEffect(
     useCallback(() => {
-      // Fetch data when screen comes into focus,
-      // but only if reference data is loaded AND filters are selected
-      if (!areReferenceDataLoading && selectedCrop && selectedDistrict) { // Use areReferenceDataLoading here
+     
+      if (!areReferenceDataLoading && selectedCrop && selectedDistrict) { 
         fetchAnalyticsData();
-      } else if (!areReferenceDataLoading && (!selectedCrop || !selectedDistrict)) { // Use areReferenceDataLoading here
-        // If reference data is loaded but filters aren't yet initialized/selected
+      } else if (!areReferenceDataLoading && (!selectedCrop || !selectedDistrict)) { 
+     
         setErrorAnalytics(String(t('admin.selectAnalyticsFilters') || 'Please select filters to view analytics.'));
         setYieldTrends([]);
         setDemandTrends([]);
       }
-      // Clear error if filters become available after previously being unavailable
-      // This is a small improvement for UX, removing the error once selection is possible.
+     
       if (!areReferenceDataLoading && selectedCrop && selectedDistrict && errorAnalytics === String(t('admin.selectAnalyticsFilters'))) {
         setErrorAnalytics(null);
       }
@@ -259,9 +257,8 @@ const AnalyticsReportingScreen: React.FC = () => {
     fetchAnalyticsData();
   }, [fetchAnalyticsData]);
 
-  // Overall loading for the entire app, including initial auth and reference data
-  // Show a full-screen loading spinner if either auth is loading OR reference data is loading
-  if (authLoading || areReferenceDataLoading) { // Combine both loading states
+
+  if (authLoading || areReferenceDataLoading) {
     return (
       <Container>
         <CustomHeader title={String(t('admin.analyticsTab'))} showLogo={true} showLanguageSwitcher={true} />
