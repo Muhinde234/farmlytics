@@ -1,10 +1,10 @@
-// src/config/theme.ts
+
 
 export const colors = {
-  primary: '#00A1DE',      // Rwandan Flag Blue
-  secondary: '#FDC400',    // Rwandan Flag Yellow
-  tertiary: '#187B3D',      // Original Rwandan Flag Green
-  darkGreen: '#187B3D',    // NEW: Darker Green for depth/accents
+  primary: '#00A1DE',     
+  secondary: '#FDC400',    
+  tertiary: '#187B3D',    
+  darkGreen: '#187B3D',   
   text: '#333333',
   lightText: '#FFFFFF',
   background: '#F9F9F9',
@@ -13,9 +13,9 @@ export const colors = {
   success: '#187B3D',
   error: '#DC3545',
   placeholder: '#999999',
-  gradientStart: '#00A1DE', // Blue for gradient start
-  gradientEnd: '#187B3D',   // Original Green for gradient end
-  darkGradientEnd: '#187B3D', // Darker green for gradient end for more contrast
+  gradientStart: '#00A1DE',
+  gradientEnd: '#187B3D',   
+  darkGradientEnd: '#187B3D', 
 };
 
 export const spacing = {
@@ -25,7 +25,7 @@ export const spacing = {
   large: 24,
   xl: 32,
   xxl: 40,
-  xxxl: 60, // Added for larger spacing
+  xxxl: 60, 
 };
 
 export const fontSizes = {
@@ -35,7 +35,7 @@ export const fontSizes = {
   large: 20,
   xl: 24,
   xxl: 32,
-  xxxl: 40, // Added for very large titles
+  xxxl: 40, 
 };
 
 export const borderRadius = {
