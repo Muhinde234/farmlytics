@@ -1,19 +1,16 @@
-// src/screens/Auth/SplashScreen.tsx
+
 
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components/native';
 import { Image, ActivityIndicator, Text, Animated, Platform, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { LinearGradient } from 'expo-linear-gradient'; // Directly import LinearGradient
+import { LinearGradient } from 'expo-linear-gradient'; 
 
 import { defaultTheme } from '../../config/theme';
 import { RootStackNavigationProp } from '../../navigation/types';
 
-// ---------------------- Styled Components ----------------------
-// FINAL FIX: We will NOT use styled(LinearGradient). We'll use a plain LinearGradient
-// and apply React Native styles directly for its required props.
-// Any other common styles can be wrapped in a styled(View) if needed.
+
 const AppLogo = styled(Image).attrs({
   resizeMode: 'contain',
 })`
@@ -30,7 +27,7 @@ const Tagline = styled(Text)`
   font-weight: 600;
 `;
 
-// ---------------------- SplashScreen Component ----------------------
+
 const SplashScreen: React.FC = () => {
   const navigation = useNavigation<RootStackNavigationProp<'Splash'>>();
   const { t, i18n } = useTranslation();
@@ -55,7 +52,7 @@ const SplashScreen: React.FC = () => {
   }, [navigation, i18n]);
 
   return (
-    // FINAL FIX: Use LinearGradient directly in JSX and pass props
+   
     <LinearGradient
       colors={[defaultTheme.colors.gradientStart, defaultTheme.colors.darkGradientEnd]}
       start={{ x: 0, y: 0 }}
@@ -65,8 +62,8 @@ const SplashScreen: React.FC = () => {
       <Animated.View style={{ opacity: fadeAnim, alignItems: 'center' }}>
         <AppLogo source={require('../../../assets/logo.png')} />
         <Tagline>
-          <Text>{String(t('common.welcome'))}</Text> {/* Explicit String() */}
-          <Text> to Farmlytics!</Text> {/* Explicit String() */}
+          <Text>{String(t('common.welcome'))}</Text> 
+          <Text> to Farmlytics!</Text> 
         </Tagline>
       </Animated.View>
       <ActivityIndicator size="large" color={defaultTheme.colors.lightText} />
