@@ -1,4 +1,4 @@
-// src/context/AuthContext.tsx
+
 
 import React, {
   createContext,
@@ -12,7 +12,7 @@ import { Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import i18n from '../config/i18n';
 
-// ✅ User interface
+
 export interface User {
   id: string;
   name: string;
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [crops, setCrops] = useState<ReferenceDataItem[]>([]);
   const [areReferenceDataLoading, setAreReferenceDataLoading] = useState(false);
 
-  // 🔹 Logout
+  
   const logout = async () => {
     console.log('Logging out...');
     await AsyncStorage.removeItem('userToken');
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     console.log('User logged out, state cleared.');
   };
 
-  // 🔹 Safe JSON parser
+ 
   const parseResponseSafely = async (response: Response): Promise<any> => {
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
@@ -82,19 +82,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (jsonError) {
         console.error('JSON Parse Error:', jsonError);
         const responseText = await response.text();
-        console.error('Response Text that caused JSON error:', responseText.substring(0, 500)); // Log part of the response for debugging
+        console.error('Response Text that caused JSON error:', responseText.substring(0, 500)); 
         throw new Error('Server returned invalid JSON.');
       }
     } else {
       const textResponse = await response.text();
-      console.error('Non-JSON response received:', textResponse.substring(0, 500)); // Log part of the response
+      console.error('Non-JSON response received:', textResponse.substring(0, 500)); 
       throw new Error(
         `Server returned non-JSON response. Status: ${response.status}. Message: ${textResponse.substring(0, 100)}...`
       );
     }
   };
 
-  // 🔹 Authenticated fetch helper
+  
   const authenticatedFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
     if (!token) {
       if (!isLoading) {
@@ -127,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return response;
   };
 
-  // 🔹 Update user profile
+  
   const updateUserProfile = async (updates: Partial<User>): Promise<boolean> => {
     try {
       console.log('Attempting to update user profile with:', updates);
@@ -159,7 +159,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // 🔹 Initial load (user + reference data)
+
   useEffect(() => {
     const loadInitialData = async () => {
       setIsLoading(true);
@@ -170,7 +170,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const storedToken = await AsyncStorage.getItem('userToken');
         console.log('Stored token:', storedToken ? 'Found' : 'Not found');
 
-        // Restore session if available
+    
         if (storedToken) {
           setToken(storedToken);
           try {
@@ -190,22 +190,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               console.log('User data loaded:', userData.data.email);
             } else {
               console.warn('User load failed (from /auth/me):', userData.message);
-              await logout(); // Logout if user data fetch fails even with a token
+              await logout(); 
             }
           } catch (userFetchError) {
             console.error('Error fetching user data on initial load (catch block):', userFetchError);
             Alert.alert(String(t('common.error')), String(t('auth.sessionExpiredMessage')));
-            await logout(); // Ensure logout if user data fetch fails
+            await logout(); 
           }
         }
 
-        // 🔹 Fetch reference data
+      
         console.log('Attempting to fetch reference data (districts, provinces, crops)...');
         const endpoints = ['/districts', '/provinces', '/crops/list'];
         const responses = await Promise.all(
           endpoints.map((ep) =>
             fetch(`${API_BASE_URL}${ep}`).catch((err) => {
-              console.error(`Fetch failed for ${ep}:`, err); // <<-- IMPORTANT LOG 1
+              console.error(`Fetch failed for ${ep}:`, err);
               return null;
             })
           )
@@ -220,7 +220,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             try {
               return await parseResponseSafely(res);
             } catch (err) {
-              console.error(`Failed to parse response for ${endpoints[index]}:`, err); // <<-- IMPORTANT LOG 2
+              console.error(`Failed to parse response for ${endpoints[index]}:`, err); 
               return null;
             }
           })
@@ -228,7 +228,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         const [districtsData, provincesData, cropsData] = parsedResults;
 
-        console.log('Raw districtsData received:', districtsData); // <<-- IMPORTANT LOG 3
+        console.log('Raw districtsData received:', districtsData); 
 
         if (districtsData) {
           const items = districtsData.data || districtsData || [];
@@ -238,12 +238,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               value: d.name || d.value || 'unknown',
             }));
             setDistricts(processedDistricts);
-            console.log('Districts successfully set:', processedDistricts.length, 'items'); // <<-- IMPORTANT LOG 4
+            console.log('Districts successfully set:', processedDistricts.length, 'items');
           } else {
-            console.warn('districtsData.data is not an array or districtsData is not an array, cannot process districts.'); // <<-- IMPORTANT LOG 5
+            console.warn('districtsData.data is not an array or districtsData is not an array, cannot process districts.'); 
           }
         } else {
-          console.warn('districtsData is null or undefined after parsing. No districts loaded.'); // <<-- IMPORTANT LOG 6
+          console.warn('districtsData is null or undefined after parsing. No districts loaded.');
         }
 
         console.log('Raw provincesData received:', provincesData);
@@ -283,26 +283,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
       } catch (error: unknown) {
-        console.error('Unhandled error in loadInitialData (outer catch block):', error); // <<-- IMPORTANT LOG 7
+        console.error('Unhandled error in loadInitialData (outer catch block):', error); 
         Alert.alert(
           String(t('common.error')),
           String(t('auth.initialLoadError') || 'Failed to initialize app data.')
         );
-        // Do not automatically logout here, as it might just be a reference data fetch issue, not an auth one.
+       
       } finally {
         setIsLoading(false);
         setAreReferenceDataLoading(false);
-        // Note: 'districts.length' here might not reflect the immediate update from setDistricts
-        // within this same tick if checked synchronously right after setting state.
-        console.log('Initial data loading finished. Final districts state length (may be async):', districts.length); // <<-- IMPORTANT LOG 8
+      
+        console.log('Initial data loading finished. Final districts state length (may be async):', districts.length); 
         console.log('areReferenceDataLoading set to false.');
       }
     };
 
     loadInitialData();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []); 
 
-  // 🔹 Login
+
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     console.log('Attempting login for:', email);
