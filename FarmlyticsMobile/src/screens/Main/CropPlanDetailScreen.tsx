@@ -1,4 +1,4 @@
-// src/screens/Main/CropPlanDetailScreen.tsx
+
 
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
@@ -14,10 +14,10 @@ import { RootStackParamList, MainTabNavigationProp } from '../../navigation/type
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { Picker } from '@react-native-picker/picker';
 
-// Define the route prop type for this screen
+
 type CropPlanDetailScreenRouteProp = RouteProp<RootStackParamList, 'CropPlanDetail'>;
 
-// ---------------------- Styled Components ----------------------
+
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -223,13 +223,13 @@ const ErrorText = styled(Text)`
 `;
 
 
-// ---------------------- Component Logic ----------------------
+
 interface CropPlan {
   _id: string;
   cropName: string;
   districtName: string;
   actualAreaPlantedHa: number;
-  plantingDate: string; // This will be an ISO string from the API
+  plantingDate: string; 
   estimatedHarvestDate: string;
   estimatedYieldKgPerHa: number;
   estimatedTotalProductionKg: number;
@@ -254,11 +254,11 @@ interface TrackerEstimates {
 
 const CropPlanDetailScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { authenticatedFetch, crops, districts, areReferenceDataLoading } = useAuth(); // Use dynamic data
+  const { authenticatedFetch, crops, districts, areReferenceDataLoading } = useAuth(); 
   const route = useRoute<CropPlanDetailScreenRouteProp>();
   const navigation = useNavigation<MainTabNavigationProp<'HarvestTrackerTab'>>();
 
-  const { cropPlanId } = route.params; // Get the ID from route parameters
+  const { cropPlanId } = route.params; 
 
   const [cropPlan, setCropPlan] = useState<CropPlan | null>(null);
   const [estimates, setEstimates] = useState<TrackerEstimates | null>(null);
@@ -312,7 +312,7 @@ const CropPlanDetailScreen: React.FC = () => {
           setCropPlan(fetchedPlan);
           console.log('Crop Plan fetched successfully:', fetchedPlan.cropName, 'Status:', fetchedPlan.status);
           
-          // Populate edit form states
+        
           setEditCropName(fetchedPlan.cropName);
           setEditDistrictName(fetchedPlan.districtName);
           setEditArea(String(fetchedPlan.actualAreaPlantedHa));
@@ -320,12 +320,12 @@ const CropPlanDetailScreen: React.FC = () => {
           setEditStatus(fetchedPlan.status);
           console.log('Edit form states populated.');
 
-          // --- FIX START: Format plantingDate to YYYY-MM-DD for the estimates API ---
+          
           const formattedPlantingDateForEstimates = new Date(fetchedPlan.plantingDate).toISOString().split('T')[0];
           console.log('Formatted Planting Date for Estimates:', formattedPlantingDateForEstimates);
-          // --- FIX END ---
+         
 
-          // Fetch Tracker Estimates (conditional on successful plan fetch)
+          
           console.log('Attempting to fetch tracker estimates...');
           const estimatesEndpoint = `/tracker/estimates?crop_name=${encodeURIComponent(fetchedPlan.cropName)}&actual_area_planted_ha=${fetchedPlan.actualAreaPlantedHa}&planting_date=${formattedPlantingDateForEstimates}&district_name=${encodeURIComponent(fetchedPlan.districtName)}`;
           console.log('Estimates endpoint:', estimatesEndpoint);
@@ -482,10 +482,10 @@ const CropPlanDetailScreen: React.FC = () => {
     );
   }, [cropPlanId, authenticatedFetch, navigation, t]);
 
-  // NEW: Handle navigation to RecordHarvestScreen from CropPlanDetail
+  
   const handleRecordHarvest = useCallback(() => {
     if (cropPlan) {
-      // Pass both cropPlanId and cropName
+   
       navigation.navigate('RecordHarvest', { cropPlanId: cropPlan._id, cropName: cropPlan.cropName });
     } else {
       Alert.alert(String(t('common.error')), String(t('cropPlan.noPlanToRecord')));
@@ -545,7 +545,7 @@ const CropPlanDetailScreen: React.FC = () => {
     );
   }
 
-  // Determine if "Record Harvest" button should be shown
+  
   const isPlantedAndNotHarvested = cropPlan.status === 'Planted';
 
 
@@ -720,7 +720,7 @@ const CropPlanDetailScreen: React.FC = () => {
             </ActionButton>
           )}
           
-          {isPlantedAndNotHarvested && !isEditMode && ( // Show "Record Harvest" only for Planted plans
+          {isPlantedAndNotHarvested && !isEditMode && ( 
             <ActionButton bgColor={defaultTheme.colors.tertiary} onPress={handleRecordHarvest}>
               <MaterialCommunityIcons name="tractor" size={defaultTheme.fontSizes.large} color={defaultTheme.colors.lightText} />
               <ActionButtonText>{String(t('home.recordHarvestTitle'))}</ActionButtonText>
