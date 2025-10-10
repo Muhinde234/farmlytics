@@ -1,34 +1,39 @@
-const nodemailer = require('nodemailer');
-const config = require('../config');
+// utils/sendEmail.js
+const sgMail = require('@sendgrid/mail');
+const config = require('../config'); 
+
+
+sgMail.setApiKey(config.sendGridApiKey);
+
 
 const sendEmail = async (options) => {
-    
-    const transporter = nodemailer.createTransport({
-        host: config.emailHost,
-        port: config.emailPort,
-        secure: config.emailPort == 465, 
-        auth: {
-            user: config.emailUser,
-            pass: config.emailPass
+   
+    const msg = {
+        to: options.email,
+        from: {
+            email: config.noReplyEmail, 
+            name: config.senderName    
         },
-        tls: {
-            rejectUnauthorized: false 
-        }
-    });
-
-
-    const mailOptions = {
+        subject: options.subject,
+        html: options.html,
         
-        from: `"${config.senderName}" <${config.noReplyEmail}>`, 
-        to: options.email, 
-        subject: options.subject, 
-        html: options.html 
     };
 
+    try {
+        await sgMail.send(msg);
+        console.log(`Email sent from "${config.senderName}" to ${options.email} with subject: "${options.subject}" using SendGrid.`);
+    } catch (error) {
+        console.error('Error sending email with SendGrid:', error);
 
-    await transporter.sendMail(mailOptions);
+        if (error.response && error.response.body && error.response.body.errors) {
+            console.error('SendGrid API Errors:', error.response.body.errors);
+        } else if (error.response) {
+            console.error('SendGrid API Response:', error.response.body);
+        }
 
-    console.log(`Email sent from "${config.senderName}" to ${options.email} with subject: "${options.subject}"`);
+        
+        throw new Error('Failed to send email via SendGrid.');
+    }
 };
 
 module.exports = sendEmail;
