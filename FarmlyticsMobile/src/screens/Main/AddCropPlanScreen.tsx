@@ -1,4 +1,4 @@
-// src/screens/Main/AddCropPlanScreen.tsx
+
 
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
@@ -12,9 +12,9 @@ import { MainTabNavigationProp } from '../../navigation/types';
 
 import CustomHeader from '../../components/CustomHeader';
 import { defaultTheme } from '../../config/theme';
-import { useAuth } from '../../context/AuthContext'; // Import useAuth for authenticatedFetch and dynamic data
+import { useAuth } from '../../context/AuthContext'; 
 
-// ---------------------- Styled Components ----------------------
+
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -129,10 +129,10 @@ const ErrorText = styled(Text)`
   margin-top: ${props => props.theme.spacing.medium}px;
 `;
 
-// ---------------------- Component Logic ----------------------
+
 const AddCropPlanScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { authenticatedFetch, crops, districts, areReferenceDataLoading } = useAuth(); // Use dynamic data
+  const { authenticatedFetch, crops, districts, areReferenceDataLoading } = useAuth(); 
   const navigation = useNavigation<MainTabNavigationProp<'HarvestTrackerTab'>>();
 
   const [cropName, setCropName] = useState('');
@@ -143,7 +143,7 @@ const AddCropPlanScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Set initial default values after dynamic data is loaded
+  
   useEffect(() => {
     if (crops.length > 0 && !cropName) {
       setCropName(crops[0].value);
@@ -154,7 +154,7 @@ const AddCropPlanScreen: React.FC = () => {
   }, [crops, districts, cropName, districtName]);
 
 
-  // Reset form when screen comes into focus
+  
   useFocusEffect(
     useCallback(() => {
       setCropName(crops.length > 0 ? crops[0].value : '');
@@ -179,7 +179,7 @@ const AddCropPlanScreen: React.FC = () => {
     const parsedArea = parseFloat(actualAreaPlantedHa);
 
     if (!cropName || !districtName || isNaN(parsedArea) || parsedArea <= 0 || !plantingDate) {
-      setError(String(t('cropPlan.formValidationError'))); // Explicit String()
+      setError(String(t('cropPlan.formValidationError'))); 
       return;
     }
 
@@ -191,26 +191,26 @@ const AddCropPlanScreen: React.FC = () => {
           cropName,
           districtName,
           actualAreaPlantedHa: parsedArea,
-          plantingDate: plantingDate.toISOString().split('T')[0], // Format to YYYY-MM-DD
-          status: 'Planted', // Default status for new plans
+          plantingDate: plantingDate.toISOString().split('T')[0], 
+          status: 'Planted', 
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          Alert.alert(String(t('common.success')), String(t('cropPlan.addSuccess'))); // Explicit String()
-          navigation.goBack(); // Go back to the list
+          Alert.alert(String(t('common.success')), String(t('cropPlan.addSuccess'))); 
+          navigation.goBack(); 
         } else {
-          setError(String(data.message || t('cropPlan.addError'))); // Explicit String()
+          setError(String(data.message || t('cropPlan.addError')));
         }
       } else {
         const errorData = await response.json();
-        setError(String(errorData.message || t('cropPlan.addError'))); // Explicit String()
+        setError(String(errorData.message || t('cropPlan.addError'))); 
       }
-    } catch (err: unknown) { // Explicitly type error as unknown
+    } catch (err: unknown) {
       console.error('Add crop plan error (catch block):', err);
-      setError(String(t('common.networkError'))); // Explicit String()
+      setError(String(t('common.networkError'))); 
     } finally {
       setLoading(false);
     }
@@ -227,10 +227,10 @@ const AddCropPlanScreen: React.FC = () => {
           <PickerContainer>
             <StyledPicker
               selectedValue={cropName}
-              onValueChange={(itemValue: unknown, itemIndex: number) => setCropName(itemValue as string)} // Corrected Picker typing
+              onValueChange={(itemValue: unknown, itemIndex: number) => setCropName(itemValue as string)} 
               enabled={!loading && !areReferenceDataLoading}
             >
-              {/* FINAL FIX: Ensure Picker.Item children are correctly formed. */}
+            
               {areReferenceDataLoading ? (
                 <Picker.Item key="loading-crops" label={String(t('common.loading'))} value="" />
               ) : crops.length > 0 ? (
@@ -247,10 +247,10 @@ const AddCropPlanScreen: React.FC = () => {
           <PickerContainer>
             <StyledPicker
               selectedValue={districtName}
-              onValueChange={(itemValue: unknown, itemIndex: number) => setDistrictName(itemValue as string)} // Corrected Picker typing
+              onValueChange={(itemValue: unknown, itemIndex: number) => setDistrictName(itemValue as string)} 
               enabled={!loading && !areReferenceDataLoading}
             >
-              {/* FINAL FIX: Same as above, ensure Picker.Item children are correctly formed. */}
+             
               {areReferenceDataLoading ? (
                 <Picker.Item key="loading-districts" label={String(t('common.loading'))} value="" />
               ) : districts.length > 0 ? (
@@ -287,7 +287,7 @@ const AddCropPlanScreen: React.FC = () => {
             onConfirm={handleConfirmDate}
             onCancel={hideDatePicker}
             date={plantingDate || new Date()}
-            locale={String(t('common.locale'))} // Explicit String()
+            locale={String(t('common.locale'))} 
           />
 
           <SubmitButton onPress={handleSubmit} disabled={loading || areReferenceDataLoading}>
