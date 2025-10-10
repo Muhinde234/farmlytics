@@ -5,11 +5,9 @@
 > **Farmlytics** is a full-stack agricultural intelligence platform that empowers Rwandan farmers with **data-driven insights**, **crop planning**, **market connections**, and **harvest tracking** — through a unified ecosystem of **Web**, **Mobile**, and **Backend API** applications.
 
 ---
-
-## **farmlytics logo**
-![Uploading logo.png…]()
-![Description](https://drive.google.com/uc?export=view&id=12FEFOGPIa5bvgjoFncOypS0fJJSk-xhY)
-
+<p align="center">
+  <img src="https://drive.google.com/uc?export=view&id=12FEFOGPIa5bvgjoFncOypS0fJJSk-xhY" alt="Preview" width="250">
+</p>
 
 
 ## 🚀 **Live Demo & Resources**
