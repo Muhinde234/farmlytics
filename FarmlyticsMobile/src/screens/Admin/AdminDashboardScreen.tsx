@@ -1,13 +1,12 @@
-// src/screens/Admin/AdminDashboardScreen.tsx
 
 import React from 'react';
 import styled from 'styled-components/native';
-import { Text, View, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native'; // Added ScrollView
+import { Text, View, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native'; 
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../context/AuthContext'; // Correct path assumed
+import { useAuth } from '../../context/AuthContext'; 
 import CustomHeader from '../../components/CustomHeader';
 import { defaultTheme } from '../../config/theme';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'; // Added MaterialCommunityIcons
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 const Container = styled(View)`
   flex: 1;
