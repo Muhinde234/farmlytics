@@ -158,7 +158,7 @@ interface DemandTrendData {
 
 const AnalyticsReportingScreen: React.FC = () => {
   const { t } = useTranslation();
-  // Destructure `areReferenceDataLoading` from useAuth
+ 
   const { authenticatedFetch, isLoading: authLoading, crops, districts, areReferenceDataLoading } = useAuth();
   const navigation = useNavigation<AdminTabNavigationProp<'AnalyticsReportingTab'>>();
 
@@ -196,7 +196,7 @@ const AnalyticsReportingScreen: React.FC = () => {
     }
 
     setLoadingAnalytics(true);
-    setErrorAnalytics(null); // Clear previous errors
+    setErrorAnalytics(null); 
     try {
       // Fetch Yield Trends
       const yieldTrendsResponse = await authenticatedFetch(
@@ -291,10 +291,10 @@ const AnalyticsReportingScreen: React.FC = () => {
                 <StyledPicker
                     selectedValue={selectedCrop}
                     onValueChange={(itemValue: unknown) => setSelectedCrop(itemValue as string)}
-                    enabled={!loadingAnalytics && !areReferenceDataLoading} // Use areReferenceDataLoading
+                    enabled={!loadingAnalytics && !areReferenceDataLoading} 
                 >
                     <Picker.Item label={String(t('cropPlanner.selectCropPlaceholder') || 'Select Crop')} value="" />
-                    {areReferenceDataLoading ? ( // Use areReferenceDataLoading for Picker loading state
+                    {areReferenceDataLoading ? ( 
                         <Picker.Item key="loading-crops" label={String(t('common.loading'))} value="" />
                     ) : crops.length > 0 ? (
                         crops.map(crop => <Picker.Item key={String(crop.value)} label={String(crop.label)} value={String(crop.value)} />)
@@ -307,10 +307,10 @@ const AnalyticsReportingScreen: React.FC = () => {
                 <StyledPicker
                     selectedValue={selectedDistrict}
                     onValueChange={(itemValue: unknown) => setSelectedDistrict(itemValue as string)}
-                    enabled={!loadingAnalytics && !areReferenceDataLoading} // Use areReferenceDataLoading
+                    enabled={!loadingAnalytics && !areReferenceDataLoading} 
                 >
                     <Picker.Item label={String(t('cropPlanner.selectDistrictPlaceholder') || 'Select District')} value="" />
-                    {areReferenceDataLoading ? ( // Use areReferenceDataLoading for Picker loading state
+                    {areReferenceDataLoading ? (
                         <Picker.Item key="loading-districts" label={String(t('common.loading'))} value="" />
                     ) : districts.length > 0 ? (
                         districts.map(district => <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} />)
@@ -320,7 +320,7 @@ const AnalyticsReportingScreen: React.FC = () => {
                 </StyledPicker>
             </FilterPickerWrapper>
         </FilterContainer>
-        {/* Disable fetch button if analytics are loading, reference data is loading, or filters are not selected */}
+      
         <FetchButton onPress={fetchAnalyticsData} disabled={loadingAnalytics || areReferenceDataLoading || !selectedCrop || !selectedDistrict}>
             {loadingAnalytics ? (
                 <ActivityIndicator color={defaultTheme.colors.lightText} />
