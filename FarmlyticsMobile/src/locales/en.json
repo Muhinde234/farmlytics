@@ -22,7 +22,12 @@
     "languageName_rw": "Kinyarwanda",
     "languageName_fr": "Français",
     "formValidationError": "Please fill all fields with valid data.",
-    "info": "Info"
+    "info": "Info",
+    "addNew": "Add New",
+    "searchDistricts":"Search Districts",
+    "searchCrops":"Search Crops"
+    
+
   },
   "auth": {
     "loginTitle": "Login to Farmlytics",
@@ -285,5 +290,25 @@
     "saveUserButton": "Save User",
     "userUpdateSuccess": "User updated successfully!",
     "userUpdateError": "Failed to update user."
+  }
+  ,
+  "recordHarvest": {
+    "title": "Record Harvest",
+    "selectPlan": "Select a planted plan",
+    "noPlantedPlans": "No planted crop plans available.",
+    "errorFetchingPlans": "Failed to fetch planted plans. Please try again.",
+    "validationError": "Please select a plan and enter valid yield and price values.",
+    "success": "Harvest recorded successfully.",
+    "error": "Failed to record harvest. Please try again.",
+    "recordingFor": "Recording harvest for",
+    "actualHarvestDate": "Actual harvest date",
+    "selectDatePlaceholder": "Select date",
+    "actualYieldKgPerHa": "Actual yield (kg/ha)",
+    "totalProduction": "Total production",
+    "actualSellingPricePerKgRwf": "Actual selling price (RWF/kg)",
+    "totalRevenue": "Total revenue",
+    "notes": "Notes",
+    "notesPlaceholder": "Any specific observations?",
+    "recordButton": "Record Harvest"
   }
 }

@@ -210,7 +210,8 @@ const RecordHarvestScreen: React.FC = () => {
           } else if (initialCropPlanId && !data.data.some((p: PlantedCropPlan) => p._id === initialCropPlanId)) {
             // If initialPlanId was provided but not found (e.g., already harvested or invalid)
             setSelectedPlanId(undefined); // Clear selection
-            Alert.alert(t('common.error'), t('recordHarvest.noPlantedPlans')); // Inform user
+            // Use common.error as t('common.info') might not exist, but common.error should
+            Alert.alert(String(t('common.error')), String(t('recordHarvest.noPlantedPlans'))); 
           }
         } else {
           setError(data.message || t('recordHarvest.errorFetchingPlans'));
@@ -254,7 +255,8 @@ const RecordHarvestScreen: React.FC = () => {
       } else {
         // If the initial plan isn't found (e.g., already harvested or deleted), clear selection
         setSelectedPlanId(undefined);
-        Alert.alert(t('common.info'), t('recordHarvest.noPlantedPlans'));
+        // Using common.error as t('common.info') might not exist
+        Alert.alert(String(t('common.error')), String(t('recordHarvest.noPlantedPlans'))); 
       }
     }
   }, [initialCropPlanId, plantedPlans, selectedPlanId, t]);

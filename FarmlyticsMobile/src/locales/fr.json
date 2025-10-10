@@ -22,7 +22,11 @@
     "languageName_rw": "Kinyarwanda",
     "languageName_fr": "Français",
     "formValidationError": "Veuillez remplir tous les champs avec des données valides.",
-    "info": "Info"
+    "info": "Info",
+    "addNew": "Ajouter",
+    "searchDistricts":"Rechercher des districts",
+    "searchCrops":"Rechercher des cultures"
+
   },
   "auth": {
     "loginTitle": "Connectez-vous à Farmlytics",
@@ -285,5 +289,25 @@
     "saveUserButton": "Enregistrer l'utilisateur",
     "userUpdateSuccess": "Utilisateur mis à jour avec succès !",
     "userUpdateError": "Échec de la mise à jour de l'utilisateur."
+  },
+  
+  "recordHarvest": {
+    "title": "Enregistrer la récolte",
+    "selectPlan": "Sélectionner un plan planté",
+    "noPlantedPlans": "Aucun plan de culture planté disponible.",
+    "errorFetchingPlans": "Échec de la récupération des plans plantés. Veuillez réessayer.",
+    "validationError": "Veuillez sélectionner un plan et saisir des valeurs valides pour le rendement et le prix.",
+    "success": "Récolte enregistrée avec succès.",
+    "error": "Échec de l'enregistrement de la récolte. Veuillez réessayer.",
+    "recordingFor": "Enregistrement de la récolte pour",
+    "actualHarvestDate": "Date réelle de récolte",
+    "selectDatePlaceholder": "Sélectionner une date",
+    "actualYieldKgPerHa": "Rendement réel (kg/ha)",
+    "totalProduction": "Production totale",
+    "actualSellingPricePerKgRwf": "Prix de vente réel (RWF/kg)",
+    "totalRevenue": "Revenu total",
+    "notes": "Remarques",
+    "notesPlaceholder": "Observations spécifiques ?",
+    "recordButton": "Enregistrer la récolte"
   }
 }
