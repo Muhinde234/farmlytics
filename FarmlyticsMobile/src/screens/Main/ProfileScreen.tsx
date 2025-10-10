@@ -5,16 +5,16 @@ import styled from 'styled-components/native';
 import { Text, View, ScrollView, TouchableOpacity, ActivityIndicator, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import CustomHeader from '../../components/CustomHeader';
-import { useAuth, User, ReferenceDataItem } from '../../context/AuthContext'; // Import User and ReferenceDataItem
+import { useAuth, User, ReferenceDataItem } from '../../context/AuthContext';
 import { defaultTheme } from '../../config/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker'; 
-import i18n from '../../config/i18n'; // Import i18n instance directly for language changes
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import { MainTabNavigationProp } from '../../navigation/types'; // Import for navigation typing
+import i18n from '../../config/i18n'; 
+import { useNavigation } from '@react-navigation/native'; 
+import { MainTabNavigationProp } from '../../navigation/types'; 
 
 
-// ---------------------- Styled Components ----------------------
+
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -182,18 +182,18 @@ const LogoutButtonText = styled(Text)`
 `;
 
 
-// ---------------------- Component Logic ----------------------
+
 const ProfileScreen: React.FC = () => {
   const { t } = useTranslation();
   const { user, logout, isLoading, updateUserProfile, districts, provinces } = useAuth(); 
-  const navigation = useNavigation<MainTabNavigationProp<'ProfileTab'>>(); // Use navigation for UpdatePassword
+  const navigation = useNavigation<MainTabNavigationProp<'ProfileTab'>>();
 
   const [editDistrict, setEditDistrict] = useState(user?.preferredDistrictName || '');
   const [editProvince, setEditProvince] = useState(user?.preferredProvinceName || '');
   const [editLanguage, setEditLanguage] = useState(user?.preferredLanguage || i18n.language); 
   const [isSaving, setIsSaving] = useState(false);
 
-  // Update local state when user prop changes (e.g., after initial load or successful update)
+ 
   useEffect(() => {
     if (user) {
       setEditDistrict(user.preferredDistrictName || '');
@@ -203,7 +203,7 @@ const ProfileScreen: React.FC = () => {
   }, [user, i18n.language]); 
 
 
-  // Handler for saving preferred language
+  
   const handleSaveLanguage = useCallback(async () => {
     setIsSaving(true);
     const updates: Partial<User> = { 
@@ -212,7 +212,7 @@ const ProfileScreen: React.FC = () => {
     
     const success = await updateUserProfile(updates);
     if (success) {
-      // If profile update is successful, also change the i18n language
+      
       i18n.changeLanguage(editLanguage);
       Alert.alert(String(t('common.success')), String(t('profile.updateSuccess')));
     } else {
@@ -221,7 +221,7 @@ const ProfileScreen: React.FC = () => {
     setIsSaving(false);
   }, [editLanguage, updateUserProfile, t]);
 
-  // Handler for saving preferred location settings
+ 
   const handleSaveLocation = useCallback(async () => {
     setIsSaving(true);
     const updates: Partial<User> = {
@@ -229,17 +229,13 @@ const ProfileScreen: React.FC = () => {
       preferredProvinceName: editProvince,
     };
 
-    // Validation: If a district is selected, it should ideally have a matching province,
-    // but the user now has flexibility to select them independently.
-    // The previous strict dependency is relaxed as requested.
-    // However, we can still validate if a selection is made, that it's not empty.
+   
     if (!editProvince && editDistrict) {
         Alert.alert(String(t('common.error')), String(t('profile.provinceShouldBeSelected')));
         setIsSaving(false);
         return;
     }
-    // If only province is selected without a district, it's allowed.
-    // If only district is selected without a province (and not farmer/buyer), this is also allowed now.
+    
 
     const success = await updateUserProfile(updates);
     if (success) {
@@ -275,12 +271,10 @@ const ProfileScreen: React.FC = () => {
         title={String(t('tab.profile'))} 
         showBack={false}
         showLogo={true} 
-        showLanguageSwitcher={false} // LanguageSwitcher is handled by this screen now
+        showLanguageSwitcher={false}
       />
       <ContentArea>
-        {/* You might want a better way to get the logo source, e.g., from assets directly */}
-        {/* For now, commenting out to prevent potential missing image error if path is wrong */}
-        {/* <AppLogo source={require('../../../assets/logo.png')} /> */} 
+        
 
         <ProfileCard>
           <ProfileIcon
@@ -323,12 +317,12 @@ const ProfileScreen: React.FC = () => {
         </DetailCard>
 
 
-        {/* --- Preferred Location Settings (for Farmer/Buyer only) --- */}
+        
         {(user?.role === 'farmer' || user?.role === 'buyer') && ( 
           <>
             <SectionTitle>{String(t('profile.preferredLocationSettings') || 'Preferred Location')}</SectionTitle>
             <DetailCard> 
-              {/* Preferred Province */}
+              
               <View style={{ marginBottom: defaultTheme.spacing.small }}>
                 <InfoLabel>{String(t('profile.preferredProvinceLabel') || 'Preferred Province:')}</InfoLabel>
                 <PickerContainer>
@@ -336,8 +330,7 @@ const ProfileScreen: React.FC = () => {
                     selectedValue={editProvince}
                     onValueChange={(itemValue: unknown) => {
                       setEditProvince(itemValue as string);
-                      // Do NOT reset district here if we want independent selection
-                      // setEditDistrict(''); 
+                     
                     }}
                     enabled={!isSaving && !isLoading}
                     accessibilityLabel={String(t('profile.selectProvincePlaceholder'))}
@@ -356,20 +349,20 @@ const ProfileScreen: React.FC = () => {
                 </PickerContainer>
               </View>
 
-              {/* Preferred District */}
+              
               <View style={{ marginBottom: defaultTheme.spacing.small }}>
                 <InfoLabel>{String(t('profile.preferredDistrictLabel') || 'Preferred District:')}</InfoLabel>
                 <PickerContainer>
                   <StyledPicker
                     selectedValue={editDistrict}
                     onValueChange={(itemValue: unknown) => setEditDistrict(itemValue as string)} 
-                    enabled={!isSaving && !isLoading} // Enable regardless of province selection
+                    enabled={!isSaving && !isLoading} 
                     accessibilityLabel={String(t('profile.selectDistrictPlaceholder'))}
                   >
-                    <Picker.Item label={String(t('profile.selectDistrictPlaceholder'))} value="" /> {/* Placeholder item */}
+                    <Picker.Item label={String(t('profile.selectDistrictPlaceholder'))} value="" /> 
                     {isLoading ? (
                       <Picker.Item key="loading-districts" label={String(t('common.loading'))} value="" />
-                    ) : districts.length > 0 ? ( // Show all districts, no longer filtering by province
+                    ) : districts.length > 0 ? ( 
                       districts
                         .map((district: ReferenceDataItem) => ( 
                           <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} />
@@ -392,14 +385,14 @@ const ProfileScreen: React.FC = () => {
         )}
 
 
-        {/* --- Account Info Section --- */}
+       
         <SectionTitle>{String(t('profile.accountInfo'))}</SectionTitle>
         <DetailCard style={{ paddingVertical: 0 }}>
           <DetailItem style={{ borderBottomWidth: 0 }}>
             <InfoLabel>{String(t('profile.emailVerified'))}</InfoLabel>
             <InfoValue>{String(user?.isVerified ? t('common.yes') : t('common.no'))}</InfoValue>
           </DetailItem>
-           {/* Add a button to update password if you have a UpdatePasswordScreen */}
+           
            <SubmitButton 
               onPress={() => navigation.navigate('UpdatePassword')} 
               style={{marginTop: defaultTheme.spacing.medium, backgroundColor: defaultTheme.colors.secondary}}
@@ -408,7 +401,7 @@ const ProfileScreen: React.FC = () => {
             </SubmitButton>
         </DetailCard>
 
-        {/* --- Logout Button --- */}
+      
         <LogoutButton onPress={handleLogout} disabled={isSaving}>
           <Ionicons name="log-out-outline" size={defaultTheme.fontSizes.medium} color={defaultTheme.colors.lightText} />
           <LogoutButtonText>{String(t('auth.logout'))}</LogoutButtonText>

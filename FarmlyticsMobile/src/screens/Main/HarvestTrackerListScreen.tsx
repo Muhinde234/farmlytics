@@ -12,7 +12,7 @@ import CustomHeader from '../../components/CustomHeader';
 import { defaultTheme } from '../../config/theme';
 import { useAuth } from '../../context/AuthContext';
 
-// ---------------------- Styled Components ----------------------
+
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -127,7 +127,7 @@ const ErrorText = styled(Text)`
 `;
 
 
-// ---------------------- Component Logic ----------------------
+
 interface CropPlan {
   _id: string;
   cropName: string;
@@ -137,7 +137,7 @@ interface CropPlan {
   estimatedHarvestDate: string;
   estimatedTotalProductionKg: number;
   estimatedRevenueRwf: number;
-  status: string; // e.g., 'Planted', 'Harvested', 'Planned'
+  status: string; 
 }
 
 const HarvestTrackerListScreen: React.FC = () => {
@@ -155,7 +155,7 @@ const HarvestTrackerListScreen: React.FC = () => {
       case 'Planted': return defaultTheme.colors.primary;
       case 'Harvested': return defaultTheme.colors.tertiary;
       case 'Planned': return defaultTheme.colors.secondary;
-      case 'Cancelled': return defaultTheme.colors.error; // Added for completeness
+      case 'Cancelled': return defaultTheme.colors.error; 
       default: return defaultTheme.colors.placeholder;
     }
   };
@@ -170,22 +170,22 @@ const HarvestTrackerListScreen: React.FC = () => {
         if (data.success) {
           setCropPlans(data.data);
         } else {
-          setError(String(data.message || t('tracker.fetchError'))); // Explicit String()
+          setError(String(data.message || t('tracker.fetchError'))); 
         }
       } else {
         const errorData = await response.json();
-        setError(String(errorData.message || t('tracker.fetchError'))); // Explicit String()
+        setError(String(errorData.message || t('tracker.fetchError'))); 
       }
-    } catch (err: unknown) { // Explicitly type error as unknown
+    } catch (err: unknown) { 
       console.error('Error fetching crop plans (catch block):', err);
-      setError(String(t('common.networkError'))); // Explicit String()
+      setError(String(t('common.networkError'))); 
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   }, [authenticatedFetch, t]);
 
-  // Fetch plans when screen is focused
+  
   useFocusEffect(
     useCallback(() => {
       fetchCropPlans();
