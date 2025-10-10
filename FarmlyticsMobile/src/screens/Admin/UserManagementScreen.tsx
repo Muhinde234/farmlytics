@@ -1,4 +1,4 @@
-// src/screens/Admin/UserManagementScreen.tsx
+
 
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
@@ -13,7 +13,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Picker } from '@react-native-picker/picker';
 
 
-// ---------------------- Styled Components ----------------------
+
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -23,7 +23,7 @@ const ContentArea = styled(ScrollView).attrs({
   contentContainerStyle: {
     padding: defaultTheme.spacing.medium,
     paddingBottom: defaultTheme.spacing.xxl,
-    flexGrow: 1, // Allows ScrollView to stretch, important for RefreshControl
+    flexGrow: 1, 
   },
 })`
   flex: 1;
@@ -241,13 +241,13 @@ const UserManagementScreen: React.FC = () => {
     setLoading(true);
     try {
       const response = await authenticatedFetch('/admin/users');
-      // Always parse JSON to get error message if response is not ok
+    
       const data = await response.json();
 
       if (response.ok && data.success) {
         setUsers(data.data);
       } else {
-        // More specific error message if backend provides one
+       
         setError(String(data.error || data.message || t('admin.loadUsersError')));
       }
     } catch (err: unknown) {
@@ -291,7 +291,7 @@ const UserManagementScreen: React.FC = () => {
     }
 
     setIsSavingUser(true);
-    setError(null); // Clear previous errors
+    setError(null); 
 
     try {
       const response = await authenticatedFetch(`/admin/users/${editingUser.id}`, {
@@ -311,7 +311,7 @@ const UserManagementScreen: React.FC = () => {
       if (response.ok && data.success) {
         Alert.alert(String(t('common.success')), String(t('admin.userUpdateSuccess')));
         setIsEditModalVisible(false);
-        fetchUsers(); // Refresh the list with updated user
+        fetchUsers(); 
       } else {
         const errorMessage = String(data.error || data.message || t('admin.userUpdateError'));
         setError(errorMessage);
@@ -368,7 +368,7 @@ const UserManagementScreen: React.FC = () => {
   }, [authenticatedFetch, fetchUsers, t]);
 
 
-  if (authLoading) { // Use authLoading for initial overall app loading
+  if (authLoading) { 
     return (
       <Container>
         <CustomHeader title={String(t('admin.userManagement'))} showLogo={true} showLanguageSwitcher={true} />
@@ -498,7 +498,6 @@ const UserManagementScreen: React.FC = () => {
               </StyledPicker>
             </PickerContainer>
 
-            {/* Preferred Province Picker */}
             <Label>{String(t('profile.preferredProvinceLabel'))}</Label>
             <PickerContainer>
               <StyledPicker
@@ -522,7 +521,7 @@ const UserManagementScreen: React.FC = () => {
               </StyledPicker>
             </PickerContainer>
 
-            {/* Preferred District Picker */}
+           
             <Label>{String(t('profile.preferredDistrictLabel'))}</Label>
             <PickerContainer>
               <StyledPicker
