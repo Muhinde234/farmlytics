@@ -6,6 +6,9 @@
 
 ---
 
+## **farmlytics logo**
+![Uploading logo.png…]()
+
 ## 🚀 **Live Demo & Resources**
 
 * 🌐 **Web App:** [https://farmlytics-eta.vercel.app/en](#)
