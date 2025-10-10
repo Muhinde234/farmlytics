@@ -118,7 +118,7 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-blue-400 text-gray-900 antialiased overflow-x-hidden">
+    <div className="min-h-screen bg-white text-gray-900 antialiased overflow-x-hidden">
       {/* Header */}
       <header
         className={`w-full fixed top-0 z-50 transition-all duration-300 ${
