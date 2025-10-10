@@ -246,11 +246,16 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 
 ---
 #### **screenshots**
-### **this is the web app landing page**
-<img width="1847" height="964" alt="image" src="https://github.com/user-attachments/assets/da62826f-fb57-4355-8c52-0eca654f954c" />
+#### **Screenshots**
 
-### **the mobile landing page**
-![WhatsApp Image 2025-10-10 at 11 40 08_5abf3c49](https://github.com/user-attachments/assets/6c9f8640-13ca-47a0-80a4-9344bf3e2b78) || ![WhatsApp Image 2025-10-10 at 11 40 56_2198a318](https://github.com/user-attachments/assets/382f88e1-4d75-4d79-afa9-1917618f5bfe)
+### **Web App Landing Page**
+<img width="800" alt="Web App Landing Page" src="https://github.com/user-attachments/assets/da62826f-fb57-4355-8c52-0eca654f954c" />
+
+### **Mobile Landing Pages**
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/6c9f8640-13ca-47a0-80a4-9344bf3e2b78" width="300" />
+  <img src="https://github.com/user-attachments/assets/382f88e1-4d75-4d79-afa9-1917618f5bfe" width="300" />
+</p>
 
 
 
