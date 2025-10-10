@@ -1,4 +1,4 @@
-// src/screens/Admin/ReferenceDataManagementScreen.tsx
+
 
 import React, { useState, useCallback, useMemo } from 'react';
 import styled from 'styled-components/native';
@@ -11,27 +11,25 @@ import { Ionicons } from '@expo/vector-icons';
 import { AdminTabNavigationProp } from '../../navigation/types';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
-// --- Specific Interfaces for API Data ---
-// These interfaces define the FULL structure of data returned by your API.
-// Even if we don't display all properties, we still fetch them for filtering etc.
+
 interface DistrictApiItem {
   _id: string;
   name?: string;
-  province?: string; // Still useful for searching, even if not displayed
+  province?: string; 
 }
 
 interface ProvinceApiItem {
   _id: string;
   name?: string;
-  districts?: string[]; // Still useful for searching/internal logic, even if not displayed
+  districts?: string[]; 
 }
 
 interface CropApiItem {
   _id: string;
   name?: string;
-  category?: string; // Still useful for searching, even if not displayed
+  category?: string; 
 }
-// --- End Specific Interfaces ---
+
 
 
 const Container = styled(View)`
@@ -70,7 +68,7 @@ const DataListCard = styled(View)`
   shadow-radius: 3px;
 `;
 
-// Modified DataListItem for single label display
+
 const DataListItem = styled(View)`
   flex-direction: row;
   justify-content: space-between; /* To push actions to the right */
@@ -88,12 +86,6 @@ const DataListLabel = styled(Text)`
   margin-right: ${defaultTheme.spacing.small}px; /* Space from actions */
 `;
 
-// DataListValue is no longer needed for display in this simplified version
-// const DataListValue = styled(Text)`
-//   font-size: ${defaultTheme.fontSizes.medium}px;
-//   color: ${defaultTheme.colors.primary};
-//   font-weight: normal;
-// `;
 
 const ErrorText = styled(Text)`
   color: ${props => props.theme.colors.error};
@@ -168,7 +160,7 @@ const ReferenceDataManagementScreen: React.FC = () => {
   const { authenticatedFetch, isLoading: authLoading } = useAuth();
   const navigation = useNavigation<AdminTabNavigationProp<'ReferenceDataManagementTab'>>();
 
-  // State for fetched reference data (using specific types)
+ 
   const [districtsData, setDistrictsData] = useState<DistrictApiItem[]>([]);
   const [provincesData, setProvincesData] = useState<ProvinceApiItem[]>([]);
   const [cropsData, setCropsData] = useState<CropApiItem[]>([]);
@@ -176,12 +168,11 @@ const ReferenceDataManagementScreen: React.FC = () => {
   const [errorData, setErrorData] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  // State for search queries
   const [districtSearch, setDistrictSearch] = useState('');
   const [provinceSearch, setProvinceSearch] = useState('');
   const [cropSearch, setCropSearch] = useState('');
 
-  // --- CUD Placeholder Handlers ---
+ 
   const handleAddItem = useCallback((type: string) => {
     Alert.alert(
       String(t('common.addFeatureTitle') || 'Add Item'),
@@ -189,18 +180,18 @@ const ReferenceDataManagementScreen: React.FC = () => {
     );
   }, [t]);
 
-  // Updated handleEditItem to handle item.name potentially being undefined
+ 
   const handleEditItem = useCallback((type: string, item: { name?: string, _id: string }) => {
-    const itemName = item.name || ''; // Use empty string if name is undefined
+    const itemName = item.name || ''; 
     Alert.alert(
       String(t('common.editFeatureTitle') || 'Edit Item'),
       String(t('common.editFeatureMessage', { type: type, name: itemName }) || `Functionality to edit ${itemName} (${type}) will be implemented here. Backend API for this action is required.`)
     );
   }, [t]);
 
-  // Updated handleDeleteItem to handle itemName potentially being undefined
+
   const handleDeleteItem = useCallback((type: string, itemId: string, itemName: string | undefined) => {
-    const displayItemName = itemName || ''; // Use empty string if itemName is undefined
+    const displayItemName = itemName || ''; 
     Alert.alert(
       String(t('common.deleteConfirmTitle') || 'Confirm Deletion'),
       String(t('common.deleteConfirmMessage', { name: displayItemName, type: type }) || `Are you sure you want to delete ${displayItemName} (${type})? This action cannot be undone.`),
@@ -222,7 +213,7 @@ const ReferenceDataManagementScreen: React.FC = () => {
       ]
     );
   }, [t]);
-  // --- End CUD Placeholder Handlers ---
+
 
 
   const fetchReferenceData = useCallback(async () => {
@@ -290,10 +281,10 @@ const ReferenceDataManagementScreen: React.FC = () => {
   }, [fetchReferenceData]);
 
 
-  // --- Filtered Data Logic (using useMemo for optimization) ---
+ 
   const filteredDistricts = useMemo(() => {
     return districtsData.filter(district => {
-      // Still allow filtering by province even if not displayed
+     
       const name = district.name?.toLowerCase() || '';
       const province = district.province?.toLowerCase() || '';
       const searchLower = districtSearch.toLowerCase();
@@ -311,14 +302,14 @@ const ReferenceDataManagementScreen: React.FC = () => {
 
   const filteredCrops = useMemo(() => {
     return cropsData.filter(crop => {
-      // Still allow filtering by category even if not displayed
+     
       const name = crop.name?.toLowerCase() || '';
       const category = crop.category?.toLowerCase() || '';
       const searchLower = cropSearch.toLowerCase();
       return name.includes(searchLower) || category.includes(searchLower);
     });
   }, [cropsData, cropSearch]);
-  // --- End Filtered Data Logic ---
+ 
 
 
   if (authLoading) {
@@ -354,7 +345,7 @@ const ReferenceDataManagementScreen: React.FC = () => {
           <ErrorText>{errorData}</ErrorText>
         ) : (
           <View>
-            {/* Districts Section */}
+         
             <SectionTitle>{String(t('admin.districtsListTitle') || 'Districts')}</SectionTitle>
             <SectionActions>
                 <AddButton onPress={() => handleAddItem(String(t('admin.district') || 'district'))}>
@@ -371,7 +362,7 @@ const ReferenceDataManagementScreen: React.FC = () => {
               <DataListCard>
                 {filteredDistricts.map((item, index) => (
                   <DataListItem key={String(item._id)} style={index === filteredDistricts.length - 1 ? { borderBottomWidth: 0 } : {}}>
-                    {/* Display only the district name, defaulting to empty string if undefined */}
+                  
                     <DataListLabel>{String(item.name || '')}</DataListLabel>
                     <ItemActions>
                         <ActionButton onPress={() => handleEditItem(String(t('admin.district') || 'district'), item)}>
@@ -388,7 +379,7 @@ const ReferenceDataManagementScreen: React.FC = () => {
               <EmptyStateText>{String(t('admin.noDistrictsFound') || 'No districts found.')}</EmptyStateText>
             )}
 
-            {/* Provinces Section */}
+          
             <SectionTitle>{String(t('admin.provincesListTitle') || 'Provinces')}</SectionTitle>
             <SectionActions>
                 <AddButton onPress={() => handleAddItem(String(t('admin.province') || 'province'))}>
@@ -405,7 +396,7 @@ const ReferenceDataManagementScreen: React.FC = () => {
               <DataListCard>
                 {filteredProvinces.map((item, index) => (
                   <DataListItem key={String(item._id)} style={index === filteredProvinces.length - 1 ? { borderBottomWidth: 0 } : {}}>
-                    {/* Display only the province name, defaulting to empty string if undefined */}
+            
                     <DataListLabel>{String(item.name || '')}</DataListLabel>
                      <ItemActions>
                         <ActionButton onPress={() => handleEditItem(String(t('admin.province') || 'province'), item)}>
@@ -422,7 +413,7 @@ const ReferenceDataManagementScreen: React.FC = () => {
               <EmptyStateText>{String(t('admin.noProvincesFound') || 'No provinces found.')}</EmptyStateText>
             )}
 
-            {/* Crops Section */}
+         
             <SectionTitle>{String(t('admin.cropsListTitle') || 'Crops')}</SectionTitle>
             <SectionActions>
                 <AddButton onPress={() => handleAddItem(String(t('admin.crop') || 'crop'))}>
@@ -439,7 +430,7 @@ const ReferenceDataManagementScreen: React.FC = () => {
               <DataListCard>
                 {filteredCrops.map((item, index) => (
                   <DataListItem key={String(item._id)} style={index === filteredCrops.length - 1 ? { borderBottomWidth: 0 } : {}}>
-                    {/* Display only the crop name, defaulting to empty string if undefined */}
+                   
                     <DataListLabel>{String(item.name || '')}</DataListLabel>
                     <ItemActions>
                         <ActionButton onPress={() => handleEditItem(String(t('admin.crop') || 'crop'), item)}>
