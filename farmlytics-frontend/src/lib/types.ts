@@ -141,3 +141,31 @@ export interface Crop {
   [key: string]: any
 }
 
+export interface MarketDemand {
+  id: string
+  crop: string
+  demandLevel: number
+  expectedPrice: number
+  region: string
+}
+
+export interface Cooperative {
+  id: string
+  name: string
+  location: string
+  contact: string
+}
+
+export interface Buyer {
+  id: string
+  name: string
+  product: string
+  location: string
+}
+
+export interface Exporter {
+  id: string
+  name: string
+  country: string
+  contact: string
+}

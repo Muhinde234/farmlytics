@@ -268,7 +268,33 @@
     "helpSupport": "Help & Support",
     "contactSupport": "Contact Support",
     "reportProblem": "Report a Problem"
-  }
+  },
+  "market": {
+    "pageTitle": "Market Connections",
+    "pageDescription": "Explore market demand, cooperatives, buyers, and exporters to grow your agribusiness.",
+    "tabs": {
+      "demand": "Market Demand",
+      "cooperatives": "Cooperatives",
+      "buyers": "Buyers & Processors",
+      "exporters": "Exporters"
+    },
+    "labels": {
+      "demand": "Demand",
+      "region": "Region",
+      "expectedPrice": "Expected Price",
+      "location": "Location",
+      "contact": "Contact",
+      "product": "Product",
+      "country": "Country"
+    },
+    "chart": {
+      "demand": "Demand",
+      "price": "Expected Price"
+    },
+    "retry": "Retry"
+  
+}
+
 
 
 
