@@ -8,7 +8,7 @@
 
 ## **farmlytics logo**
 ![Uploading logo.png…]()
-FarmlyticsMobile/assets/favicon.png
+
 
 ## 🚀 **Live Demo & Resources**
 
