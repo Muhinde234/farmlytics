@@ -1,4 +1,4 @@
-// src/screens/Auth/RegisterScreen.tsx
+
 
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components/native';
@@ -132,7 +132,7 @@ const RegisterScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const navigation = useNavigation<RootStackNavigationProp<'Register'>>();
-  const { register } = useAuth(); // Use useAuth to get register function
+  const { register } = useAuth();
 
   useFocusEffect(
     useCallback(() => {
