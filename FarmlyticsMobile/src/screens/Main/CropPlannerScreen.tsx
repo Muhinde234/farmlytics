@@ -11,9 +11,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import CustomHeader from '../../components/CustomHeader';
 import { defaultTheme } from '../../config/theme';
 
-import { useAuth } from '../../context/AuthContext'; // Import useAuth for authenticatedFetch and dynamic data
+import { useAuth } from '../../context/AuthContext'; 
 
-// ---------------------- Styled Components ----------------------
+
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -23,7 +23,7 @@ const ContentArea = styled(ScrollView).attrs({
   contentContainerStyle: {
     padding: defaultTheme.spacing.medium,
     paddingBottom: defaultTheme.spacing.xxl,
-    flexGrow: 1, // Allows content to grow and enable scrolling
+    flexGrow: 1, 
   },
 })`
   flex: 1;
@@ -171,7 +171,7 @@ const EmptyStateText = styled(Text)`
   margin-top: ${props => props.theme.spacing.large}px;
 `;
 
-// ---------------------- Component Logic ----------------------
+
 interface CropRecommendation {
   CropName: string;
   Recommended_Area_ha: number;
@@ -181,23 +181,23 @@ interface CropRecommendation {
 
 const CropPlannerScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { authenticatedFetch, districts, areReferenceDataLoading } = useAuth(); // Use dynamic districts
+  const { authenticatedFetch, districts, areReferenceDataLoading } = useAuth(); 
   
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [farmSize, setFarmSize] = useState(''); // As string from TextInput
+  const [farmSize, setFarmSize] = useState(''); 
   const [recommendations, setRecommendations] = useState<CropRecommendation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false); // For pull-to-refresh
+  const [refreshing, setRefreshing] = useState(false); 
 
-  // Set initial district after districts are loaded
+  
   useEffect(() => {
     if (districts.length > 0 && !selectedDistrict) {
       setSelectedDistrict(districts[0].value);
     }
   }, [districts, selectedDistrict]);
 
-  // Reset form when screen comes into focus
+ 
   const resetForm = useCallback(() => {
     setSelectedDistrict(districts.length > 0 ? districts[0].value : '');
     setFarmSize('');
@@ -210,12 +210,12 @@ const CropPlannerScreen: React.FC = () => {
 
   const handleSubmit = useCallback(async () => {
     setError(null);
-    setRecommendations([]); // Clear previous results
+    setRecommendations([]); 
     
     const parsedFarmSize = parseFloat(farmSize);
 
     if (!selectedDistrict || isNaN(parsedFarmSize) || parsedFarmSize <= 0) {
-      setError(String(t('cropPlanner.formValidationError'))); // Explicit String()
+      setError(String(t('cropPlanner.formValidationError')));
       return;
     }
 
@@ -230,13 +230,13 @@ const CropPlannerScreen: React.FC = () => {
         if (data.success && data.data.length > 0) {
           setRecommendations(data.data);
         } else {
-          setError(String(t('cropPlanner.noRecommendations'))); // Explicit String()
+          setError(String(t('cropPlanner.noRecommendations'))); 
         }
       } else {
         const errorData = await response.json();
-        setError(String(errorData.message || t('cropPlanner.fetchError'))); // Explicit String()
+        setError(String(errorData.message || t('cropPlanner.fetchError'))); 
       }
-    } catch (err: unknown) { // Explicitly type error as unknown
+    } catch (err: unknown) { 
       console.error('Crop recommendation fetch error (catch block):', err);
       setError(String(t('common.networkError'))); // Explicit String()
     } finally {
@@ -246,8 +246,8 @@ const CropPlannerScreen: React.FC = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    resetForm(); // Reset form on refresh
-    setRefreshing(false); // Stop refreshing immediately after resetting form
+    resetForm(); 
+    setRefreshing(false); 
   }, [resetForm]);
 
 
@@ -271,14 +271,14 @@ const CropPlannerScreen: React.FC = () => {
           <PickerContainer>
             <StyledPicker
               selectedValue={selectedDistrict}
-              onValueChange={(itemValue: unknown, itemIndex: number) => setSelectedDistrict(itemValue as string)} // Corrected Picker typing
+              onValueChange={(itemValue: unknown, itemIndex: number) => setSelectedDistrict(itemValue as string)} 
               enabled={!loading && !areReferenceDataLoading}
             >
               {areReferenceDataLoading ? (
                 <Picker.Item key="loading" label={String(t('common.loading'))} value="" />
               ) : districts.length > 0 ? (
                 districts.map((district) => (
-                  <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} /> // Explicit String()
+                  <Picker.Item key={String(district.value)} label={String(district.label)} value={String(district.value)} /> 
                 ))
               ) : (
                 <Picker.Item key="no-districts" label={String(t('cropPlanner.noDistrictsFound') || "No districts available")} value="" />
@@ -312,7 +312,7 @@ const CropPlannerScreen: React.FC = () => {
           <ResultsSection>
             <FormTitle>{String(t('cropPlanner.resultsTitle'))}</FormTitle>
             {recommendations.map((rec, index) => (
-              <View key={String(rec.CropName)}> {/* Explicit String() for key */}
+              <View key={String(rec.CropName)}> 
                 {(index !== 0) && (
                   <View style={{ height: 1, backgroundColor: defaultTheme.colors.border, marginVertical: defaultTheme.spacing.small }} />
                 )}
