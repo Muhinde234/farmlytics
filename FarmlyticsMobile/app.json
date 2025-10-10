@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "FarmlyticsMobile",
+    "slug": "FarmlyticsMobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#00A1DE"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.farmlytics.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#00A1DE"
+      },
+      "package": "com.farmlytics.mobile"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "plugins": [
+        "expo-localization"
+      ]
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f2bf9e6f-da82-4809-9719-bab96df8c830"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/f2bf9e6f-da82-4809-9719-bab96df8c830"
+    }
+  }
+}

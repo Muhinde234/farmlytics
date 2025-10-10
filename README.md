@@ -8,8 +8,8 @@
 
 ## 🚀 **Live Demo & Resources**
 
-* 🌐 **Web App:** [https://farmlytics.vercel.app](#)
-* 📱 **Mobile App (APK):** [Download Farmlytics](#)
+* 🌐 **Web App:** [https://farmlytics-eta.vercel.app/en](#)
+* 📱 **Mobile App (APK):** [https://expo.dev/artifacts/eas/2RyioNgBheDCrKyESZSMGz.apk](#)
 * ⚙️ **Backend API (Swagger):** [https://farmlytics1-1.onrender.com/api-docs/](https://farmlytics1-1.onrender.com/api-docs/)
 
 ---
@@ -32,7 +32,7 @@ These datasets were analyzed, preprocessed, and integrated into the backend to s
 | **farmlytics_eicv_consumption_cleaned_aggregated.csv** | Consumption and demand patterns across provinces and districts used for **Market Insights**.        | NISR Integrated Household Living Conditions Survey (EICV) |
 | **farmlytics_establishment_census_cleaned.csv**        | Business and cooperative data used for **Market Connection** and **Export Insights**.               | NISR Establishment Census                                 |
 
-📂 All datasets are stored in the backend `/data/Aggregated_CSVs` directory and are loaded automatically by the analytics service on startup.
+📂 All  cleaned data from  datasets we got at nisr  are stored in the backend `/data/Aggregated_CSVs` directory and are loaded automatically by the analytics service on startup.
 
 ---
 
@@ -54,7 +54,7 @@ These datasets were analyzed, preprocessed, and integrated into the backend to s
 * **Market Insights** highlighting high-demand crops
 * **Harvest Tracker** with yield and revenue estimation
 * **Crop Disease Awareness** (educational, not detection-based)
-* **Visual Insights** via charts and maps
+* **Visual Insights** via charts 
 * **Multi-language support** (English, Kinyarwanda, French)
 
 ### 📱 **Mobile App**
@@ -117,7 +117,7 @@ These datasets were analyzed, preprocessed, and integrated into the backend to s
 ### 🖥️ **Frontend (Web App)**
 
 ```bash
-git clone https://github.com/your-username/farmlytics-frontend.git
+git clone https://github.com/Muhinde234/farmlytics
 cd farmlytics-frontend
 npm install
 npm run dev
@@ -130,7 +130,7 @@ npm run dev
 ### 📱 **Mobile App**
 
 ```bash
-git clone https://github.com/your-username/farmlytics-mobile.git
+git clone https://github.com/Muhinde234/farmlytics
 cd farmlytics-mobile
 npm install
 npm start
@@ -149,7 +149,7 @@ Run via **Expo Go** (QR code) or Android Emulator.
 ### ⚙️ **Backend API**
 
 ```bash
-git clone https://github.com/your-username/farmlytics-backend.git
+git clone https://github.com/Muhinde234/farmlytics
 cd farmlytics-backend
 npm install
 npm run dev
@@ -165,7 +165,9 @@ BASE_FRONTEND_URL=http://localhost:3000
 ```
 
 Access API Docs at:
-📘 [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
+
+📘 [https://farmlytics1-1.onrender.com/api-docs]
+
 
 ---
 
@@ -204,7 +206,9 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 
 * Lists common diseases per crop (e.g., Cassava Mosaic, Potato Blight, Maize Rust).
 * Explains **symptoms**, **causes**, and **preventive measures**.
-* Focuses on awareness and prevention (not AI detection).
+
+* Focuses on awareness and prevention .
+
 
 ---
 
@@ -234,7 +238,7 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 * 📈 **Encourages open-data innovation** for Rwandan agriculture
 * 🧑‍💻 **Bridges digital and rural communities** through technology
 
----
+
 
 ## 🏆 **Why Farmlytics Stands Out**
 
@@ -244,11 +248,28 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 * Modern stack: **Next.js, React Native, Node.js, MongoDB**
 * Designed for **impact, scalability, and accessibility**
 
----
+
+
+#### **screenshots**
+#### **Screenshots**
+
+### **Web App Landing Page**
+<img width="800" alt="Web App Landing Page" src="https://github.com/user-attachments/assets/da62826f-fb57-4355-8c52-0eca654f954c" />
+
+### **Mobile Landing Pages**
+<p float="left">
+  <img src="https://github.com/user-attachments/assets/6c9f8640-13ca-47a0-80a4-9344bf3e2b78" width="300" />
+  <img src="https://github.com/user-attachments/assets/382f88e1-4d75-4d79-afa9-1917618f5bfe" width="300" />
+</p>
+
+
+
+
+
 
 ## 🤝 **Contributors**
 
 **Team Farmlytics**
-Developed with ❤️ by innovators passionate about **agriculture**, **data**, and **technology for Rwanda’s digital future**.
 
----
+_Developed with ❤️ by BitQueens passionate about **agriculture**, **data**, and **technology for Rwanda’s digital future**._
+

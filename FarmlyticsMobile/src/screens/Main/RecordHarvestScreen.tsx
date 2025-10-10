@@ -1,0 +1,470 @@
+// src/screens/Main/RecordHarvestScreen.tsx
+
+import React, { useState, useCallback, useEffect } from 'react';
+import styled from 'styled-components/native';
+import { Text, View, ScrollView, ActivityIndicator, Alert, Platform, TouchableOpacity } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import DateTimePickerModal from 'react-native-modal-datetime-picker'; // Using react-native-modal-datetime-picker
+import { Picker } from '@react-native-picker/picker'; // Using @react-native-picker/picker
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation, useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
+import { RootStackParamList, MainTabNavigationProp } from '../../navigation/types';
+
+import CustomHeader from '../../components/CustomHeader';
+import { defaultTheme } from '../../config/theme';
+import { useAuth } from '../../context/AuthContext';
+
+// Define the route prop type for this screen
+type RecordHarvestScreenRouteProp = RouteProp<RootStackParamList, 'RecordHarvest'>;
+
+// ---------------------- Styled Components ----------------------
+const Container = styled(View)`
+  flex: 1;
+  background-color: ${props => props.theme.colors.background};
+`;
+
+const ContentArea = styled(ScrollView).attrs({
+  contentContainerStyle: {
+    padding: defaultTheme.spacing.medium,
+    paddingBottom: defaultTheme.spacing.xxl,
+    flexGrow: 1,
+  },
+})`
+  flex: 1;
+`;
+
+const FormSection = styled(View)`
+  background-color: ${props => props.theme.colors.cardBackground};
+  border-radius: ${props => props.theme.borderRadius.large}px;
+  padding: ${props => props.theme.spacing.large}px;
+  margin-bottom: ${props => props.theme.spacing.large}px;
+  elevation: 4;
+  shadow-color: '#000';
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.2;
+  shadow-radius: 4px;
+`;
+
+const FormTitle = styled(Text)`
+  font-size: ${props => props.theme.fontSizes.xl}px;
+  font-weight: bold;
+  color: ${props => props.theme.colors.primary};
+  margin-bottom: ${props => props.theme.spacing.large}px;
+  text-align: center;
+`;
+
+const Label = styled(Text)`
+  font-size: ${props => props.theme.fontSizes.medium}px;
+  color: ${props => props.theme.colors.text};
+  margin-bottom: ${props => props.theme.spacing.small}px;
+  margin-top: ${defaultTheme.spacing.medium}px; /* Add some top margin for spacing */
+  font-weight: 600;
+`;
+
+// Using styled.TextInput directly as per your other screens
+const Input = styled.TextInput`
+  width: 100%;
+  padding: ${props => props.theme.spacing.medium + 2}px;
+  margin-bottom: ${props => props.theme.spacing.large}px;
+  border-width: 1px;
+  border-color: ${props => props.theme.colors.border};
+  border-radius: ${props => props.theme.borderRadius.medium}px;
+  background-color: ${props => props.theme.colors.background};
+  color: ${props => props.theme.colors.text};
+  font-size: ${props => props.theme.fontSizes.medium}px;
+`;
+
+const DatePickerButton = styled(TouchableOpacity)`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: ${props => props.theme.spacing.medium + 2}px;
+  margin-bottom: ${props => props.theme.spacing.large}px;
+  border-width: 1px;
+  border-color: ${props => props.theme.colors.border};
+  border-radius: ${props => props.theme.borderRadius.medium}px;
+  background-color: ${props => props.theme.colors.background};
+`;
+
+const DatePickerButtonText = styled(Text)<{ isPlaceholder?: boolean }>`
+  font-size: ${props => props.theme.fontSizes.medium}px;
+  color: ${props => props.isPlaceholder ? props.theme.colors.placeholder : props.theme.colors.text};
+`;
+
+const SubmitButton = styled(TouchableOpacity)`
+  background-color: ${props => props.theme.colors.tertiary}; /* Green for record harvest */
+  border-radius: ${props => props.theme.borderRadius.pill}px;
+  padding: ${props => props.theme.spacing.medium + 4}px;
+  align-items: center;
+  justify-content: center;
+  elevation: 5;
+  shadow-color: '#000';
+  shadow-offset: 0px 3px;
+  shadow-opacity: 0.25;
+  shadow-radius: 4px;
+  margin-top: ${defaultTheme.spacing.large}px;
+`;
+
+const SubmitButtonText = styled(Text)`
+  font-size: ${props => props.theme.fontSizes.large}px;
+  font-weight: bold;
+  color: ${props => props.theme.colors.lightText};
+`;
+
+const ErrorText = styled(Text)`
+  color: ${props => props.theme.colors.error};
+  font-size: ${props => props.theme.fontSizes.medium}px;
+  text-align: center;
+  margin-top: ${props => props.theme.spacing.medium}px;
+`;
+
+const PickerContainer = styled(View)`
+  width: 100%;
+  border-width: 1px;
+  border-color: ${props => props.theme.colors.border};
+  border-radius: ${props => props.theme.borderRadius.medium}px;
+  background-color: ${props => props.theme.colors.background};
+  margin-bottom: ${props => props.theme.spacing.large}px;
+  overflow: hidden;
+`;
+
+const StyledPicker = styled(Picker)`
+  width: 100%;
+  color: ${props => props.theme.colors.text};
+  height: 50px;
+`;
+
+const InfoText = styled(Text)`
+  font-size: ${props => props.theme.fontSizes.medium}px;
+  color: ${props => props.theme.colors.text};
+  margin-bottom: ${defaultTheme.spacing.small}px;
+`;
+
+const CalculatedValue = styled(Text)`
+  font-size: ${props => props.theme.fontSizes.large}px;
+  font-weight: bold;
+  color: ${props => props.theme.colors.primary};
+  margin-bottom: ${defaultTheme.spacing.medium}px;
+`;
+
+// ---------------------- Component Logic ----------------------
+
+// Interface for a planted crop plan summary
+interface PlantedCropPlan {
+  _id: string;
+  cropName: string;
+  actualAreaPlantedHa: number;
+  plantingDate: string; // ISO string
+  estimatedHarvestDate: string; // ISO string
+  // Add any other fields you need for display in the picker
+}
+
+const RecordHarvestScreen: React.FC = () => {
+  const { t } = useTranslation();
+  const { authenticatedFetch } = useAuth();
+  // Using MainTabNavigationProp for navigation, which correctly includes RootStack screens
+  const navigation = useNavigation<MainTabNavigationProp<'HarvestTrackerTab'>>(); 
+  const route = useRoute<RecordHarvestScreenRouteProp>();
+
+  // Extract initial cropPlanId and cropName from route params, if available
+  const initialCropPlanId = route.params?.cropPlanId;
+  const initialCropName = route.params?.cropName;
+
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [plantedPlans, setPlantedPlans] = useState<PlantedCropPlan[]>([]); // To store all planted plans
+  const [selectedPlanId, setSelectedPlanId] = useState<string | undefined>(initialCropPlanId);
+  const [actualHarvestDate, setActualHarvestDate] = useState<Date>(new Date());
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [actualYieldKgPerHa, setActualYieldKgPerHa] = useState<string>('');
+  const [actualSellingPricePerKgRwf, setActualSellingPricePerKgRwf] = useState<string>('');
+  const [harvestNotes, setHarvestNotes] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
+
+  // Find the currently selected plan object from the fetched list
+  const selectedPlan = plantedPlans.find(p => p._id === selectedPlanId);
+
+  // Derived values for display and API payload (parsed from string inputs)
+  const actualAreaPlantedHa = selectedPlan?.actualAreaPlantedHa || 0;
+  const parsedActualYieldKgPerHa = parseFloat(actualYieldKgPerHa) || 0;
+  const parsedActualSellingPricePerKgRwf = parseFloat(actualSellingPricePerKgRwf) || 0;
+
+  const totalActualProductionKg = parsedActualYieldKgPerHa * actualAreaPlantedHa;
+  const totalActualRevenueRwf = totalActualProductionKg * parsedActualSellingPricePerKgRwf;
+
+  // Function to fetch all "Planted" crop plans for the current user
+  const fetchPlantedPlans = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Fetch only plans with 'Planted' status
+      const response = await authenticatedFetch('/crop-plans?status=Planted');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setPlantedPlans(data.data);
+          // If no plan was pre-selected (e.g., from Home Quick Link) AND there are plans, select the first one
+          if (!initialCropPlanId && !selectedPlanId && data.data.length > 0) {
+            setSelectedPlanId(data.data[0]._id);
+          } else if (initialCropPlanId && !data.data.some((p: PlantedCropPlan) => p._id === initialCropPlanId)) {
+            // If initialPlanId was provided but not found (e.g., already harvested or invalid)
+            setSelectedPlanId(undefined); // Clear selection
+            Alert.alert(t('common.error'), t('recordHarvest.noPlantedPlans')); // Inform user
+          }
+        } else {
+          setError(data.message || t('recordHarvest.errorFetchingPlans'));
+        }
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || t('recordHarvest.errorFetchingPlans'));
+      }
+    } catch (err: unknown) {
+      console.error('Error fetching planted plans:', err);
+      setError(t('common.networkError'));
+    } finally {
+      setLoading(false);
+    }
+  }, [authenticatedFetch, initialCropPlanId, selectedPlanId, t]);
+
+  // useFocusEffect to refetch data and reset form when screen becomes focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchPlantedPlans();
+      // Reset form fields when screen gains focus, unless it's explicitly navigating FROM CropPlanDetail
+      // In that case, the useEffect below will handle initialCropPlanId
+      if (!initialCropPlanId) {
+        setActualYieldKgPerHa('');
+        setActualSellingPricePerKgRwf('');
+        setHarvestNotes('');
+        setActualHarvestDate(new Date()); // Default to current date
+      }
+      // Clear any previous error messages
+      setError(null);
+    }, [fetchPlantedPlans, initialCropPlanId])
+  );
+
+  // useEffect to handle pre-selection of plan if initialCropPlanId is provided via route params
+  // This runs when `initialCropPlanId` or `plantedPlans` change.
+  useEffect(() => {
+    if (initialCropPlanId && plantedPlans.length > 0 && selectedPlanId !== initialCropPlanId) {
+      // Ensure the initialCropPlanId is actually in the list of fetched planted plans
+      if (plantedPlans.some(plan => plan._id === initialCropPlanId)) {
+        setSelectedPlanId(initialCropPlanId);
+      } else {
+        // If the initial plan isn't found (e.g., already harvested or deleted), clear selection
+        setSelectedPlanId(undefined);
+        Alert.alert(t('common.info'), t('recordHarvest.noPlantedPlans'));
+      }
+    }
+  }, [initialCropPlanId, plantedPlans, selectedPlanId, t]);
+
+
+  // Date picker handlers
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    const currentDate = selectedDate || actualHarvestDate;
+    setDatePickerVisible(false); // Hide picker
+    setActualHarvestDate(currentDate);
+  };
+
+  // Handle form submission
+  const handleSubmit = useCallback(async () => {
+    setError(null);
+    // Basic validation
+    if (!selectedPlanId || parsedActualYieldKgPerHa <= 0 || parsedActualSellingPricePerKgRwf <= 0 || !actualHarvestDate) {
+      Alert.alert(String(t('common.error')), String(t('recordHarvest.validationError')));
+      return;
+    }
+
+    setSubmitting(true); // Indicate submission is in progress
+    try {
+      const payload = {
+        actualHarvestDate: actualHarvestDate.toISOString().split('T')[0], // Format to YYYY-MM-DD
+        actualYieldKgPerHa: parsedActualYieldKgPerHa,
+        actualTotalProductionKg: totalActualProductionKg, // Calculated value
+        actualSellingPricePerKgRwf: parsedActualSellingPricePerKgRwf,
+        actualRevenueRwf: totalActualRevenueRwf, // Calculated value
+        harvestNotes: harvestNotes || undefined, // Only send if not empty
+      };
+
+      const response = await authenticatedFetch(`/crop-plans/${selectedPlanId}/record-harvest`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        Alert.alert(String(t('common.success')), String(t('recordHarvest.success')));
+        // After successful recording, navigate back.
+        // If coming from CropPlanDetail, it will go back to that screen.
+        // If from Home, it will go back to the HomeTab.
+        navigation.goBack(); 
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || t('recordHarvest.error'));
+        Alert.alert(String(t('common.error')), errorData.message || t('recordHarvest.error'));
+      }
+    } catch (err: unknown) {
+      console.error('Error recording harvest:', err);
+      setError(t('common.networkError'));
+      Alert.alert(String(t('common.error')), t('common.networkError'));
+    } finally {
+      setSubmitting(false); // End submission
+    }
+  }, [
+    selectedPlanId,
+    actualHarvestDate,
+    parsedActualYieldKgPerHa,
+    parsedActualSellingPricePerKgRwf,
+    totalActualProductionKg,
+    totalActualRevenueRwf,
+    harvestNotes,
+    authenticatedFetch,
+    navigation,
+    t,
+  ]);
+
+  // Render loading state while fetching planted plans
+  if (loading) {
+    return (
+      <Container>
+        <CustomHeader title={String(t('recordHarvest.title'))} showBack={true} showLogo={true} showLanguageSwitcher={true}/>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={defaultTheme.colors.primary} />
+          <Text style={{ color: defaultTheme.colors.text, marginTop: defaultTheme.spacing.medium }}>
+            {String(t('common.loading'))}
+          </Text>
+        </View>
+      </Container>
+    );
+  }
+
+  // Main render function
+  return (
+    <Container>
+      <CustomHeader title={String(t('recordHarvest.title'))} showBack={true} showLogo={true} showLanguageSwitcher={true}/>
+      <ContentArea>
+        <FormSection>
+          <FormTitle>{String(t('recordHarvest.title'))}</FormTitle>
+          
+          <Label>{String(t('recordHarvest.selectPlan'))}</Label>
+          {plantedPlans.length === 0 ? (
+            <Text style={{ color: defaultTheme.colors.placeholder, textAlign: 'center', marginBottom: defaultTheme.spacing.medium }}>
+              {String(t('recordHarvest.noPlantedPlans'))}
+            </Text>
+          ) : (
+            <PickerContainer>
+              <StyledPicker
+                selectedValue={selectedPlanId}
+                onValueChange={(itemValue: unknown) => setSelectedPlanId(String(itemValue))}
+                enabled={!submitting}
+              >
+                {/* Ensure that the selectedPlanId is available in the plantedPlans before rendering */}
+                {plantedPlans.map(plan => (
+                  <Picker.Item
+                    key={plan._id}
+                    label={`${plan.cropName} - ${plan.actualAreaPlantedHa}ha (Planted: ${new Date(plan.plantingDate).toLocaleDateString()})`}
+                    value={plan._id}
+                  />
+                ))}
+              </StyledPicker>
+            </PickerContainer>
+          )}
+
+          {/* Only show input fields if a plan is selected */}
+          {selectedPlan && (
+            <>
+              <InfoText style={{marginBottom: defaultTheme.spacing.medium, color: defaultTheme.colors.primary, fontWeight: 'bold'}}>
+                {String(t('recordHarvest.recordingFor'))} {selectedPlan.cropName} ({selectedPlan.actualAreaPlantedHa}ha)
+              </InfoText>
+
+              <Label>{String(t('recordHarvest.actualHarvestDate'))}</Label>
+              <DatePickerButton onPress={() => setDatePickerVisible(true)} disabled={submitting}>
+                <DatePickerButtonText isPlaceholder={!actualHarvestDate}>
+                  {actualHarvestDate ? actualHarvestDate.toLocaleDateString() : (String(t('cropPlan.selectDatePlaceholder')))}
+                </DatePickerButtonText>
+                <Ionicons name="calendar-outline" size={defaultTheme.fontSizes.large} color={defaultTheme.colors.text} />
+              </DatePickerButton>
+
+              {/* DateTimePickerModal for selecting harvest date */}
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={onDateChange}
+                onCancel={() => setDatePickerVisible(false)} // Hide picker on cancel
+                date={actualHarvestDate || new Date()} // Default to current date if none selected
+                locale={String(t('common.locale'))}
+                maximumDate={new Date()} // Cannot pick a future date for harvest
+              />
+
+              <Label>{String(t('recordHarvest.actualYieldKgPerHa'))}</Label>
+              <Input
+                placeholder="e.g., 750"
+                keyboardType="numeric"
+                value={actualYieldKgPerHa}
+                onChangeText={setActualYieldKgPerHa}
+                placeholderTextColor={defaultTheme.colors.placeholder}
+                editable={!submitting}
+                style={{marginBottom: defaultTheme.spacing.small}}
+              />
+              <InfoText style={{marginBottom: defaultTheme.spacing.large, textAlign: 'right', color: defaultTheme.colors.placeholder}}>
+                {String(t('market.kgPerHaUnit'))}
+              </InfoText>
+
+              <Label>{String(t('recordHarvest.totalProduction'))}</Label>
+              <CalculatedValue>
+                {/* Display calculated total production, formatted to 2 decimal places */}
+                {totalActualProductionKg.toFixed(2)} {String(t('market.kgUnit'))}
+              </CalculatedValue>
+
+              <Label>{String(t('recordHarvest.actualSellingPricePerKgRwf'))}</Label>
+              <Input
+                placeholder="e.g., 400"
+                keyboardType="numeric"
+                value={actualSellingPricePerKgRwf}
+                onChangeText={setActualSellingPricePerKgRwf}
+                placeholderTextColor={defaultTheme.colors.placeholder}
+                editable={!submitting}
+                style={{marginBottom: defaultTheme.spacing.small}}
+              />
+               <InfoText style={{marginBottom: defaultTheme.spacing.large, textAlign: 'right', color: defaultTheme.colors.placeholder}}>
+                RWF/{String(t('market.kgUnit'))}
+              </InfoText>
+
+
+              <Label>{String(t('recordHarvest.totalRevenue'))}</Label>
+              <CalculatedValue>
+                {/* Display calculated total revenue, formatted as currency */}
+                {totalActualRevenueRwf.toLocaleString('en-RW', { style: 'currency', currency: 'RWF' })}
+              </CalculatedValue>
+
+              <Label>{String(t('recordHarvest.notes'))}</Label>
+              <Input
+                placeholder={String(t('recordHarvest.notesPlaceholder')) || "Any specific observations?"}
+                value={harvestNotes}
+                onChangeText={setHarvestNotes}
+                placeholderTextColor={defaultTheme.colors.placeholder}
+                multiline
+                numberOfLines={3}
+                editable={!submitting}
+              />
+
+              <SubmitButton onPress={handleSubmit} disabled={submitting || plantedPlans.length === 0}>
+                {submitting ? (
+                  <ActivityIndicator color={defaultTheme.colors.lightText} />
+                ) : (
+                  <SubmitButtonText>{String(t('recordHarvest.recordButton'))}</SubmitButtonText>
+                )}
+              </SubmitButton>
+            </>
+          )}
+          {error && <ErrorText>{error}</ErrorText>}
+        </FormSection>
+      </ContentArea>
+    </Container>
+  );
+};
+
+export default RecordHarvestScreen;

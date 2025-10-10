@@ -1,0 +1,30 @@
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 04:24:56"}
+{"level":"info","message":"Admin user seeded successfully.","timestamp":"2025-10-07 04:24:59"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 09:49:37"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 09:49:37"}
+{"level":"info","message":"::1 - - [07/Oct/2025:16:55:05 +0000] \"POST /api/v1/auth/register HTTP/1.1\" 201 219 \"http://localhost:5000/api-docs/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0\"","timestamp":"2025-10-07 09:55:05"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:01:01"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:01:01"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:03:24"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:03:25"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:03:42"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:03:42"}
+{"level":"info","message":"::1 - - [07/Oct/2025:17:04:32 +0000] \"POST /api/v1/auth/register HTTP/1.1\" 201 219 \"http://localhost:5000/api-docs/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0\"","timestamp":"2025-10-07 10:04:32"}
+{"level":"info","message":"User niyocroirealine@gmail.com successfully verified their email.","timestamp":"2025-10-07 10:04:44"}
+{"level":"info","message":"::1 - - [07/Oct/2025:17:04:44 +0000] \"GET /api/v1/auth/verifyemail/f74726fcf7ee5726788100cea84192fba9449134 HTTP/1.1\" 200 2452 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0\"","timestamp":"2025-10-07 10:04:44"}
+{"level":"info","message":"::1 - - [07/Oct/2025:17:04:44 +0000] \"GET /favicon.ico HTTP/1.1\" 404 150 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0\"","timestamp":"2025-10-07 10:04:44"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:05:17"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:05:18"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:05:22"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:05:22"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:05:51"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:05:51"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:06:07"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:06:07"}
+{"level":"info","message":"::1 - - [07/Oct/2025:17:06:25 +0000] \"POST /api/v1/auth/register HTTP/1.1\" 201 219 \"http://localhost:5000/api-docs/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0\"","timestamp":"2025-10-07 10:06:25"}
+{"level":"info","message":"User niyocroirealine@gmail.com successfully verified their email.","timestamp":"2025-10-07 10:06:33"}
+{"level":"info","message":"::1 - - [07/Oct/2025:17:06:33 +0000] \"GET /api/v1/auth/verifyemail/4129d5b5f216dd6b1a8fff8f93d32c03247a5f38 HTTP/1.1\" 200 2177 \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0\"","timestamp":"2025-10-07 10:06:33"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:06:55"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:06:55"}
+{"level":"info","message":"Server running in development mode on port 5000","timestamp":"2025-10-07 10:16:22"}
+{"level":"info","message":"Admin user already exists.","timestamp":"2025-10-07 10:16:23"}
