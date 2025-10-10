@@ -1,4 +1,4 @@
-// src/screens/Admin/AdminHomeScreen.tsx
+
 
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
@@ -11,7 +11,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { AdminTabNavigationProp } from '../../navigation/types';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
-// ---------------------- Styled Components ----------------------
+
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -21,7 +21,7 @@ const ContentArea = styled(ScrollView).attrs({
   contentContainerStyle: {
     padding: defaultTheme.spacing.medium,
     paddingBottom: defaultTheme.spacing.xxl,
-    flexGrow: 1, // Ensures scroll view can grow to fill space, useful for RefreshControl
+    flexGrow: 1, 
     justifyContent: 'flex-start',
   },
 })`
@@ -145,10 +145,10 @@ const ErrorText = styled(Text)`
   font-size: ${props => props.theme.fontSizes.medium}px;
 `;
 
-// ---------------------- Component Logic ----------------------
+
 const AdminHomeScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { user, isLoading, authenticatedFetch } = useAuth(); // `user` object from AuthContext
+  const { user, isLoading, authenticatedFetch } = useAuth();
   const navigation = useNavigation<AdminTabNavigationProp<'AdminHomeTab'>>();
 
   const [stats, setStats] = useState({ totalUsers: 0, totalCropPlans: 0 });
@@ -161,9 +161,7 @@ const AdminHomeScreen: React.FC = () => {
     setLoadingStats(true);
     setErrorStats(null);
     try {
-      // --- Fetch Total Users ---
-      // ASSUMPTION: Backend has an /api/v1/admin/users endpoint accessible by admin roles
-      // that returns a list of all users, e.g., { success: true, data: [{_id: '...', name: '...'}, ...] }
+    
       const usersResponse = await authenticatedFetch('/admin/users');
       if (!usersResponse.ok) {
         const errorData = await usersResponse.json();
@@ -173,9 +171,7 @@ const AdminHomeScreen: React.FC = () => {
       const totalUsers = usersData.success ? usersData.data.length : 0;
       console.log('Fetched total users:', totalUsers);
 
-      // --- Fetch Total Crop Plans ---
-      // ASSUMPTION: Backend's /api/v1/crop-plans endpoint (specifically getCropPlans controller)
-      // is modified to allow admin users to fetch ALL crop plans when `?all=true` is provided.
+  
       const cropPlansResponse = await authenticatedFetch('/crop-plans?all=true');
       if (!cropPlansResponse.ok) {
         const errorData = await cropPlansResponse.json();
@@ -189,7 +185,7 @@ const AdminHomeScreen: React.FC = () => {
 
     } catch (err: unknown) {
       console.error('Error fetching admin stats (catch block):', err);
-      // Ensure error is a string for display
+  
       setErrorStats(String(t('admin.loadStatsError') || 'Failed to load admin statistics.') + (err instanceof Error ? ` ${err.message}` : ''));
     } finally {
       setLoadingStats(false);
@@ -197,20 +193,20 @@ const AdminHomeScreen: React.FC = () => {
     }
   }, [authenticatedFetch, t]);
 
-  // Fetches stats when the screen comes into focus
+
   useFocusEffect(
     useCallback(() => {
       fetchAdminStats();
     }, [fetchAdminStats])
   );
 
-  // Handles manual pull-to-refresh
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchAdminStats();
   }, [fetchAdminStats]);
 
-  // Initial loading state for the *entire app* (from AuthContext)
+  
   if (isLoading) {
     return (
       <Container>
@@ -225,7 +221,7 @@ const AdminHomeScreen: React.FC = () => {
     );
   }
 
-  // Ensure user is an admin; though the navigation itself should prevent non-admins
+
   if (user?.role !== 'admin') {
     return (
       <Container>
