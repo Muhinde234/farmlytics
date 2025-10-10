@@ -1,11 +1,11 @@
-// src/components/LanguageSelector.tsx
+
 
 import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import { Platform, Text, View, Modal, TouchableWithoutFeedback } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next'; // Ensure useTranslation is imported
-import { defaultTheme } from '../config/theme'; // Import defaultTheme for consistent colors
+import { useTranslation } from 'react-i18next'; 
+import { defaultTheme } from '../config/theme'; 
 
 const StandardLanguageContainer = styled(View)`
   flex-direction: row;
@@ -112,13 +112,13 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'standard
             <TouchableWithoutFeedback>
               <ModalContent>
                 {languages.map((lang, index) => (
-                  <View key={String(lang.code)}> {/* Explicit String() */}
+                  <View key={String(lang.code)}>
                     {index !== 0 && <View style={{ height: 1, backgroundColor: defaultTheme.colors.border }} />}
                     <ModalItem
                       onPress={() => changeLanguage(lang.code)}
                       style={index === languages.length - 1 ? { borderBottomWidth: 0 } : {}}
                     >
-                      <ModalItemText selected={i18n.language === lang.code}>{String(lang.label)}</ModalItemText> {/* Explicit String() */}
+                      <ModalItemText selected={i18n.language === lang.code}>{String(lang.label)}</ModalItemText>
                       {i18n.language === lang.code && <Ionicons name="checkmark" size={defaultTheme.fontSizes.medium} color={defaultTheme.colors.primary} />}
                     </ModalItem>
                   </View>
@@ -135,7 +135,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'standard
     <StandardLanguageContainer>
       {languages.map((lang) => (
         <StandardLanguageButton key={String(lang.code)} selected={i18n.language === lang.code} onPress={() => changeLanguage(lang.code)}>
-          <StandardLanguageText selected={i18n.language === lang.code}>{String(lang.code.toUpperCase())}</StandardLanguageText> {/* Explicit String() */}
+          <StandardLanguageText selected={i18n.language === lang.code}>{String(lang.code.toUpperCase())}</StandardLanguageText> 
         </StandardLanguageButton>
       ))}
     </StandardLanguageContainer>
