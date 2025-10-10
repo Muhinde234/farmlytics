@@ -76,32 +76,7 @@ npm run dev
 ---
 
 ## 🧩 **Project Structure**
-farmlytics-frontend/
-├── .next/                    # Next.js build output
-├── node_modules/             # Installed dependencies
-├── public/                   # Static assets (images, icons, translations)
-├── src/                      # Main source folder
-│   ├── api/                  # API routes and data fetching logic
-│   ├── app/                  # App Router pages, layouts, and routes
-│   ├── components/           # Reusable UI and functional components
-│   ├── context/              # Global state management using React Context
-│   ├── helpers/              # Utility and helper functions
-│   ├── hooks/                # Custom React hooks (TanStack Query, state logic)
-│   ├── i18n/                 # Internationalization configuration (Next-Intl)
-│   ├── lib/                  # Shared utilities, constants, or data logic
-│   ├── messages/             # Translation message files for supported languages
-│   └── middleware.ts         # Middleware for locale redirection and routing
-│
-├── .env                      # Environment variables
-├── .gitignore                # Git ignore rules
-├── eslint.config.mjs         # ESLint configuration
-├── next-env.d.ts             # Next.js TypeScript definitions
-├── next.config.ts            # Next.js configuration (i18n, SSR, etc.)
-├── package.json              # Dependencies and scripts
-├── package-lock.json         # Locked dependency versions
-├── postcss.config.mjs        # PostCSS configuration for Tailwind
-├── tsconfig.json             # TypeScript compiler configuration
-└── README.md                 # Project documentation
+<pre> ```plaintext farmlytics-frontend/ ├── .next/ # Next.js build output ├── node_modules/ # Installed dependencies ├── public/ # Static assets (images, icons, translations) ├── src/ # Main source folder │ ├── api/ # API routes and data fetching logic │ ├── app/ # App Router pages, layouts, and routes │ ├── components/ # Reusable UI and functional components │ ├── context/ # Global state management using React Context │ ├── helpers/ # Utility and helper functions │ ├── hooks/ # Custom React hooks (TanStack Query, state logic) │ ├── i18n/ # Internationalization configuration (Next-Intl) │ ├── lib/ # Shared utilities, constants, or data logic │ ├── messages/ # Translation message files for supported languages │ └── middleware.ts # Middleware for locale redirection and routing │ ├── .env # Environment variables ├── .gitignore # Git ignore rules ├── eslint.config.mjs # ESLint configuration ├── next-env.d.ts # Next.js TypeScript definitions ├── next.config.ts # Next.js configuration (i18n, SSR, etc.) ├── package.json # Dependencies and scripts ├── package-lock.json # Locked dependency versions ├── postcss.config.mjs # PostCSS configuration for Tailwind ├── tsconfig.json # TypeScript compiler configuration └── README.md # Project documentation ``` </pre>
 
 
 ## 🌍 **Key Design Principles**
