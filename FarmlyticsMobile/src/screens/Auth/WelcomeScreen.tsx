@@ -1,18 +1,18 @@
-// src/screens/Auth/WelcomeScreen.tsx
+
 
 import React from 'react';
-import styled, { DefaultTheme } from 'styled-components/native'; // Import DefaultTheme
+import styled, { DefaultTheme } from 'styled-components/native'; 
 import { Image, Platform, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { LinearGradient } from 'expo-linear-gradient'; // Directly import LinearGradient
+import { LinearGradient } from 'expo-linear-gradient'; 
 
-// import LanguageSelector from '../../components/LanguageSelector'; // REMOVED - now in CustomHeader
-import CustomHeader from '../../components/CustomHeader'; // Ensure CustomHeader is imported
+
+import CustomHeader from '../../components/CustomHeader'; 
 import { defaultTheme } from '../../config/theme';
 import { RootStackNavigationProp } from '../../navigation/types';
 
-// FINAL FIX: No styled(LinearGradient). Use a styled View to contain the LinearGradient
+
 const WelcomeScreenContainer = styled(View)`
   flex: 1;
   /* No background-color, LinearGradient will cover */
@@ -99,7 +99,7 @@ const WelcomeScreen: React.FC = () => {
         showLogo={true}
         showLanguageSwitcher={true}
       />
-      {/* FINAL FIX: Use LinearGradient directly in JSX */}
+    
       <LinearGradient
         colors={[defaultTheme.colors.gradientStart, defaultTheme.colors.darkGradientEnd]}
         start={{ x: 0, y: 0 }}
