@@ -119,14 +119,14 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 antialiased overflow-x-hidden">
-      {/* Header */}
+    
       <header
         className={`w-full fixed top-0 z-50 transition-all duration-300 ${
           isScrolled ? "bg-white/90 backdrop-blur-lg shadow-md" : "bg-transparent"
         }`}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-          {/* Logo */}
+    
           <Link href="/" className="flex items-center space-x-2">
             <Logo />
             <span className="text-2xl font-bold bg-gradient-to-r from-emerald-700 to-green-600 bg-clip-text text-transparent">
@@ -134,9 +134,9 @@ export default function HomePage() {
             </span>
           </Link>
 
-          {/* Desktop Menu */}
+        
           <nav className="hidden md:flex items-center gap-6">
-            {/* Language Switcher */}
+         
             <div className="relative">
               <Button
                 onClick={() => setIsLanguageOpen(!isLanguageOpen)}
@@ -179,7 +179,7 @@ export default function HomePage() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  {/* Changed: "Go to Dashboard" is now always visible when logged in */}
+           
                   <DropdownMenuItem onClick={() => router.push("/admin")}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                    {tCommon("goto")}
@@ -202,7 +202,7 @@ export default function HomePage() {
             )}
           </nav>
 
-          {/* Mobile Toggle */}
+      
           <div className="md:hidden flex items-center gap-2">
             <Button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -213,7 +213,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+      
         {isMenuOpen && (
           <div className="md:hidden bg-white/95 backdrop-blur-lg border-t border-emerald-100 shadow-xl pb-4">
             <nav className="flex flex-col p-4 space-y-3">
@@ -231,7 +231,7 @@ export default function HomePage() {
                 </div>
               )}
 
-              {/* Language Switcher */}
+          
               <div>
                 <Button
                   onClick={() => setIsLanguageOpen(!isLanguageOpen)}
@@ -256,12 +256,12 @@ export default function HomePage() {
                 )}
               </div>
 
-              {/* User / Auth Buttons */}
+            
               {user ? (
                 <>
-                  {/* Changed: "Go to Dashboard" is now always visible when logged in */}
+                
                   <Button
-                    onClick={() => router.push("/admin")} // Changed link to /admin as in desktop
+                    onClick={() => router.push("/admin")} 
                     className="bg-emerald-600 text-white rounded-full py-2 px-4 w-full"
                   >
                     {tCommon("goto")}
@@ -389,7 +389,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* Footer */}
+    
       <footer className="bg-emerald-800 text-emerald-100 py-12 md:py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex flex-col items-center justify-center space-y-4">

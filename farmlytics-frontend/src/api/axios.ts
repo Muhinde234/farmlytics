@@ -7,7 +7,7 @@ const API = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
 });
 
-// Authentication interceptor
+
 API.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -19,7 +19,6 @@ API.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// API Error handling interceptor
 API.interceptors.response.use(
     response => response,
     (error: AxiosError<ApiError>) => {

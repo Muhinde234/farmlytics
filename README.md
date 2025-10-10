@@ -54,7 +54,7 @@ These datasets were analyzed, preprocessed, and integrated into the backend to s
 * **Market Insights** highlighting high-demand crops
 * **Harvest Tracker** with yield and revenue estimation
 * **Crop Disease Awareness** (educational, not detection-based)
-* **Visual Insights** via charts and maps
+* **Visual Insights** via charts 
 * **Multi-language support** (English, Kinyarwanda, French)
 
 ### 📱 **Mobile App**
@@ -165,7 +165,9 @@ BASE_FRONTEND_URL=http://localhost:3000
 ```
 
 Access API Docs at:
+
 📘 [https://farmlytics1-1.onrender.com/api-docs]
+
 
 ---
 
@@ -204,7 +206,9 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 
 * Lists common diseases per crop (e.g., Cassava Mosaic, Potato Blight, Maize Rust).
 * Explains **symptoms**, **causes**, and **preventive measures**.
+
 * Focuses on awareness and prevention .
+
 
 ---
 
@@ -234,7 +238,7 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 * 📈 **Encourages open-data innovation** for Rwandan agriculture
 * 🧑‍💻 **Bridges digital and rural communities** through technology
 
----
+
 
 ## 🏆 **Why Farmlytics Stands Out**
 
@@ -244,7 +248,8 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 * Modern stack: **Next.js, React Native, Node.js, MongoDB**
 * Designed for **impact, scalability, and accessibility**
 
----
+
+
 #### **screenshots**
 #### **Screenshots**
 
@@ -261,9 +266,10 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 
 
 
+
 ## 🤝 **Contributors**
 
 **Team Farmlytics**
+
 _Developed with ❤️ by BitQueens passionate about **agriculture**, **data**, and **technology for Rwanda’s digital future**._
 
----

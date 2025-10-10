@@ -28,8 +28,8 @@ type LoginFormData = z.infer<typeof loginSchema>
 export default function LoginPage() {
   const t = useTranslations("login")
   const router = useRouter();
-  // const [isLoading] = useState(false) // You can remove this if isPending from useLogin is sufficient
-  const { mutate, isPending } = useLogin() // Use isPending from useLogin
+  
+  const { mutate, isPending } = useLogin() 
 
   const {
     register,
@@ -45,9 +45,7 @@ export default function LoginPage() {
   const onSubmit = (data:LoginFormData ) => {
     mutate(data, {
       onSuccess: (response) => {
-        // user is already set in context by useLogin's onSuccess
-        // For Pages Router, you might want to reload pageProps if navigating directly or using router.replace
-        // For App Router, `router.push` is generally sufficient
+      
         router.push("/admin");
         toast.success("Login successful");
       },

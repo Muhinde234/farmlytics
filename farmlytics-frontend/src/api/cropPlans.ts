@@ -38,10 +38,10 @@ export async function createCropPlan(plan: CreateCropPlanDTO): Promise<CropPlan>
 }
 
 export async function recordHarvest(id: string, harvestData: RecordHarvestDTO): Promise<CropPlan> {
-  console.log("[v0] Recording harvest for crop plan:", id, harvestData)
+  console.log(" Recording harvest for crop plan:", id, harvestData)
   try {
     const response = await api.post(`/crop-plans/${id}/record-harvest`, harvestData)
-    console.log("[v0] Record harvest response:", response.data)
+    console.log("Record harvest response:", response.data)
     return response.data.data
   } catch (error) {
     console.error("[v0] Error recording harvest:", error)
@@ -50,12 +50,12 @@ export async function recordHarvest(id: string, harvestData: RecordHarvestDTO): 
 }
 
 export async function deleteCropPlan(id: string): Promise<void> {
-  console.log("[v0] Deleting crop plan:", id)
+  console.log(" Deleting crop plan:", id)
   try {
     await api.delete(`/crop-plans/${id}`)
-    console.log("[v0] Crop plan deleted successfully")
+    console.log("Crop plan deleted successfully")
   } catch (error) {
-    console.error("[v0] Error deleting crop plan:", error)
+    console.error(" Error deleting crop plan:", error)
     throw error
   }
 }

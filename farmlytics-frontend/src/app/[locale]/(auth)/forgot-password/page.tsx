@@ -9,7 +9,7 @@ import { ArrowLeft, Loader2, Mail, CheckCircle2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import Logo from "@/components/common/logo" // Assuming Logo component is available
+import Logo from "@/components/common/logo" 
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address").min(1, "Email is required"),
@@ -30,7 +30,7 @@ export default function ForgotPasswordPage() {
   })
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
-    // Simulate API call
+  
     await new Promise((resolve) => setTimeout(resolve, 2000))
     setEmailSent(true)
   }
