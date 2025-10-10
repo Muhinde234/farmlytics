@@ -245,6 +245,14 @@ This feature complements the **Crop Planner** and **Harvest Tracker** modules.
 * Designed for **impact, scalability, and accessibility**
 
 ---
+#### screenshots
+###this is the web app landing page
+<img width="1847" height="964" alt="image" src="https://github.com/user-attachments/assets/da62826f-fb57-4355-8c52-0eca654f954c" />
+
+###the mobile landing page
+![WhatsApp Image 2025-10-10 at 11 13 28_3030a3a8](https://github.com/user-attachments/assets/ce6337ab-a46f-4949-9506-c64b7e28c929)
+
+
 
 ## 🤝 **Contributors**
 
