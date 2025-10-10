@@ -8,6 +8,7 @@
 
 ## **farmlytics logo**
 ![Uploading logo.png…]()
+![Description](https://drive.google.com/uc?export=view&id=12FEFOGPIa5bvgjoFncOypS0fJJSk-xhY)
 
 
 
