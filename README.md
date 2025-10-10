@@ -32,7 +32,7 @@ These datasets were analyzed, preprocessed, and integrated into the backend to s
 | **farmlytics_eicv_consumption_cleaned_aggregated.csv** | Consumption and demand patterns across provinces and districts used for **Market Insights**.        | NISR Integrated Household Living Conditions Survey (EICV) |
 | **farmlytics_establishment_census_cleaned.csv**        | Business and cooperative data used for **Market Connection** and **Export Insights**.               | NISR Establishment Census                                 |
 
-📂 All datasets are stored in the backend `/data/Aggregated_CSVs` directory and are loaded automatically by the analytics service on startup.
+📂 All  cleaned data from  datasets we got at nisr  are stored in the backend `/data/Aggregated_CSVs` directory and are loaded automatically by the analytics service on startup.
 
 ---
 
