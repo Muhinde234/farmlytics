@@ -1,8 +1,8 @@
-// src/screens/Auth/ForgotPasswordScreen.tsx
+
 
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components/native';
-// CORRECTED: Added TextInput, TouchableOpacity to react-native import
+
 import { Image, ActivityIndicator, Alert, Platform, ScrollView, Text, View, KeyboardAvoidingView, TouchableOpacity, TextInput } from 'react-native'; 
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,7 @@ import { defaultTheme } from '../../config/theme';
 import { RootStackNavigationProp } from '../../navigation/types';
 import CustomHeader from '../../components/CustomHeader';
 
-// ---------------------- Styled Components ----------------------
+
 const Container = styled(KeyboardAvoidingView).attrs({
   behavior: Platform.OS === 'ios' ? 'padding' : 'height',
 })`
@@ -106,7 +106,7 @@ const ForgotPasswordScreen: React.FC = () => {
     setMessage(null);
     setLoading(true);
     try {
-      const response = await fetch('https://farmlytics1-1.onrender.com/api/v1/auth/forgotpassword', { // CORRECTED API_BASE_URL
+      const response = await fetch('https://farmlytics1-1.onrender.com/api/v1/auth/forgotpassword', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
