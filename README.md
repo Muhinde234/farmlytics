@@ -9,7 +9,7 @@
 ## 🚀 **Live Demo & Resources**
 
 * 🌐 **Web App:** [https://farmlytics-eta.vercel.app/en](#)
-* 📱 **Mobile App (APK):** [https://expo.dev/artifacts/eas/2RyioNgBheDCrKyESZSMGz.apk](#)
+* 📱 **Mobile App (APK):** [https://expo.dev/artifacts/eas/sTY7wPtgNJtZMQqcwBDgfb.apk](#)
 * ⚙️ **Backend API (Swagger):** [https://farmlytics1-1.onrender.com/api-docs/](https://farmlytics1-1.onrender.com/api-docs/)
 
 ---
