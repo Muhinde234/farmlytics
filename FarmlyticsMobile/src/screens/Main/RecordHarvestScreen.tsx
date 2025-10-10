@@ -4,8 +4,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { Text, View, ScrollView, ActivityIndicator, Alert, Platform, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import DateTimePickerModal from 'react-native-modal-datetime-picker'; // Using react-native-modal-datetime-picker
-import { Picker } from '@react-native-picker/picker'; // Using @react-native-picker/picker
+import DateTimePickerModal from 'react-native-modal-datetime-picker'; 
+import { Picker } from '@react-native-picker/picker'; 
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList, MainTabNavigationProp } from '../../navigation/types';
@@ -14,10 +14,9 @@ import CustomHeader from '../../components/CustomHeader';
 import { defaultTheme } from '../../config/theme';
 import { useAuth } from '../../context/AuthContext';
 
-// Define the route prop type for this screen
+
 type RecordHarvestScreenRouteProp = RouteProp<RootStackParamList, 'RecordHarvest'>;
 
-// ---------------------- Styled Components ----------------------
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -61,7 +60,7 @@ const Label = styled(Text)`
   font-weight: 600;
 `;
 
-// Using styled.TextInput directly as per your other screens
+
 const Input = styled.TextInput`
   width: 100%;
   padding: ${props => props.theme.spacing.medium + 2}px;
@@ -148,32 +147,29 @@ const CalculatedValue = styled(Text)`
   margin-bottom: ${defaultTheme.spacing.medium}px;
 `;
 
-// ---------------------- Component Logic ----------------------
-
-// Interface for a planted crop plan summary
 interface PlantedCropPlan {
   _id: string;
   cropName: string;
   actualAreaPlantedHa: number;
-  plantingDate: string; // ISO string
-  estimatedHarvestDate: string; // ISO string
-  // Add any other fields you need for display in the picker
+  plantingDate: string; 
+  estimatedHarvestDate: string; 
+ 
 }
 
 const RecordHarvestScreen: React.FC = () => {
   const { t } = useTranslation();
   const { authenticatedFetch } = useAuth();
-  // Using MainTabNavigationProp for navigation, which correctly includes RootStack screens
+ 
   const navigation = useNavigation<MainTabNavigationProp<'HarvestTrackerTab'>>(); 
   const route = useRoute<RecordHarvestScreenRouteProp>();
 
-  // Extract initial cropPlanId and cropName from route params, if available
+  
   const initialCropPlanId = route.params?.cropPlanId;
   const initialCropName = route.params?.cropName;
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [plantedPlans, setPlantedPlans] = useState<PlantedCropPlan[]>([]); // To store all planted plans
+  const [plantedPlans, setPlantedPlans] = useState<PlantedCropPlan[]>([]); 
   const [selectedPlanId, setSelectedPlanId] = useState<string | undefined>(initialCropPlanId);
   const [actualHarvestDate, setActualHarvestDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
@@ -182,10 +178,10 @@ const RecordHarvestScreen: React.FC = () => {
   const [harvestNotes, setHarvestNotes] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
-  // Find the currently selected plan object from the fetched list
+ 
   const selectedPlan = plantedPlans.find(p => p._id === selectedPlanId);
 
-  // Derived values for display and API payload (parsed from string inputs)
+  
   const actualAreaPlantedHa = selectedPlan?.actualAreaPlantedHa || 0;
   const parsedActualYieldKgPerHa = parseFloat(actualYieldKgPerHa) || 0;
   const parsedActualSellingPricePerKgRwf = parseFloat(actualSellingPricePerKgRwf) || 0;
@@ -193,24 +189,24 @@ const RecordHarvestScreen: React.FC = () => {
   const totalActualProductionKg = parsedActualYieldKgPerHa * actualAreaPlantedHa;
   const totalActualRevenueRwf = totalActualProductionKg * parsedActualSellingPricePerKgRwf;
 
-  // Function to fetch all "Planted" crop plans for the current user
+ 
   const fetchPlantedPlans = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      // Fetch only plans with 'Planted' status
+
       const response = await authenticatedFetch('/crop-plans?status=Planted');
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
           setPlantedPlans(data.data);
-          // If no plan was pre-selected (e.g., from Home Quick Link) AND there are plans, select the first one
+       
           if (!initialCropPlanId && !selectedPlanId && data.data.length > 0) {
             setSelectedPlanId(data.data[0]._id);
           } else if (initialCropPlanId && !data.data.some((p: PlantedCropPlan) => p._id === initialCropPlanId)) {
-            // If initialPlanId was provided but not found (e.g., already harvested or invalid)
-            setSelectedPlanId(undefined); // Clear selection
-            // Use common.error as t('common.info') might not exist, but common.error should
+            
+            setSelectedPlanId(undefined);
+            
             Alert.alert(String(t('common.error')), String(t('recordHarvest.noPlantedPlans'))); 
           }
         } else {
@@ -228,34 +224,31 @@ const RecordHarvestScreen: React.FC = () => {
     }
   }, [authenticatedFetch, initialCropPlanId, selectedPlanId, t]);
 
-  // useFocusEffect to refetch data and reset form when screen becomes focused
   useFocusEffect(
     useCallback(() => {
       fetchPlantedPlans();
-      // Reset form fields when screen gains focus, unless it's explicitly navigating FROM CropPlanDetail
-      // In that case, the useEffect below will handle initialCropPlanId
+      
       if (!initialCropPlanId) {
         setActualYieldKgPerHa('');
         setActualSellingPricePerKgRwf('');
         setHarvestNotes('');
-        setActualHarvestDate(new Date()); // Default to current date
+        setActualHarvestDate(new Date()); 
       }
-      // Clear any previous error messages
+      
       setError(null);
     }, [fetchPlantedPlans, initialCropPlanId])
   );
 
-  // useEffect to handle pre-selection of plan if initialCropPlanId is provided via route params
-  // This runs when `initialCropPlanId` or `plantedPlans` change.
+
   useEffect(() => {
     if (initialCropPlanId && plantedPlans.length > 0 && selectedPlanId !== initialCropPlanId) {
-      // Ensure the initialCropPlanId is actually in the list of fetched planted plans
+      
       if (plantedPlans.some(plan => plan._id === initialCropPlanId)) {
         setSelectedPlanId(initialCropPlanId);
       } else {
-        // If the initial plan isn't found (e.g., already harvested or deleted), clear selection
+        
         setSelectedPlanId(undefined);
-        // Using common.error as t('common.info') might not exist
+        
         Alert.alert(String(t('common.error')), String(t('recordHarvest.noPlantedPlans'))); 
       }
     }
@@ -265,28 +258,28 @@ const RecordHarvestScreen: React.FC = () => {
   // Date picker handlers
   const onDateChange = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || actualHarvestDate;
-    setDatePickerVisible(false); // Hide picker
+    setDatePickerVisible(false); 
     setActualHarvestDate(currentDate);
   };
 
-  // Handle form submission
+  
   const handleSubmit = useCallback(async () => {
     setError(null);
-    // Basic validation
+    
     if (!selectedPlanId || parsedActualYieldKgPerHa <= 0 || parsedActualSellingPricePerKgRwf <= 0 || !actualHarvestDate) {
       Alert.alert(String(t('common.error')), String(t('recordHarvest.validationError')));
       return;
     }
 
-    setSubmitting(true); // Indicate submission is in progress
+    setSubmitting(true); 
     try {
       const payload = {
-        actualHarvestDate: actualHarvestDate.toISOString().split('T')[0], // Format to YYYY-MM-DD
+        actualHarvestDate: actualHarvestDate.toISOString().split('T')[0], 
         actualYieldKgPerHa: parsedActualYieldKgPerHa,
-        actualTotalProductionKg: totalActualProductionKg, // Calculated value
+        actualTotalProductionKg: totalActualProductionKg, 
         actualSellingPricePerKgRwf: parsedActualSellingPricePerKgRwf,
-        actualRevenueRwf: totalActualRevenueRwf, // Calculated value
-        harvestNotes: harvestNotes || undefined, // Only send if not empty
+        actualRevenueRwf: totalActualRevenueRwf, 
+        harvestNotes: harvestNotes || undefined,
       };
 
       const response = await authenticatedFetch(`/crop-plans/${selectedPlanId}/record-harvest`, {
@@ -299,9 +292,7 @@ const RecordHarvestScreen: React.FC = () => {
 
       if (response.ok) {
         Alert.alert(String(t('common.success')), String(t('recordHarvest.success')));
-        // After successful recording, navigate back.
-        // If coming from CropPlanDetail, it will go back to that screen.
-        // If from Home, it will go back to the HomeTab.
+        
         navigation.goBack(); 
       } else {
         const errorData = await response.json();
@@ -313,7 +304,7 @@ const RecordHarvestScreen: React.FC = () => {
       setError(t('common.networkError'));
       Alert.alert(String(t('common.error')), t('common.networkError'));
     } finally {
-      setSubmitting(false); // End submission
+      setSubmitting(false); 
     }
   }, [
     selectedPlanId,
@@ -328,7 +319,7 @@ const RecordHarvestScreen: React.FC = () => {
     t,
   ]);
 
-  // Render loading state while fetching planted plans
+  
   if (loading) {
     return (
       <Container>
@@ -343,7 +334,7 @@ const RecordHarvestScreen: React.FC = () => {
     );
   }
 
-  // Main render function
+  
   return (
     <Container>
       <CustomHeader title={String(t('recordHarvest.title'))} showBack={true} showLogo={true} showLanguageSwitcher={true}/>
@@ -363,7 +354,7 @@ const RecordHarvestScreen: React.FC = () => {
                 onValueChange={(itemValue: unknown) => setSelectedPlanId(String(itemValue))}
                 enabled={!submitting}
               >
-                {/* Ensure that the selectedPlanId is available in the plantedPlans before rendering */}
+                
                 {plantedPlans.map(plan => (
                   <Picker.Item
                     key={plan._id}
@@ -375,7 +366,7 @@ const RecordHarvestScreen: React.FC = () => {
             </PickerContainer>
           )}
 
-          {/* Only show input fields if a plan is selected */}
+          
           {selectedPlan && (
             <>
               <InfoText style={{marginBottom: defaultTheme.spacing.medium, color: defaultTheme.colors.primary, fontWeight: 'bold'}}>
@@ -390,15 +381,15 @@ const RecordHarvestScreen: React.FC = () => {
                 <Ionicons name="calendar-outline" size={defaultTheme.fontSizes.large} color={defaultTheme.colors.text} />
               </DatePickerButton>
 
-              {/* DateTimePickerModal for selecting harvest date */}
+             
               <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
                 onConfirm={onDateChange}
-                onCancel={() => setDatePickerVisible(false)} // Hide picker on cancel
-                date={actualHarvestDate || new Date()} // Default to current date if none selected
+                onCancel={() => setDatePickerVisible(false)} 
+                date={actualHarvestDate || new Date()}
                 locale={String(t('common.locale'))}
-                maximumDate={new Date()} // Cannot pick a future date for harvest
+                maximumDate={new Date()} 
               />
 
               <Label>{String(t('recordHarvest.actualYieldKgPerHa'))}</Label>
@@ -417,7 +408,7 @@ const RecordHarvestScreen: React.FC = () => {
 
               <Label>{String(t('recordHarvest.totalProduction'))}</Label>
               <CalculatedValue>
-                {/* Display calculated total production, formatted to 2 decimal places */}
+                
                 {totalActualProductionKg.toFixed(2)} {String(t('market.kgUnit'))}
               </CalculatedValue>
 
@@ -438,7 +429,7 @@ const RecordHarvestScreen: React.FC = () => {
 
               <Label>{String(t('recordHarvest.totalRevenue'))}</Label>
               <CalculatedValue>
-                {/* Display calculated total revenue, formatted as currency */}
+                
                 {totalActualRevenueRwf.toLocaleString('en-RW', { style: 'currency', currency: 'RWF' })}
               </CalculatedValue>
 

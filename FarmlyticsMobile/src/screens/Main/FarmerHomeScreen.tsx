@@ -7,7 +7,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { MainTabNavigationProp } from '../../navigation/types';
 import CustomHeader from '../../components/CustomHeader';
-// Ensure FontAwesome5 is imported for the tractor icon
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons'; 
 import { ScrollView, View, Text, ActivityIndicator, RefreshControl, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -16,10 +15,10 @@ import { defaultTheme } from '../../config/theme';
 
 import { LineChart } from 'react-native-gifted-charts';
 
-// Get screen width for responsive chart sizing
+
 const screenWidth = Dimensions.get('window').width;
 
-// ---------------------- Styled Components (your existing styled components) ----------------------
+
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -218,7 +217,7 @@ const PlotInsight = styled(Text)`
 `;
 
 
-// ---------------------- Component Logic ----------------------
+
 interface CropPlanSummary {
   _id: string;
   cropName: string;
@@ -270,9 +269,9 @@ const FarmerHomeScreen: React.FC = () => {
   const [nextHarvest, setNextHarvest] = useState<CropPlanSummary | null>(null);
   const [topDemandCrop, setTopDemandCrop] = useState<MarketDemandSummary | null>(null);
   const [yieldPerformanceData, setYieldPerformanceData] = useState<MyYieldPerformanceAPIDataPoint[]>([]);
-  const [demandTrendsData, setDemandTrendsData] = useState<DemandTrendAPIDataPoint[]>([]); // User's/Top Demand Trends
+  const [demandTrendsData, setDemandTrendsData] = useState<DemandTrendAPIDataPoint[]>([]); 
 
-  // NEW: State for general analytics data
+ 
   const [generalYieldTrends, setGeneralYieldTrends] = useState<GeneralYieldTrendAPIDataPoint[]>([]);
   const [generalDemandTrends, setGeneralDemandTrends] = useState<DemandTrendAPIDataPoint[]>([]);
 
@@ -280,7 +279,7 @@ const FarmerHomeScreen: React.FC = () => {
   const [loadingDashboard, setLoadingDashboard] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Calculate the visible width for charts, accounting for screen padding and plot container padding
+ 
   const chartVisibleWidth = screenWidth - (defaultTheme.spacing.medium * 2) - (defaultTheme.spacing.large * 2);
 
 
@@ -289,7 +288,7 @@ const FarmerHomeScreen: React.FC = () => {
 
     setLoadingDashboard(true);
     try {
-      // Fetch Next Harvest (Card)
+      
       const cropPlansResponse = await authenticatedFetch('/crop-plans?limit=1&status=planted');
       if (cropPlansResponse.ok) {
         const plansData = await cropPlansResponse.json();
@@ -299,8 +298,7 @@ const FarmerHomeScreen: React.FC = () => {
         setNextHarvest(null);
       }
 
-      // Fetch Top Market Demand (Card)
-      // Use user's preferred location for relevance, fallback to defaults
+     
       const userDistrict = user.preferredDistrictName || (user.role === 'farmer' ? 'Gasabo' : 'Kigali City');
       const userProvince = user.preferredProvinceName || (user.role === 'farmer' ? 'Kigali City' : 'Eastern Province');
 
@@ -335,7 +333,7 @@ const FarmerHomeScreen: React.FC = () => {
           setTopDemandCrop(null);
       }
 
-      // Fetch User's Personal Yield Performance Trends (Real Data from MongoDB)
+      
       const yieldPerformanceResponse = await authenticatedFetch('/analytics/my-yield-performance');
       if (yieldPerformanceResponse.ok) {
         const yieldData = await yieldPerformanceResponse.json();
@@ -345,8 +343,8 @@ const FarmerHomeScreen: React.FC = () => {
         setYieldPerformanceData([]);
       }
 
-      // Fetch User's Local Market Demand Trends
-      const defaultCropForPersonalDemand = 'Maize'; // Example, ideally this would be a user preference or most common crop
+     
+      const defaultCropForPersonalDemand = 'Maize'; 
       const defaultLocationForPersonalDemand = userDistrict || userProvince || 'Gasabo';
       const defaultLocationTypeForPersonalDemand = userDistrict ? 'District' : (userProvince ? 'Province' : 'District');
 
@@ -355,15 +353,14 @@ const FarmerHomeScreen: React.FC = () => {
       );
       if (demandTrendsResponse.ok) {
         const demandData = await demandTrendsResponse.json();
-        // FIX: Changed 'data.data' to 'demandData.data'
+       
         setDemandTrendsData(demandData.success ? demandData.data : []); 
       } else {
         console.error('Failed to fetch demand trends (personal):', demandTrendsResponse.status);
         setDemandTrendsData([]);
       }
 
-      // NEW: Fetch General Yield Trends (from /analytics/yield-trends)
-      // These parameters are for a *general* view, so fixed values or global defaults are fine
+
       const generalAnalyticsCrop = 'Maize'; 
       const generalAnalyticsDistrict = 'Gasabo'; 
 
@@ -378,7 +375,7 @@ const FarmerHomeScreen: React.FC = () => {
         setGeneralYieldTrends([]);
       }
 
-      // NEW: Fetch General Market Demand Trends (from /analytics/demand-trends)
+      
       const generalAnalyticsDemandLocation = 'Kigali City'; 
       const generalAnalyticsDemandLocationType = 'Province';
       const generalAnalyticsDemandCrop = 'Beans';
@@ -414,7 +411,7 @@ const FarmerHomeScreen: React.FC = () => {
     fetchDashboardData();
   }, [fetchDashboardData]);
 
-  // Helper for User's Personal Yield Chart Data transformation
+  
   const getYieldChartData = () => {
     if (yieldPerformanceData.length === 0) {
       return [{ value: 0, label: '' }];
@@ -425,7 +422,7 @@ const FarmerHomeScreen: React.FC = () => {
     }));
   };
 
-  // Helper for User's Local Market Demand Chart Data transformation
+  
   const getDemandChartData = () => {
     if (demandTrendsData.length === 0) {
       return [{ value: 0, label: '' }];
@@ -436,18 +433,18 @@ const FarmerHomeScreen: React.FC = () => {
     }));
   };
 
-  // NEW: Helper for General Yield Chart Data transformation
+  
   const getGeneralYieldChartData = () => {
     if (generalYieldTrends.length === 0) {
       return [{ value: 0, label: '' }];
     }
     return generalYieldTrends.map(item => ({
-      value: item.total_production_kg, // Using total_production_kg as per API schema
+      value: item.total_production_kg, 
       label: String(item.year),
     }));
   };
 
-  // NEW: Helper for General Demand Chart Data transformation
+  
   const getGeneralDemandChartData = () => {
     if (generalDemandTrends.length === 0) {
       return [{ value: 0, label: '' }];
@@ -461,14 +458,14 @@ const FarmerHomeScreen: React.FC = () => {
   const commonChartProps = {
     areaChart: true,
     curved: true,
-    hideDataPoints: false, // Show data points for better interactivity
-    // Dynamically adjust spacing based on the max number of data points across all charts
+    hideDataPoints: false, 
+    
     spacing: chartVisibleWidth / (Math.max(
       yieldPerformanceData.length,
       demandTrendsData.length,
       generalYieldTrends.length,
       generalDemandTrends.length,
-      2 // Ensures reasonable spacing even with minimal data points
+      2 
     ) + 1), 
     initialSpacing: 20,
     endSpacing: 20,
@@ -615,7 +612,7 @@ const FarmerHomeScreen: React.FC = () => {
                     height={200}
                     width={chartVisibleWidth}
                     showVerticalLines
-                    color={defaultTheme.colors.secondary} // Another color for general demand
+                    color={defaultTheme.colors.secondary} 
                     startFillColor={defaultTheme.colors.primary + '30'}
                     endFillColor={defaultTheme.colors.gradientEnd + '00'}
                     startOpacity={0.8}

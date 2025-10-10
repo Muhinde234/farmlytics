@@ -10,10 +10,10 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import CustomHeader from '../../components/CustomHeader';
 import { defaultTheme } from '../../config/theme';
-// import { RWANDA_DISTRICTS, RWANDA_PROVINCES } from '../../config/districts'; // REMOVED: Now dynamic
-import { useAuth } from '../../context/AuthContext'; // Import useAuth for dynamic data
 
-// ---------------------- Styled Components ----------------------
+import { useAuth } from '../../context/AuthContext'; 
+
+
 const Container = styled(View)`
   flex: 1;
   background-color: ${props => props.theme.colors.background};
@@ -170,7 +170,7 @@ const EmptyStateText = styled(Text)`
   margin-top: ${props => props.theme.spacing.large}px;
 `;
 
-// ---------------------- Component Logic ----------------------
+
 interface MarketDemandItem {
   CropName: string;
   Total_Weighted_Consumption_Qty_Kg: number;
@@ -196,16 +196,16 @@ interface MarketInsights {
 
 const MarketInsightsScreen: React.FC = () => {
   const { t } = useTranslation();
-  const { authenticatedFetch, districts, provinces, areReferenceDataLoading } = useAuth(); // Use dynamic data
+  const { authenticatedFetch, districts, provinces, areReferenceDataLoading } = useAuth(); 
 
   const [locationType, setLocationType] = useState<'District' | 'Province'>('District');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [insights, setInsights] = useState<MarketInsights | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false); // For pull-to-refresh
+  const [refreshing, setRefreshing] = useState(false); 
 
-  // Set initial selected location after dynamic data is loaded
+  
   useEffect(() => {
     if (!areReferenceDataLoading) {
       if (locationType === 'District' && districts.length > 0 && !selectedLocation) {
@@ -217,10 +217,9 @@ const MarketInsightsScreen: React.FC = () => {
   }, [districts, provinces, locationType, selectedLocation, areReferenceDataLoading]);
 
 
-  // Reset form and results when screen comes into focus
   const resetForm = useCallback(() => {
     setLocationType('District');
-    setSelectedLocation(''); // Reset to empty, useEffect will set default
+    setSelectedLocation(''); 
     setInsights(null);
     setError(null);
     setLoading(false);
@@ -228,7 +227,7 @@ const MarketInsightsScreen: React.FC = () => {
 
   useFocusEffect(resetForm);
 
-  // Update selected location when locationType changes
+  
   const handleLocationTypeChange = useCallback((newType: 'District' | 'Province') => {
     setLocationType(newType);
     setSelectedLocation(newType === 'District' ? (districts.length > 0 ? districts[0].value : '') : (provinces.length > 0 ? provinces[0].value : ''));
@@ -239,37 +238,37 @@ const MarketInsightsScreen: React.FC = () => {
     setInsights(null);
     
     if (!selectedLocation) {
-      setError(String(t('market.locationValidationError'))); // Explicit String()
+      setError(String(t('market.locationValidationError'))); 
       return;
     }
 
     setLoading(true);
     try {
-      // --- Fetch Market Demand ---
+     
       const demandResponse = await authenticatedFetch(
         `/market/demand?location_name=${selectedLocation}&location_type=${locationType}&top_n=5&sort_by=quantity`
       );
       const demandData = demandResponse.ok ? await demandResponse.json() : { success: false, message: String(t('market.demandFetchError')) }; // Explicit String()
 
-      // --- Fetch Cooperatives ---
+    
       const coopResponse = await authenticatedFetch(
         `/market/cooperatives?location_name=${selectedLocation}&location_type=${locationType}`
       );
       const coopData = coopResponse.ok ? await coopResponse.json() : { success: false, message: String(t('market.coopFetchError')) }; // Explicit String()
 
-      // --- Fetch Buyers/Processors ---
+     
       const buyersProcResponse = await authenticatedFetch(
         `/market/buyers-processors?location_name=${selectedLocation}&location_type=${locationType}&min_workers=10&min_turnover=5000000` // Example thresholds
       );
       const buyersProcData = buyersProcResponse.ok ? await buyersProcResponse.json() : { success: false, message: String(t('market.buyersProcFetchError')) }; // Explicit String()
 
-      // --- Fetch Exporters ---
+      
       const exportersResponse = await authenticatedFetch(
         `/market/exporters?location_name=${selectedLocation}&location_type=${locationType}`
       );
       const exportersData = exportersResponse.ok ? await exportersResponse.json() : { success: false, message: String(t('market.exportersFetchError')) }; // Explicit String()
 
-      // Consolidate results and check for overall success
+      
       if (demandData.success || coopData.success || buyersProcData.success || exportersData.success) {
         setInsights({
           demand: demandData.success ? demandData.data : [],
@@ -281,9 +280,9 @@ const MarketInsightsScreen: React.FC = () => {
         setError(String(t('market.noInsightsFound') || 'No market insights available for the selected location.')); // Explicit String()
       }
 
-    } catch (err: unknown) { // Explicitly type error as unknown
+    } catch (err: unknown) { 
       console.error('Market insights fetch error (catch block):', err);
-      setError(String(t('common.networkError'))); // Explicit String()
+      setError(String(t('common.networkError'))); 
     } finally {
       setLoading(false);
     }
@@ -328,14 +327,14 @@ const MarketInsightsScreen: React.FC = () => {
           <PickerContainer>
             <StyledPicker
               selectedValue={selectedLocation}
-              onValueChange={(itemValue: unknown, itemIndex: number) => setSelectedLocation(itemValue as string)} // Corrected Picker typing
+              onValueChange={(itemValue: unknown, itemIndex: number) => setSelectedLocation(itemValue as string)} 
               enabled={!loading && !areReferenceDataLoading}
             >
               {areReferenceDataLoading ? (
                 <Picker.Item key="loading-locations" label={String(t('common.loading'))} value="" />
               ) : (locationType === 'District' ? districts : provinces).length > 0 ? (
                 (locationType === 'District' ? districts : provinces).map((loc) => (
-                  <Picker.Item key={String(loc.value)} label={String(loc.label)} value={String(loc.value)} /> // Explicit String()
+                  <Picker.Item key={String(loc.value)} label={String(loc.label)} value={String(loc.value)} /> 
                 ))
               ) : (
                 <Picker.Item key="no-locations" label={String(t('market.noLocationsFound') || "No locations available")} value="" />
