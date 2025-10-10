@@ -1,4 +1,3 @@
-// src/components/CustomHeader.tsx
 
 import React from 'react';
 import styled from 'styled-components/native';
@@ -6,11 +5,11 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Platform, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { defaultTheme } from '../config/theme'; // Correct: Import defaultTheme
+import { defaultTheme } from '../config/theme'; 
 import LanguageSelector from './LanguageSelector';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-// NEW: Styled component for dynamic status bar padding
+
 const StatusBarSpacer = styled(View)<{ height: number }>`
   height: ${props => props.height}px;
   background-color: ${defaultTheme.colors.primary}; /* Match header background */
@@ -103,7 +102,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
             <View style={{ width: 40 }} />
           )}
         </LeftSection>
-        <TitleText>{String(title || t('common.back'))}</TitleText> {/* Explicit String() */}
+        <TitleText>{String(title || t('common.back'))}</TitleText> 
         <RightSection>
           {showLanguageSwitcher && <LanguageSelector variant="header" color={defaultTheme.colors.lightText} />}
           {rightAction && (
