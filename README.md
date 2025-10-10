@@ -117,7 +117,7 @@ These datasets were analyzed, preprocessed, and integrated into the backend to s
 ### 🖥️ **Frontend (Web App)**
 
 ```bash
-git clone https://github.com/your-username/farmlytics-frontend.git
+git clone https://github.com/Muhinde234/farmlytics
 cd farmlytics-frontend
 npm install
 npm run dev
@@ -130,7 +130,7 @@ npm run dev
 ### 📱 **Mobile App**
 
 ```bash
-git clone https://github.com/your-username/farmlytics-mobile.git
+git clone https://github.com/Muhinde234/farmlytics
 cd farmlytics-mobile
 npm install
 npm start
@@ -149,7 +149,7 @@ Run via **Expo Go** (QR code) or Android Emulator.
 ### ⚙️ **Backend API**
 
 ```bash
-git clone https://github.com/your-username/farmlytics-backend.git
+git clone https://github.com/Muhinde234/farmlytics
 cd farmlytics-backend
 npm install
 npm run dev
@@ -165,7 +165,7 @@ BASE_FRONTEND_URL=http://localhost:3000
 ```
 
 Access API Docs at:
-📘 [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
+📘 [https://farmlytics1-1.onrender.com/api-docs]
 
 ---
 
