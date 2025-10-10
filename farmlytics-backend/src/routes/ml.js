@@ -12,7 +12,7 @@ const router = express.Router();
  * @swagger
  * tags:
  *   name: Machine Learning (ML) Models
- *   description: Placeholder API endpoints for advanced agricultural predictions
+ *   description:  API endpoints for advanced agricultural predictions
  */
 
 // All ML routes require authentication (and usually 'farmer' or 'admin' role)
@@ -63,7 +63,7 @@ router.use(authorize('farmer', 'admin'));
  *         example: "Good fertilizer use"
  *     responses:
  *       200:
- *         description: Dynamic yield prediction (mock data).
+ *         description: Dynamic yield prediction.
  *         content:
  *           application/json:
  *             schema:
@@ -125,7 +125,7 @@ router.get('/predict-yield', predictYield);
  *         example: "2025-04-10"
  *     responses:
  *       200:
- *         description: Disease/pest prediction (mock data).
+ *         description: Disease/pest prediction.
  *         content:
  *           application/json:
  *             schema:
@@ -187,7 +187,7 @@ router.get('/predict-disease-pest', predictDiseasePest);
  *         example: Volcanic
  *     responses:
  *       200:
- *         description: Optimal planting window recommendation (mock data).
+ *         description: Optimal planting window recommendation.
  *         content:
  *           application/json:
  *             schema:

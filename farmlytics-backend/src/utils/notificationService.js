@@ -12,7 +12,7 @@ const notificationService = {
             return { success: false, message: 'No device tokens provided.' };
         }
 
-        // --- EXPO PUSH NOTIFICATION INTEGRATION EXAMPLE ---
+        
         const expoPushEndpoint = 'https://exp.host/--/api/v2/push/send';
         const messages = deviceTokens.map(token => ({
             to: token,
@@ -20,30 +20,27 @@ const notificationService = {
             title: title,
             body: body,
             data: data,
-            ...extraOptions // Allow extra Expo options like _displayInForeground, priority
+            ...extraOptions 
         }));
 
         logger.info(`Notification Service: Attempting to send notification to ${deviceTokens.length} devices via Expo Push API.`);
         logger.debug(`Expo Push Payload: ${JSON.stringify(messages)}`);
 
         try {
-            // For Expo Push, the API key (if used) would be for an Expo account, not typically sent in Authorization.
-            // Many Expo apps send directly without an explicit backend API key if using client-side generated tokens.
-            // If you have a specific Expo access token for backend sending, it might go here:
-            // headers['Authorization'] = `Bearer ${config.notificationServiceApiKey}`;
+        
 
             const response = await axios.post(expoPushEndpoint, messages, {
                 headers: {
                     'Accept': 'application/json',
                     'Accept-encoding': 'gzip, deflate',
                     'Content-Type': 'application/json',
-                    // 'Authorization': `Bearer ${config.notificationServiceApiKey}` // Uncomment if using an Expo access token
+                     'Authorization': `Bearer ${config.notificationServiceApiKey}` 
                 },
             });
 
             logger.info(`Expo Push API Response: ${JSON.stringify(response.data)}`);
 
-            // Check Expo Push API response for success/failure
+            
             if (response.data && response.data.data) {
                 const results = response.data.data;
                 const successfulReceipts = results.filter(r => r.status === 'ok').length;
@@ -62,7 +59,7 @@ const notificationService = {
 
         } catch (error) {
             logger.error(`Error sending Expo Push notification: ${error.message}`, { details: error.response?.data || error });
-            // Fallback to simulated response if actual sending fails (e.g., API key not set, network error)
+            
             logger.warn('Notification Service: Falling back to simulated response due to actual sending error.');
             const simulatedResponse = {
                 data: deviceTokens.map(token => ({ status: 'ok', id: `sim-${Math.random().toString(36).substring(7)}` })),

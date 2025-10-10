@@ -1,8 +1,7 @@
 // src/controllers/referenceDataController.js
 const asyncHandler = require('express-async-handler');
-const { province_mapping, district_mapping, mvp_crops_list } = require('../utils/constants'); // Import constants
+const { province_mapping, district_mapping, mvp_crops_list } = require('../utils/constants'); 
 
-// Helper to convert map to array of objects
 const mapToArray = (map) => Object.entries(map).map(([code, name]) => ({ code: parseInt(code), name }));
 
 // @desc      Get all provinces

@@ -24,7 +24,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
         // Verify token
         const decoded = jwt.verify(token, config.jwtSecret);
 
-        req.user = await User.findById(decoded.id).select('-password'); // Attach user to request (excluding password)
+        req.user = await User.findById(decoded.id).select('-password'); 
         if (!req.user) {
             res.status(401);
             throw new Error('Not authorized to access this route, user not found');

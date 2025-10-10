@@ -6,11 +6,11 @@ const mlService = {
     async getDynamicYieldPrediction(district, crop, soilType, weatherForecast, historicalPractices) {
         logger.info(`ML Service: Request for Dynamic Yield Prediction for ${crop} in ${district}`);
        
-        const mockYield = (Math.random() * 500 + 1000).toFixed(2); // between 1000 and 1500 kg/ha
+        const mockYield = (Math.random() * 500 + 1000).toFixed(2); 
         logger.debug(`ML Service: Dynamic Yield Prediction mock result: ${mockYield}`);
         return {
             predicted_yield_kg_per_ha: parseFloat(mockYield),
-            confidence: (Math.random() * 0.2 + 0.8).toFixed(2), // 0.8 to 1.0
+            confidence: (Math.random() * 0.2 + 0.8).toFixed(2),
             factors_considered: { district, crop, soilType, weatherForecast, historicalPractices },
             message: "This is a mock prediction. Actual ML model integration pending."
         };
@@ -18,7 +18,6 @@ const mlService = {
 
     async getDiseasePestPrediction(crop, region, weatherConditions, plantingDate) {
         logger.info(`ML Service: Request for Disease/Pest Prediction for ${crop} in ${region}`);
-        // Simulate a call to an external ML microservice
         const mockRisk = Math.random();
         let prediction = 'Low Risk';
         if (mockRisk > 0.8) prediction = 'High Risk of Pests';
@@ -36,9 +35,8 @@ const mlService = {
 
     async getOptimalPlantingWindow(crop, district, weatherForecastLongTerm, soilType) {
         logger.info(`ML Service: Request for Optimal Planting Window for ${crop} in ${district}`);
-        // Simulate a call to an external ML microservice
-        const mockMonth = Math.floor(Math.random() * 3) + 3; // Random month between March (3) and May (5)
-        const mockDay = Math.floor(Math.random() * 20) + 1; // Random day 1-20
+        const mockMonth = Math.floor(Math.random() * 3) + 3; 
+        const mockDay = Math.floor(Math.random() * 20) + 1; 
         const currentYear = new Date().getFullYear();
 
         logger.debug(`ML Service: Optimal Planting Window mock result: ${currentYear}-${mockMonth}-${mockDay}`);

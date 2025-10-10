@@ -7,7 +7,7 @@ const {
     verifyEmail,
     forgotPassword, 
     resetPassword,  
-    renderResetPasswordForm, // NEW: Render the password reset form
+    renderResetPasswordForm, 
     updatePassword  
 } = require('../controllers/authController');
 const { protect, authorize } = require('../middlewares/auth');
@@ -40,11 +40,11 @@ const router = express.Router();
  *             properties:
  *               name:
  *                 type: string
- *                 example: John Doe
+ *                 example: Aline
  *               email:
  *                 type: string
  *                 format: email
- *                 example: new.user@example.com
+ *                 example: aline@gmail.com
  *               password:
  *                 type: string
  *                 format: password
@@ -70,7 +70,7 @@ const router = express.Router();
  *                   properties:
  *                     id: { type: string, example: "60c72b2f9c1e4b001c8e4d3a" }
  *                     name: { type: string, example: "John Doe" }
- *                     email: { type: string, example: "new.user@example.com" }
+ *                     email: { type: string, example: "aline@gmail.com" }
  *                     role: { type: string, example: "farmer" }
  *                     isVerified: { type: boolean, example: false }
  *       400:
@@ -99,7 +99,7 @@ router.post('/register', register);
  *               email:
  *                 type: string
  *                 format: email
- *                 example: john.doe@example.com
+ *                 example: Dostha@gmail.com
  *               password:
  *                 type: string
  *                 format: password
@@ -288,7 +288,7 @@ router.post('/forgotpassword', forgotPassword);
  *       400:
  *         description: HTML page indicating invalid or expired reset token.
  */
-router.get('/resetpassword-form/:token', renderResetPasswordForm); // NEW route for form
+router.get('/resetpassword-form/:token', renderResetPasswordForm); 
 
 /**
  * @swagger

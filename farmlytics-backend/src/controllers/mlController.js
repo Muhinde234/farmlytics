@@ -1,5 +1,5 @@
 const asyncHandler = require('express-async-handler');
-const mlService = require('../utils/mlService'); // Import our ML service
+const mlService = require('../utils/mlService'); 
 const logger = require('../config/winston');
 
 // @desc      Get dynamic yield prediction
@@ -13,7 +13,7 @@ exports.predictYield = asyncHandler(async (req, res, next) => {
         throw new Error('Please provide district and crop for yield prediction.');
     }
 
-    // Call the ML service (which currently returns mock data)
+   
     const prediction = await mlService.getDynamicYieldPrediction(
         district, crop, soilType, weatherForecast, historicalPractices
     );

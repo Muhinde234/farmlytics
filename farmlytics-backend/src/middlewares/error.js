@@ -1,20 +1,20 @@
-const logger = require('../config/winston'); // NEW: Import Winston logger
+const logger = require('../config/winston'); 
 
 const errorHandler = (err, req, res, next) => {
     let error = { ...err };
     error.message = err.message;
 
-    // Log to console using Winston (and to file if configured)
+   
     logger.error(`Error encountered: ${err.message}`, { 
         stack: err.stack, 
         method: req.method, 
         path: req.originalUrl, 
         ip: req.ip,
-        body: req.body, // Include request body for context (be careful with sensitive data)
+        body: req.body, 
         query: req.query 
     });
 
-    // Mongoose bad ObjectId
+    
     if (err.name === 'CastError') {
         const message = `Resource not found with id of ${err.value}`;
         error = new Error(message);
@@ -31,7 +31,7 @@ const errorHandler = (err, req, res, next) => {
     // Mongoose validation error
     if (err.name === 'ValidationError') {
         const message = Object.values(err.errors).map(val => val.message);
-        error = new Error(message.join(', ')); // Join messages if multiple validation errors
+        error = new Error(message.join(', ')); 
         res.status(400);
     }
 

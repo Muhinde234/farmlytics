@@ -8,35 +8,32 @@ const logger = require('./config/winston');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
-// Trust proxy for express-rate-limit when deployed behind a proxy (like Render)
 app.set('trust proxy', 1);
 
-// Helmet for security headers (applied early)
+
 app.use(helmet()); 
 
-// Rate Limiting (applied before most routes)
+
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000, 
+    max: 100, 
     message: 'Too many requests from this IP, please try again after 15 minutes',
     standardHeaders: true,
     legacyHeaders: false,
 });
 app.use(limiter);
 
-// Morgan for HTTP request logging, piped to Winston
 app.use(morgan('combined', { stream: logger.stream })); 
 
 app.use(cors({ 
-    origin: '*', // Allow all for development
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow common methods
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'] // Allow common headers
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'] 
 })); 
 
 
 app.use(express.json());
 
-// Swagger setup (moved after core middleware for consistent headers)
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -54,7 +51,6 @@ const swaggerOptions = {
         },
         servers: [
             {
-                // CRITICAL FIX: Use https for Swagger UI base URL for deployments
                 url: `${config.nodeEnv === 'production' ? 'https' : 'http'}://${process.env.RENDER_EXTERNAL_HOSTNAME || `localhost:${config.port}`}/api/v1`,
                 description: 'Deployment / Development server'
             }
@@ -118,7 +114,6 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
-// Mount routers
 const authRoutes = require('./routes/auth');
 const cropPlannerRoutes = require('./routes/cropPlanner');
 const marketRoutes = require('./routes/market');
@@ -146,7 +141,6 @@ app.get('/', (req, res) => {
     res.send('Farmlytics API is running...');
 });
 
-// Error handling middleware MUST be after all routes
 app.use(errorHandler);
 
 module.exports = app;

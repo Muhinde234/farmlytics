@@ -3,9 +3,7 @@ const { mvp_crops_list, province_mapping, district_mapping } = require('../utils
 const CropPlan = require('../models/CropPlan');
 const analyticsService = require('../utils/analyticsService'); // Import analytics service
 
-// @desc      Get historical yield trends (NOW USES REAL HISTORICAL SAS DATA)
-// @route     GET /api/v1/analytics/yield-trends
-// @access    Private (Farmer, Admin)
+
 exports.getYieldTrends = asyncHandler(async (req, res, next) => {
     const { district, crop, year_start, year_end } = req.query;
 
@@ -47,9 +45,6 @@ exports.getYieldTrends = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc      Get historical demand trends (NOW USES REAL HISTORICAL EICV DATA)
-// @route     GET /api/v1/analytics/demand-trends
-// @access    Private (Farmer, Buyer, Admin)
 exports.getDemandTrends = asyncHandler(async (req, res, next) => {
     const { location, location_type, crop, year_start, year_end } = req.query;
 
@@ -93,14 +88,12 @@ exports.getDemandTrends = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc      Get user's personal yield performance trends (REAL DATA FROM MONGODB)
-// @route     GET /api/v1/analytics/my-yield-performance
-// @access    Private (Farmer, Admin)
+
 exports.getMyYieldPerformance = asyncHandler(async (req, res, next) => {
     const { crop, year_start, year_end } = req.query;
-    let query = { user: req.user.id, status: 'Harvested' }; // Only for harvested plans
+    let query = { user: req.user.id, status: 'Harvested' }; 
     
-    if (req.user.role === 'admin' && req.query.userId) { // Admin can view other farmers' data
+    if (req.user.role === 'admin' && req.query.userId) {
         query.user = req.query.userId;
     }
 
@@ -111,11 +104,11 @@ exports.getMyYieldPerformance = asyncHandler(async (req, res, next) => {
     const startYear = year_start ? parseInt(year_start) : new Date().getFullYear() - 3;
     const endYear = year_end ? parseInt(year_end) : new Date().getFullYear();
 
-    // Aggregate crop plans for the user
+  
     const yieldData = await CropPlan.aggregate([
         { $match: query },
         {
-            $addFields: { // Extract year from actualHarvestDate or plantingDate
+            $addFields: { 
                 year: { $year: { $cond: [ "$actualHarvestDate", "$actualHarvestDate", "$plantingDate" ] } }
             }
         },
@@ -140,14 +133,12 @@ exports.getMyYieldPerformance = asyncHandler(async (req, res, next) => {
     });
 });
 
-// @desc      Get user's personal revenue trends (REAL DATA FROM MONGODB)
-// @route     GET /api/v1/analytics/my-revenue-trends
-// @access    Private (Farmer, Admin)
+
 exports.getMyRevenueTrends = asyncHandler(async (req, res, next) => {
     const { crop, year_start, year_end } = req.query;
-    let query = { user: req.user.id, status: 'Harvested' }; // Only for harvested plans
+    let query = { user: req.user.id, status: 'Harvested' }; 
 
-    if (req.user.role === 'admin' && req.query.userId) { // Admin can view other farmers' data
+    if (req.user.role === 'admin' && req.query.userId) { 
         query.user = req.query.userId;
     }
 
