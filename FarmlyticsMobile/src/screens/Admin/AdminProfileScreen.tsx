@@ -1,4 +1,4 @@
-// src/screens/Admin/AdminProfileScreen.tsx
+
 
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components/native';
@@ -21,9 +21,9 @@ const Container = styled(View)`
 const ContentArea = styled(ScrollView).attrs({
   contentContainerStyle: {
     padding: defaultTheme.spacing.medium,
-    paddingBottom: defaultTheme.spacing.xxl, // Ensure ample scroll space
-    flexGrow: 1, // Allow content to grow
-    justifyContent: 'flex-start', // Align content to start
+    paddingBottom: defaultTheme.spacing.xxl, 
+    flexGrow: 1, 
+    justifyContent: 'flex-start', 
   },
 })`
   flex: 1;
@@ -202,7 +202,7 @@ const AdminProfileScreen: React.FC = () => {
     
     const success = await updateUserProfile(updates);
     if (success) {
-      // Profile updated, AuthContext handles language change and user state update
+      
     }
     setIsSaving(false);
   }, [editLanguage, updateUserProfile]);
@@ -249,7 +249,7 @@ const AdminProfileScreen: React.FC = () => {
           </ProfileRole>
         </ProfileCard>
 
-        {/* --- Language Settings --- */}
+    
         <SectionTitle>{String(t('profile.languageSettings'))}</SectionTitle>
         <DetailCard style={{ paddingVertical: defaultTheme.spacing.medium }}>
           <View style={{ marginBottom: defaultTheme.spacing.small }}>
@@ -275,9 +275,8 @@ const AdminProfileScreen: React.FC = () => {
           </SubmitButton>
         </DetailCard>
 
-        {/* No Preferred Location settings for Admin, as it's less relevant */}
+      
 
-        {/* --- Account Info Section --- */}
         <SectionTitle>{String(t('profile.accountInfo'))}</SectionTitle>
         <DetailCard style={{ paddingVertical: 0 }}>
           <DetailItem style={{ borderBottomWidth: 0 }}>
@@ -286,7 +285,7 @@ const AdminProfileScreen: React.FC = () => {
           </DetailItem>
         </DetailCard>
 
-        {/* --- Logout Button --- */}
+      
         <LogoutButton onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={defaultTheme.fontSizes.medium} color={defaultTheme.colors.lightText} />
           <LogoutButtonText>{String(t('auth.logout'))}</LogoutButtonText>
