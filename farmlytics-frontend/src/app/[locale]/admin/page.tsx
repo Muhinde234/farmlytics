@@ -9,7 +9,6 @@ import {
   TrendingUp,
   Users,
   Calendar,
-  AlertTriangle,
   CheckCircle2,
   Clock,
   BarChart3,
