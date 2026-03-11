@@ -1,6 +1,8 @@
 "use client";
 
 import { useUser } from "@/context/userContext";
+import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,8 +18,10 @@ import {
 import { useTranslations } from "next-intl";
 
 export default function SettingsPage() {
-  const { user, logout } = useUser(); // ✅ Use your own context property
+  const { user, logout } = useUser(); 
   const t = useTranslations("settings");
+    const router = useRouter();
+    const currentLocale = useLocale();
 
   return (
     <div className="p-6 space-y-6 bg-white min-h-screen">
@@ -82,7 +86,14 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="pt-4">
           <Label>{t("chooseLanguage")}</Label>
-          <Select defaultValue={user?.language || "en"}>
+            <Select
+              defaultValue={currentLocale}
+              onValueChange={(newLocale) => {
+                const segments = window.location.pathname.split('/')
+                segments[1] = newLocale
+                router.replace(segments.join('/'))
+              }}
+            >
             <SelectTrigger className="border-green-500 mt-2">
               <SelectValue placeholder={t("chooseLanguage")} />
             </SelectTrigger>

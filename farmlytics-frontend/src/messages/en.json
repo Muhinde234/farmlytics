@@ -216,7 +216,54 @@
     "settings": "Settings",
     "logout":"logout"
   
-}},
+},
+    "stats": {
+      "totalPlans": "Total Plans",
+      "harvested": "Harvested",
+      "planted": "Active Plans",
+      "totalRevenue": "Total Revenue",
+      "totalArea": "Total Area",
+      "totalFarmers": "Farmers"
+    },
+    "charts": {
+      "revenueByCrop": "Revenue by Crop",
+      "statusDist": "Status Distribution"
+    },
+    "recentActivity": "Recent Activity",
+    "noData": "No data available."
+  },
+
+  "cropPlans": {
+    "title": "Crop Plans",
+    "addButton": "Add New Plan",
+    "listTitle": "My Crop Plans",
+    "noData": "No crop plans found.",
+    "noRecommendations": "No recommendations available.",
+    "aiRecommendations": "AI Crop Recommendations",
+    "yieldPredictor": "Yield Predictor",
+    "form": {
+      "crop": "Crop",
+      "district": "District",
+      "area": "Area (Ha)",
+      "plantingDate": "Planting Date",
+      "status": "Status",
+      "submit": "Create Plan"
+    },
+    "successCreate": "Crop plan created successfully!",
+    "errorCreate": "Failed to create crop plan. Please try again."
+  },
+
+  "notifications": {
+    "title": "Notifications",
+    "sendNotification": "Send Push Notification",
+    "deviceToken": "Device Token (leave blank to broadcast)",
+    "notificationTitle": "Title",
+    "body": "Message Body",
+    "send": "Send Notification",
+    "sending": "Sending...",
+    "success": "Notification sent successfully!",
+    "error": "Failed to send notification."
+  },
 
   "HarvestTracker": {
     "title": "  Harvest Tracker",

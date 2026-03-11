@@ -219,7 +219,54 @@
 
   
 }
-   },
+    },
+      "stats": {
+        "totalPlans": "Gahunda Zose",
+        "harvested": "Zasaruwe",
+        "planted": "Gahunda Zikorwa",
+        "totalRevenue": "Inyungu Yose",
+        "totalArea": "Ubuso Bwose",
+        "totalFarmers": "Abahinzi"
+      },
+      "charts": {
+        "revenueByCrop": "Inyungu ku Gihingwa",
+        "statusDist": "Ikwirakwizwa ry'Imimerere"
+      },
+      "recentActivity": "Ibikorwa Biheruka",
+      "noData": "Nta makuru arahari."
+    },
+
+    "cropPlans": {
+      "title": "Gahunda z'Ibihingwa",
+      "addButton": "Ongeraho Gahunda",
+      "listTitle": "Gahunda Zanjye",
+      "noData": "Nta gahunda z'ibihingwa zirimo.",
+      "noRecommendations": "Nta makuru ahari.",
+      "aiRecommendations": "Inama za AI",
+      "yieldPredictor": "Gufatanya Umusaruro",
+      "form": {
+        "crop": "Igihingwa",
+        "district": "Akarere",
+        "area": "Ubuso (Ha)",
+        "plantingDate": "Itariki yo Guhinga",
+        "status": "Imimerere",
+        "submit": "Shyiraho Gahunda"
+      },
+      "successCreate": "Gahunda y'igihingwa yashyizweho neza!",
+      "errorCreate": "Ntibishobotse gushyiraho gahunda. Ongera ugerageze."
+    },
+
+    "notifications": {
+      "title": "Amamenyesha",
+      "sendNotification": "Ohereza Ikibutsa",
+      "deviceToken": "Ikimenyetso cy'igikoresho (Siba ngo wohereze bose)",
+      "notificationTitle": "Umutwe",
+      "body": "Ubutumwa",
+      "send": "Ohereza",
+      "sending": "Kohereza...",
+      "success": "Ikibutsa cyoherejwe neza!",
+      "error": "Ntibishobotse kohereza ikibutsa."
+    },
    
   "HarvestTracker": {
     "title": "Ikurikirana ry’Isarura",
