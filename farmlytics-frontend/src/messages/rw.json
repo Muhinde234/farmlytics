@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "learnMore": "Menya Byinshi",
     "signIn": "Injira",
@@ -206,35 +206,32 @@
     "initialTitle": "Emeza Imeyili Yawe",
     "initialMessage": "Inzira yo kwemeza yoherejwe kuri aderesi imeyili yawe. Ndakwinginze, reba muri imeyili yawe maze ukande kuri iyo nzira kugirango ukore konti yawe."
   },
-   "dashboard":{
+  "dashboard": {
     "sidebar": {
-    "dashboard": "Ahabanza",
-    "crop-planner": "Gahunda y'ibihingwa",
-    "market": "Isoko",
-    "diseases": "Indwara z’ibihingwa",
-    "notification": "Amamenyesha",
-    "harvest": "Kugenzura umusaruro",
-    "settings": "Guhindura",
-    "logout":"Gusohoka"
-
-  
-}
+      "dashboard": "Ahabanza",
+      "crop-planner": "Gahunda y'ibihingwa",
+      "market": "Isoko",
+      "diseases": "Indwara z'ibihingwa",
+      "notification": "Amamenyesha",
+      "harvest": "Kugenzura umusaruro",
+      "settings": "Guhindura",
+      "logout": "Gusohoka"
     },
-      "stats": {
-        "totalPlans": "Gahunda Zose",
-        "harvested": "Zasaruwe",
-        "planted": "Gahunda Zikorwa",
-        "totalRevenue": "Inyungu Yose",
-        "totalArea": "Ubuso Bwose",
-        "totalFarmers": "Abahinzi"
-      },
-      "charts": {
-        "revenueByCrop": "Inyungu ku Gihingwa",
-        "statusDist": "Ikwirakwizwa ry'Imimerere"
-      },
-      "recentActivity": "Ibikorwa Biheruka",
-      "noData": "Nta makuru arahari."
+    "stats": {
+      "totalPlans": "Gahunda Zose",
+      "harvested": "Zasaruwe",
+      "planted": "Gahunda Zikorwa",
+      "totalRevenue": "Inyungu Yose",
+      "totalArea": "Ubuso Bwose",
+      "totalFarmers": "Abahinzi"
     },
+    "charts": {
+      "revenueByCrop": "Inyungu ku Gihingwa",
+      "statusDist": "Ikwirakwizwa ry'Imimerere"
+    },
+    "recentActivity": "Ibikorwa Biheruka",
+    "noData": "Nta makuru arahari."
+  },
 
     "cropPlans": {
       "title": "Gahunda z'Ibihingwa",
@@ -288,36 +285,51 @@
     "errorCreate": "Ntibishobotse gushyiraho gahunda. Ongera ugerageze."
   },
   
-  "settings": {
+    "settings": {
     "profileInfo": "Ibisobanuro by'umwirondoro",
     "name": "Amazina yose",
+    "email": "Imeyili",
     "phone": "Nimero ya telefoni",
     "district": "Akarere",
     "sector": "Umurenge",
-    "farmSize": "Ingano y’ubutaka (hegitare)",
+    "farmSize": "Ingano y'ubutaka (hegitare)",
+    "role": "Uruhare",
+    "farmer": "Umuhinzi",
+    "buyer": "Ugura",
+    "welcome": "Murakaze neza",
+    "memberSince": "Winjiye kuwa",
+    "viewOnlyNote": "Amakuru y'umwirondoro ashingira ku konte yawe. Vugana n'inkunga kugira ngo uhindure.",
     "saveChanges": "Bika impinduka",
 
     "languageSettings": "Ururimi n'ahantu",
     "chooseLanguage": "Hitamo ururimi",
+    "languageChanged": "Ururimi rwahindutse neza",
 
     "notifications": "Amatangazo",
+    "notifNote": "Hitamo iburira ushaka kubona kuri dashboard yawe.",
     "marketUpdates": "Amakuru y'isoko",
-    "diseaseAlerts": "Iburira ry’indwara z’ibihingwa",
+    "diseaseAlerts": "Iburira ry'indwara z'ibihingwa",
     "harvestReminders": "Ibuka igihe cyo gusarura",
-    "weatherAlerts": "Iburira ry’ibihe",
+    "weatherAlerts": "Iburira ry'ibihe",
 
-    "dataManagement": "Igenzura ry’amakuru",
+    "dataManagement": "Igenzura ry'amakuru",
     "downloadData": "Kuramo amakuru yanjye",
     "clearLogs": "Siba amakuru y'ibihingwa",
-    "deleteAccount": "Siba konte yanjye",
 
     "accountSecurity": "Umutekano wa konte",
-    "changePassword": "Hindura ijambo ry’ibanga",
+    "changePassword": "Hindura ijambo ry'ibanga",
     "logout": "Sohoka",
 
-    "helpSupport": "Ubufasha n’inkunga",
-    "contactSupport": "Vugana n’inkunga",
-    "reportProblem": "Tanga ikibazo"
+    "helpSupport": "Ubufasha n'inkunga",
+    "contactSupport": "Vugana n'inkunga",
+    "reportProblem": "Tanga ikibazo",
+
+    "dangerZone": "Ahantu Hateye Ubwoba",
+    "deleteAccount": "Siba konte yanjye",
+    "deleteAccountDesc": "Siba burundu konte yawe n'amakuru yose ajyanye nawe. Iyi nterambwe ntishobora gusubizwaho.",
+
+    "appVersion": "Farmlytics v1.0.0",
+    "builtFor": "Yakozwe ku bahinzi bo mu Rwanda"
   },
   
   "market": {

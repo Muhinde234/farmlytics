@@ -290,16 +290,25 @@
   "settings": {
     "profileInfo": "Informations du profil",
     "name": "Nom complet",
+    "email": "E-mail",
     "phone": "Numéro de téléphone",
     "district": "District",
     "sector": "Secteur",
     "farmSize": "Taille de la ferme (hectares)",
+    "role": "Rôle",
+    "farmer": "Agriculteur",
+    "buyer": "Acheteur",
+    "welcome": "Bienvenue",
+    "memberSince": "Membre depuis",
+    "viewOnlyNote": "Les données du profil sont synchronisées depuis votre compte. Contactez le support pour apporter des modifications.",
     "saveChanges": "Enregistrer les modifications",
 
     "languageSettings": "Langue et localisation",
     "chooseLanguage": "Choisir la langue",
+    "languageChanged": "Langue mise à jour avec succès",
 
     "notifications": "Notifications",
+    "notifNote": "Choisissez les alertes que vous souhaitez recevoir sur votre tableau de bord.",
     "marketUpdates": "Mises à jour des prix du marché",
     "diseaseAlerts": "Alertes de maladies des cultures",
     "harvestReminders": "Rappels de récolte",
@@ -308,7 +317,6 @@
     "dataManagement": "Gestion des données",
     "downloadData": "Télécharger mes données",
     "clearLogs": "Effacer les journaux de culture",
-    "deleteAccount": "Supprimer mon compte",
 
     "accountSecurity": "Sécurité du compte",
     "changePassword": "Changer le mot de passe",
@@ -316,7 +324,14 @@
 
     "helpSupport": "Aide et assistance",
     "contactSupport": "Contacter le support",
-    "reportProblem": "Signaler un problème"
+    "reportProblem": "Signaler un problème",
+
+    "dangerZone": "Zone dangereuse",
+    "deleteAccount": "Supprimer mon compte",
+    "deleteAccountDesc": "Supprimez définitivement votre compte et toutes les données associées. Cette action est irréversible.",
+
+    "appVersion": "Farmlytics v1.0.0",
+    "builtFor": "Conçu pour les agriculteurs rwandais"
   },
   
   "market": {

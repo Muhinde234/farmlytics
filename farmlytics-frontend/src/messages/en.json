@@ -288,16 +288,25 @@
   "settings": {
     "profileInfo": "Profile Information",
     "name": "Full Name",
+    "email": "Email",
     "phone": "Phone Number",
     "district": "District",
     "sector": "Sector",
     "farmSize": "Farm Size (hectares)",
+    "role": "Role",
+    "farmer": "Farmer",
+    "buyer": "Buyer",
+    "welcome": "Welcome back",
+    "memberSince": "Member since",
+    "viewOnlyNote": "Profile data is synced from your account. Contact support to make changes.",
     "saveChanges": "Save Changes",
 
     "languageSettings": "Language & Localization",
     "chooseLanguage": "Choose Language",
+    "languageChanged": "Language updated successfully",
 
     "notifications": "Notifications",
+    "notifNote": "Choose which alerts you want to receive on your dashboard.",
     "marketUpdates": "Market Price Updates",
     "diseaseAlerts": "Crop Disease Alerts",
     "harvestReminders": "Harvest Reminders",
@@ -306,7 +315,6 @@
     "dataManagement": "Data Management",
     "downloadData": "Download My Data",
     "clearLogs": "Clear Crop Logs",
-    "deleteAccount": "Delete My Account",
 
     "accountSecurity": "Account Security",
     "changePassword": "Change Password",
@@ -314,7 +322,14 @@
 
     "helpSupport": "Help & Support",
     "contactSupport": "Contact Support",
-    "reportProblem": "Report a Problem"
+    "reportProblem": "Report a Problem",
+
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete My Account",
+    "deleteAccountDesc": "Permanently delete your account and all associated data. This action cannot be undone.",
+
+    "appVersion": "Farmlytics v1.0.0",
+    "builtFor": "Built for Rwandan farmers"
   },
   "market": {
     "pageTitle": "Market Connections",
