@@ -18,9 +18,10 @@ export function useCropPlans() {
     try {
       setLoading(true)
       const data = await getCropPlans()
-      setCropPlans(data)
+      setCropPlans(Array.isArray(data) ? data : [])
     } catch (err: any) {
       setError(err.message)
+      setCropPlans([])
     } finally {
       setLoading(false)
     }

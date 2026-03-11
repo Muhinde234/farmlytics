@@ -1,6 +1,5 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
 import { bottomNavItems, navItems } from './constant';
 import {
   Sidebar,
@@ -12,8 +11,8 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import Logo from '@/components/common/logo';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 import {Button} from "@/components/ui/button";
 import {LogOutIcon} from "lucide-react";
