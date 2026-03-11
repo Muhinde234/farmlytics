@@ -288,7 +288,6 @@ import { useCrops } from "@/hooks/use-crops"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Topsection from "@/components/common/topsection"
 
-export default function CropPlannerPage() {
   const t = useTranslations("HarvestTracker")
   const { cropPlans, loading, addCropPlan } = useCropPlans()
   const { data: districts, isLoading: loadingDistricts } = useDistricts()
