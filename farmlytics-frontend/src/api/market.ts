@@ -1,21 +1,29 @@
 import API from './axios'
-import type { MarketDemand, Cooperative, Buyer, Exporter } from '@/lib/types'
+import type {
+  ApiResponse,
+  MarketConsumption,
+  BusinessEntity,
+  BuyersProcessorsResponse,
+} from '@/lib/types'
 
 export const marketService = {
-  getDemands: async (): Promise<MarketDemand[]> => {
-    const res = await API.get('/market/demand')
-    return res.data
+  getDemands: async (): Promise<MarketConsumption[]> => {
+    const res = await API.get<ApiResponse<MarketConsumption[]>>('/market/demand')
+    return res.data.data ?? []
   },
-  getCooperatives: async (): Promise<Cooperative[]> => {
-    const res = await API.get('/market/cooperatives')
-    return res.data
+
+  getCooperatives: async (): Promise<BusinessEntity[]> => {
+    const res = await API.get<ApiResponse<BusinessEntity[]>>('/market/cooperatives')
+    return res.data.data ?? []
   },
-  getBuyers: async (): Promise<Buyer[]> => {
-    const res = await API.get('/market/buyers-processors')
-    return res.data
+
+  getBuyersProcessors: async (): Promise<BuyersProcessorsResponse> => {
+    const res = await API.get<ApiResponse<BuyersProcessorsResponse>>('/market/buyers-processors')
+    return res.data.data ?? { Potential_Buyers: [], Food_Processors: [] }
   },
-  getExporters: async (): Promise<Exporter[]> => {
-    const res = await API.get('/market/exporters')
-    return res.data
+
+  getExporters: async (): Promise<BusinessEntity[]> => {
+    const res = await API.get<ApiResponse<BusinessEntity[]>>('/market/exporters')
+    return res.data.data ?? []
   },
 }
