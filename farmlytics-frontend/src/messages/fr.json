@@ -219,6 +219,53 @@
     "logout":"Déconnexion"
   }
  },
+    "stats": {
+      "totalPlans": "Total des plans",
+      "harvested": "Récolté",
+      "planted": "Plans actifs",
+      "totalRevenue": "Revenu total",
+      "totalArea": "Superficie totale",
+      "totalFarmers": "Agriculteurs"
+    },
+    "charts": {
+      "revenueByCrop": "Revenu par culture",
+      "statusDist": "Répartition des statuts"
+    },
+    "recentActivity": "Activité récente",
+    "noData": "Aucune donnée disponible."
+  },
+
+  "cropPlans": {
+    "title": "Plans de culture",
+    "addButton": "Ajouter un plan",
+    "listTitle": "Mes plans de culture",
+    "noData": "Aucun plan de culture trouvé.",
+    "noRecommendations": "Aucune recommandation disponible.",
+    "aiRecommendations": "Recommandations IA",
+    "yieldPredictor": "Prédicteur de rendement",
+    "form": {
+      "crop": "Culture",
+      "district": "District",
+      "area": "Superficie (Ha)",
+      "plantingDate": "Date de plantation",
+      "status": "Statut",
+      "submit": "Créer le plan"
+    },
+    "successCreate": "Plan de culture créé avec succès !",
+    "errorCreate": "Échec de la création du plan. Veuillez réessayer."
+  },
+
+  "notifications": {
+    "title": "Notifications",
+    "sendNotification": "Envoyer une notification push",
+    "deviceToken": "Jeton d'appareil (laisser vide pour diffuser)",
+    "notificationTitle": "Titre",
+    "body": "Corps du message",
+    "send": "Envoyer",
+    "sending": "Envoi en cours...",
+    "success": "Notification envoyée avec succès !",
+    "error": "Échec de l'envoi de la notification."
+  },
  
   "HarvestTracker": {
     "title": "Suivi de Récolte",

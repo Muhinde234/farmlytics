@@ -1,47 +1,75 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { CropPlan, CreateCropPlanDTO } from "@/lib/types";
-import { getCropPlans, createCropPlan } from "@/api/cropPlans";
+import { useState, useEffect } from 'react'
+import type { CropPlan, CreateCropPlanDTO, RecordHarvestDTO } from '@/lib/types'
+import {
+  getCropPlans,
+  createCropPlan,
+  recordHarvest,
+  deleteCropPlan,
+} from '@/api/cropPlans'
 
 export function useCropPlans() {
-  const [cropPlans, setCropPlans] = useState<CropPlan[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [cropPlans, setCropPlans] = useState<CropPlan[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchCropPlans = async () => {
     try {
-      setLoading(true);
-      const data = await getCropPlans();
-      setCropPlans(data);
+      setLoading(true)
+      const data = await getCropPlans()
+      setCropPlans(data)
     } catch (err: any) {
-      console.error("[v0] Error fetching crop plans:", err.response?.data || err.message);
-      setError(err.message);
+      setError(err.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const addCropPlan = async (plan: CreateCropPlanDTO) => {
     try {
-      setLoading(true);
-      console.log("[v0] Submitting crop plan:", plan);
-      const response = await createCropPlan(plan);
-      console.log("[v0] Create crop plan response:", response);
-      await fetchCropPlans();
-      return response; // ✅ return response to the caller
+      setLoading(true)
+      const response = await createCropPlan(plan)
+      await fetchCropPlans()
+      return response
     } catch (err: any) {
-      console.error("[v0] Error creating crop plan:", err.response?.data || err.message);
-      setError(err.response?.data?.message || err.message);
-      throw err; // ✅ re-throw so component can handle
+      setError(err.response?.data?.message || err.message)
+      throw err
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
+
+  const harvestCropPlan = async (id: string, data: RecordHarvestDTO) => {
+    try {
+      setLoading(true)
+      const response = await recordHarvest(id, data)
+      await fetchCropPlans()
+      return response
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const removeCropPlan = async (id: string) => {
+    try {
+      setLoading(true)
+      await deleteCropPlan(id)
+      await fetchCropPlans()
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    fetchCropPlans();
-  }, []);
+    fetchCropPlans()
+  }, [])
 
-  return { cropPlans, loading, error, addCropPlan, fetchCropPlans };
+  return { cropPlans, loading, error, addCropPlan, harvestCropPlan, removeCropPlan, fetchCropPlans }
 }

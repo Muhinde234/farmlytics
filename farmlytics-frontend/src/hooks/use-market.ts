@@ -1,28 +1,35 @@
 import { useState, useEffect, useCallback } from 'react'
 import { marketService } from '@/api/market'
-import type { MarketDemand, Cooperative, Buyer, Exporter } from '@/lib/types'
+import type {
+  MarketConsumption,
+  BusinessEntity,
+  BuyersProcessorsResponse,
+} from '@/lib/types'
 
 export function useMarketConnections() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [demands, setDemands] = useState<MarketDemand[]>([])
-  const [cooperatives, setCooperatives] = useState<Cooperative[]>([])
-  const [buyers, setBuyers] = useState<Buyer[]>([])
-  const [exporters, setExporters] = useState<Exporter[]>([])
+  const [demands, setDemands] = useState<MarketConsumption[]>([])
+  const [cooperatives, setCooperatives] = useState<BusinessEntity[]>([])
+  const [buyersProcessors, setBuyersProcessors] = useState<BuyersProcessorsResponse>({
+    Potential_Buyers: [],
+    Food_Processors: [],
+  })
+  const [exporters, setExporters] = useState<BusinessEntity[]>([])
 
   const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const [demandsRes, coopRes, buyersRes, exportersRes] = await Promise.all([
+      const [demandsRes, coopRes, bpRes, exportersRes] = await Promise.all([
         marketService.getDemands(),
         marketService.getCooperatives(),
-        marketService.getBuyers(),
+        marketService.getBuyersProcessors(),
         marketService.getExporters(),
       ])
       setDemands(demandsRes)
       setCooperatives(coopRes)
-      setBuyers(buyersRes)
+      setBuyersProcessors(bpRes)
       setExporters(exportersRes)
     } catch (err) {
       console.error(err)
@@ -36,5 +43,5 @@ export function useMarketConnections() {
     fetchData()
   }, [fetchData])
 
-  return { loading, error, demands, cooperatives, buyers, exporters, refetch: fetchData }
+  return { loading, error, demands, cooperatives, buyersProcessors, exporters, refetch: fetchData }
 }

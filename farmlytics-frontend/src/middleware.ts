@@ -16,7 +16,7 @@ export default async function middleware(request: NextRequest) {
   const protectedPaths = [`/${locale}/admin`]; // Add more as needed
   const isProtectedRoute = protectedPaths.some((path) => pathname.startsWith(path));
 
-  // Get the token from cookies
+  
   const token = request.cookies.get('token')?.value;
 
   // 2. Handle authentication for protected routes

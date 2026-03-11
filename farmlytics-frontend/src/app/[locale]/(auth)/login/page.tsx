@@ -42,8 +42,8 @@ export default function LoginPage() {
     },
   })
 
-  const onSubmit = (data:LoginFormData ) => {
-    mutate(data, {
+  const onSubmit = ({ email, password }: LoginFormData) => {
+    mutate({ email, password }, {
       onSuccess: (response) => {
       
         router.push("/admin");
