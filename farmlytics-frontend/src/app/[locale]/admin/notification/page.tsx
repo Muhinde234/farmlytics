@@ -43,7 +43,7 @@ export default function NotificationPage() {
     setSending(true)
     try {
       const res = await notificationService.send({ ...form, data: parsedData })
-      setLastResult(res.messageId ?? 'sent')
+      setLastResult(res.message ?? 'sent')
       toast.success(t('success'))
       setForm(EMPTY_FORM)
       setDataRaw('')
